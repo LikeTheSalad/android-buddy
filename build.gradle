@@ -1,0 +1,82 @@
+buildscript {
+    ext.kotlin_version = '1.3.72'
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+plugins {
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+}
+
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply plugin: 'kotlin-kapt'
+
+group 'com.likethesalad.android'
+version '1.0.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+
+repositories {
+    mavenCentral()
+    google()
+    jcenter()
+}
+
+ext {
+    dagger_version = '2.28.1'
+    autoValue_version = '1.7.3'
+    autoFactory_version = '1.0-beta8'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "com.android.tools.build:gradle:3.5.3"
+    implementation 'net.bytebuddy:byte-buddy:1.10.13'
+    implementation "com.google.dagger:dagger:$dagger_version"
+    implementation "com.google.auto.factory:auto-factory:$autoFactory_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    kapt "com.google.auto.factory:auto-factory:$autoFactory_version"
+    kapt "com.google.auto.value:auto-value:$autoValue_version"
+    annotationProcessor "com.google.auto.factory:auto-factory:$autoFactory_version"
+    annotationProcessor "com.google.auto.value:auto-value:$autoValue_version"
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+gradlePlugin {
+    plugins {
+        simplePlugin {
+            id = 'android-byte-buddy'
+            implementationClass = 'com.likethesalad.android.buddy.AndroidBuddyPlugin'
+        }
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = 'buddy'
+            version = version
+
+            from components.java
+        }
+    }
+}
+
+kapt {
+    correctErrorTypes = true
+}
