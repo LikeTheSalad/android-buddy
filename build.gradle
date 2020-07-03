@@ -19,6 +19,7 @@ apply plugin: 'kotlin-kapt'
 
 group 'com.likethesalad.android'
 version '1.0.0-SNAPSHOT'
+ext.artifactId = 'android-buddy'
 
 sourceCompatibility = 1.8
 
@@ -68,9 +69,9 @@ gradlePlugin {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = group
-            artifactId = 'buddy'
-            version = version
+            groupId = project.group
+            artifactId = project.artifactId
+            version = project.version
 
             from components.java
         }
