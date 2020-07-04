@@ -1,10 +1,6 @@
 package com.likethesalad.android.buddy.utils
 
-import com.likethesalad.android.buddy.bytebuddy.FolderIterator
-import net.bytebuddy.build.Plugin
-
-class ConcatFolderIterator(private val iterators: MutableList<FolderIterator>) :
-    MutableIterator<Plugin.Engine.Source.Element> {
+class ConcatIterator<T>(private val iterators: MutableList<out Iterator<T>>) : MutableIterator<T> {
 
     override fun hasNext(): Boolean {
         if (iterators.isEmpty()) {
@@ -14,7 +10,7 @@ class ConcatFolderIterator(private val iterators: MutableList<FolderIterator>) :
         return iterators.first().hasNext()
     }
 
-    override fun next(): Plugin.Engine.Source.Element {
+    override fun next(): T {
         val first = iterators.first()
         val next = first.next()
         if (!first.hasNext()) {

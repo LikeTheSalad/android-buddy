@@ -1,8 +1,8 @@
 package com.likethesalad.android.buddy.bytebuddy
 
-import com.likethesalad.android.buddy.utils.ConcatFolderIterator
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
+import com.likethesalad.android.buddy.utils.ConcatIterator
 import net.bytebuddy.build.Plugin
 import net.bytebuddy.dynamic.ClassFileLocator
 import java.io.File
@@ -15,9 +15,11 @@ class SourceForMultipleFolders(
 ) : Plugin.Engine.Source, Plugin.Engine.Source.Origin {
 
     private val elementIterator: MutableIterator<Plugin.Engine.Source.Element> by lazy {
-        ConcatFolderIterator(folders.map {
+        val folderIterators = folders.map {
             folderIteratorFactory.create(it)
-        }.toMutableList())
+        }.toMutableList()
+
+        ConcatIterator(folderIterators)
     }
 
     private val locator: ClassFileLocator by lazy {

@@ -18,8 +18,8 @@ apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'kotlin-kapt'
 
 group 'com.likethesalad.android'
-version '1.0.0-SNAPSHOT'
 ext.artifactId = 'android-buddy'
+version '1.0.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
@@ -48,6 +48,8 @@ dependencies {
     annotationProcessor "com.google.auto.factory:auto-factory:$autoFactory_version"
     annotationProcessor "com.google.auto.value:auto-value:$autoValue_version"
     testImplementation group: 'junit', name: 'junit', version: '4.12'
+    testImplementation "com.google.truth:truth:1.0.1"
+    testImplementation "io.mockk:mockk:1.10.0"
 }
 
 compileKotlin {
@@ -59,7 +61,7 @@ compileTestKotlin {
 
 gradlePlugin {
     plugins {
-        simplePlugin {
+        byteBuddyExecutor {
             id = 'android-byte-buddy'
             implementationClass = 'com.likethesalad.android.buddy.AndroidBuddyPlugin'
         }

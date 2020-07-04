@@ -30,7 +30,7 @@ class PluginFactoriesProvider @Inject constructor(private val pluginClassNamesPr
         return Plugin.Factory.UsingReflection(
             Class.forName(
                 className, false, classLoader
-            ) as Class<out Plugin?>
+            ) as Class<out Plugin>
         )
     }
 }
