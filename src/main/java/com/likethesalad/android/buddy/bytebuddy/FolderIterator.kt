@@ -3,23 +3,19 @@ package com.likethesalad.android.buddy.bytebuddy
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesMaker
-import com.likethesalad.android.buddy.utils.FileTreeCreator
+import com.likethesalad.android.buddy.utils.FileTreeIteratorProvider
 import net.bytebuddy.build.Plugin
 import java.io.File
 
 @AutoFactory
 class FolderIterator(
-    @Provided fileTreeCreator: FileTreeCreator,
+    @Provided fileTreeIteratorProvider: FileTreeIteratorProvider,
     @Provided private val byteBuddyClassesMaker: ByteBuddyClassesMaker,
     private val folder: File
 ) : Iterator<Plugin.Engine.Source.Element> {
 
-    private val filesIterator: Iterator<File>
-
-    init {
-        val fileTree = fileTreeCreator.createFileTree(folder).filter { it.isFile }
-
-        filesIterator = fileTree.iterator()
+    private val filesIterator: Iterator<File> by lazy {
+        fileTreeIteratorProvider.createFileTreeIterator(folder)
     }
 
     override fun hasNext(): Boolean {

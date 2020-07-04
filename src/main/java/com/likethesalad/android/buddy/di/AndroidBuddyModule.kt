@@ -2,7 +2,7 @@ package com.likethesalad.android.buddy.di
 
 import com.likethesalad.android.buddy.AndroidBuddyPlugin
 import com.likethesalad.android.buddy.utils.AndroidBootClasspathProvider
-import com.likethesalad.android.buddy.utils.FileTreeCreator
+import com.likethesalad.android.buddy.utils.FileTreeIteratorProvider
 import com.likethesalad.android.buddy.utils.PluginClassNamesProvider
 import dagger.Module
 import dagger.Provides
@@ -16,7 +16,7 @@ class AndroidBuddyModule(private val androidBuddyPlugin: AndroidBuddyPlugin) {
     }
 
     @Provides
-    fun provideFileTreeCreator(): FileTreeCreator {
+    fun provideFileTreeCreator(): FileTreeIteratorProvider {
         return androidBuddyPlugin
     }
 

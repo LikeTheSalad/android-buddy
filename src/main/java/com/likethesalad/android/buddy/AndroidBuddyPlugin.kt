@@ -5,14 +5,14 @@ import com.likethesalad.android.buddy.di.AndroidBuddyModule
 import com.likethesalad.android.buddy.di.DaggerAndroidBuddyComponent
 import com.likethesalad.android.buddy.models.AndroidBuddyExtension
 import com.likethesalad.android.buddy.utils.AndroidBootClasspathProvider
-import com.likethesalad.android.buddy.utils.FileTreeCreator
+import com.likethesalad.android.buddy.utils.FileTreeIteratorProvider
 import com.likethesalad.android.buddy.utils.PluginClassNamesProvider
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.file.FileTree
 import java.io.File
 
-class AndroidBuddyPlugin : Plugin<Project>, AndroidBootClasspathProvider, FileTreeCreator, PluginClassNamesProvider {
+class AndroidBuddyPlugin : Plugin<Project>, AndroidBootClasspathProvider, FileTreeIteratorProvider,
+    PluginClassNamesProvider {
     private lateinit var project: Project
     private lateinit var androidExtension: AppExtension
     private lateinit var androidBuddyExtension: AndroidBuddyExtension
@@ -40,8 +40,8 @@ class AndroidBuddyPlugin : Plugin<Project>, AndroidBootClasspathProvider, FileTr
         return androidExtension.bootClasspath.toSet()
     }
 
-    override fun createFileTree(folder: File): FileTree {
-        return project.fileTree(folder)
+    override fun createFileTreeIterator(folder: File): Iterator<File> {
+        return project.fileTree(folder).iterator()
     }
 
     override fun getPluginClassNames(): Set<String> {
