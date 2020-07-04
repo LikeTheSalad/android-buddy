@@ -7,6 +7,7 @@ import com.likethesalad.android.buddy.bytebuddy.ClassFileLocatorMaker
 import com.likethesalad.android.buddy.bytebuddy.PluginEngineProvider
 import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
 import com.likethesalad.android.buddy.bytebuddy.SourceAndTargetProvider
+import com.likethesalad.android.buddy.utils.FilesHolderFactory
 import com.likethesalad.android.buddy.utils.TransformInvocationDataExtractorFactory
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,7 +18,8 @@ class ByteBuddyTransform @Inject constructor(
     private val pluginFactoriesProvider: PluginFactoriesProvider,
     private val pluginEngineProvider: PluginEngineProvider,
     private val sourceAndTargetProvider: SourceAndTargetProvider,
-    private val transformInvocationDataExtractorFactory: TransformInvocationDataExtractorFactory
+    private val transformInvocationDataExtractorFactory: TransformInvocationDataExtractorFactory,
+    private val filesHolderFactory: FilesHolderFactory
 ) : Transform() {
 
     override fun getName(): String = "Android ByteBuddy Transform"
@@ -40,11 +42,11 @@ class ByteBuddyTransform @Inject constructor(
         super.transform(transformInvocation)
 
         val transformInvocationDataExtractor = transformInvocationDataExtractorFactory.create(transformInvocation)
-        val classpath = transformInvocationDataExtractor.getClasspath()
-        val folders = classpath.filter { it.isDirectory }.toSet()
+        val classpath = filesHolderFactory.create(transformInvocationDataExtractor.getClasspath())
+        val folders = classpath.dirs
 
         pluginEngineProvider.makeEngine()
-            .with(classFileLocatorMaker.make(classpath))
+            .with(classFileLocatorMaker.make(classpath.allFiles))
             .apply(
                 sourceAndTargetProvider.getSource(folders),
                 sourceAndTargetProvider.getTarget(transformInvocationDataExtractor.getOutputFolder()),
