@@ -2,6 +2,7 @@ package com.likethesalad.android.buddy.bytebuddy
 
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
+import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesMaker
 import com.likethesalad.android.buddy.utils.FileTreeCreator
 import net.bytebuddy.build.Plugin
 import java.io.File
@@ -9,6 +10,7 @@ import java.io.File
 @AutoFactory
 class FolderIterator(
     @Provided fileTreeCreator: FileTreeCreator,
+    @Provided private val byteBuddyClassesMaker: ByteBuddyClassesMaker,
     private val folder: File
 ) : Iterator<Plugin.Engine.Source.Element> {
 
@@ -25,6 +27,6 @@ class FolderIterator(
     }
 
     override fun next(): Plugin.Engine.Source.Element {
-        return Plugin.Engine.Source.Element.ForFile(folder, filesIterator.next())
+        return byteBuddyClassesMaker.makeSourceElementForFile(folder, filesIterator.next())
     }
 }

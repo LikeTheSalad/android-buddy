@@ -1,12 +1,13 @@
 package com.likethesalad.android.buddy.bytebuddy
 
+import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesMaker
 import net.bytebuddy.dynamic.ClassFileLocator
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ClassFileLocatorMaker @Inject constructor() {
+class ClassFileLocatorMaker @Inject constructor(private val byteBuddyClassesMaker: ByteBuddyClassesMaker) {
 
     fun make(filesAndDirs: Set<File>): ClassFileLocator {
         val classFileLocators: MutableList<ClassFileLocator> = mutableListOf()
@@ -14,13 +15,13 @@ class ClassFileLocatorMaker @Inject constructor() {
         for (artifact in filesAndDirs) {
             classFileLocators.add(
                 if (artifact.isFile) {
-                    ClassFileLocator.ForJarFile.of(artifact)
+                    byteBuddyClassesMaker.makeJarClassFileLocator(artifact)
                 } else {
-                    ClassFileLocator.ForFolder(artifact)
+                    byteBuddyClassesMaker.makeFolderClassFileLocator(artifact)
                 }
             )
         }
 
-        return ClassFileLocator.Compound(classFileLocators)
+        return byteBuddyClassesMaker.makeCompoundClassFileLocator(classFileLocators)
     }
 }
