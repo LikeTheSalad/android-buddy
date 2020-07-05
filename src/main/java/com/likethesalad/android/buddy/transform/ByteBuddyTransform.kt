@@ -6,7 +6,8 @@ import com.android.build.api.transform.TransformInvocation
 import com.likethesalad.android.buddy.bytebuddy.ClassFileLocatorMaker
 import com.likethesalad.android.buddy.bytebuddy.PluginEngineProvider
 import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
-import com.likethesalad.android.buddy.bytebuddy.SourceAndTargetProvider
+import com.likethesalad.android.buddy.bytebuddy.SourceForMultipleFoldersFactory
+import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.utils.FilesHolderFactory
 import com.likethesalad.android.buddy.utils.TransformInvocationDataExtractorFactory
 import javax.inject.Inject
@@ -17,7 +18,8 @@ class ByteBuddyTransform @Inject constructor(
     private val classFileLocatorMaker: ClassFileLocatorMaker,
     private val pluginFactoriesProvider: PluginFactoriesProvider,
     private val pluginEngineProvider: PluginEngineProvider,
-    private val sourceAndTargetProvider: SourceAndTargetProvider,
+    private val byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator,
+    private val sourceForMultipleFoldersFactory: SourceForMultipleFoldersFactory,
     private val transformInvocationDataExtractorFactory: TransformInvocationDataExtractorFactory,
     private val filesHolderFactory: FilesHolderFactory
 ) : Transform() {
@@ -44,12 +46,13 @@ class ByteBuddyTransform @Inject constructor(
         val transformInvocationDataExtractor = transformInvocationDataExtractorFactory.create(transformInvocation)
         val classpath = filesHolderFactory.create(transformInvocationDataExtractor.getClasspath())
         val folders = classpath.dirs
+        val outputFolder = transformInvocationDataExtractor.getOutputFolder()
 
         pluginEngineProvider.makeEngine()
             .with(classFileLocatorMaker.make(classpath.allFiles))
             .apply(
-                sourceAndTargetProvider.getSource(folders),
-                sourceAndTargetProvider.getTarget(transformInvocationDataExtractor.getOutputFolder()),
+                sourceForMultipleFoldersFactory.create(folders),
+                byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder),
                 pluginFactoriesProvider.getFactories(folders)
             )
     }

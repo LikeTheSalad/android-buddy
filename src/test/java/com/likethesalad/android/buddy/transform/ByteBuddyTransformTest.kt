@@ -3,10 +3,8 @@ package com.likethesalad.android.buddy.transform
 import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.TransformInvocation
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.bytebuddy.ClassFileLocatorMaker
-import com.likethesalad.android.buddy.bytebuddy.PluginEngineProvider
-import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
-import com.likethesalad.android.buddy.bytebuddy.SourceAndTargetProvider
+import com.likethesalad.android.buddy.bytebuddy.*
+import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.testutils.BaseMockable
 import com.likethesalad.android.buddy.utils.FilesHolder
 import com.likethesalad.android.buddy.utils.FilesHolderFactory
@@ -33,7 +31,10 @@ class ByteBuddyTransformTest : BaseMockable() {
     lateinit var pluginEngineProvider: PluginEngineProvider
 
     @MockK
-    lateinit var sourceAndTargetProvider: SourceAndTargetProvider
+    lateinit var byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator
+
+    @MockK
+    lateinit var sourceForMultipleFoldersFactory: SourceForMultipleFoldersFactory
 
     @MockK
     lateinit var transformInvocationDataExtractorFactory: TransformInvocationDataExtractorFactory
@@ -47,7 +48,8 @@ class ByteBuddyTransformTest : BaseMockable() {
     fun setUp() {
         byteBuddyTransform = ByteBuddyTransform(
             classFileLocatorMaker, pluginFactoriesProvider, pluginEngineProvider,
-            sourceAndTargetProvider, transformInvocationDataExtractorFactory, filesHolderFactory
+            byteBuddyClassesInstantiator, sourceForMultipleFoldersFactory,
+            transformInvocationDataExtractorFactory, filesHolderFactory
         )
     }
 
@@ -82,7 +84,7 @@ class ByteBuddyTransformTest : BaseMockable() {
         val filesHolder = mockk<FilesHolder>()
         val pluginEngine = mockk<Plugin.Engine>()
         val classFileLocator = mockk<ClassFileLocator>()
-        val source = mockk<Plugin.Engine.Source>()
+        val source = mockk<SourceForMultipleFolders>()
         val target = mockk<Plugin.Engine.Target>()
         val factories = listOf<Plugin.Factory>()
         every {
@@ -99,8 +101,8 @@ class ByteBuddyTransformTest : BaseMockable() {
         every { filesHolder.allFiles }.returns(classpath)
         every { pluginEngineProvider.makeEngine() }.returns(pluginEngine)
         every { classFileLocatorMaker.make(classpath) }.returns(classFileLocator)
-        every { sourceAndTargetProvider.getSource(folders) }.returns(source)
-        every { sourceAndTargetProvider.getTarget(outputFolder) }.returns(target)
+        every { sourceForMultipleFoldersFactory.create(folders) }.returns(source)
+        every { byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder) }.returns(target)
         every { pluginEngine.with(any<ClassFileLocator>()) }.returns(pluginEngine)
         every { pluginFactoriesProvider.getFactories(folders) }.returns(factories)
         every {
