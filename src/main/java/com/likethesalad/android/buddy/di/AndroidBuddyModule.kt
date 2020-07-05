@@ -1,9 +1,9 @@
 package com.likethesalad.android.buddy.di
 
 import com.likethesalad.android.buddy.AndroidBuddyPlugin
-import com.likethesalad.android.buddy.utils.AndroidBootClasspathProvider
-import com.likethesalad.android.buddy.utils.FileTreeIteratorProvider
-import com.likethesalad.android.buddy.utils.PluginClassNamesProvider
+import com.likethesalad.android.buddy.providers.AndroidBootClasspathProvider
+import com.likethesalad.android.buddy.providers.FileTreeIteratorProvider
+import com.likethesalad.android.buddy.providers.PluginClassNamesProvider
 import dagger.Module
 import dagger.Provides
 

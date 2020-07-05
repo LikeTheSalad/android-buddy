@@ -1,6 +1,6 @@
 package com.likethesalad.android.buddy.utils
 
-class ConcatIterator<T>(private val iterators: MutableList<out Iterator<T>>) : MutableIterator<T> {
+class ConcatIterator<T>(val iterators: MutableList<out Iterator<T>>) : MutableIterator<T> {
 
     override fun hasNext(): Boolean {
         if (iterators.isEmpty()) {

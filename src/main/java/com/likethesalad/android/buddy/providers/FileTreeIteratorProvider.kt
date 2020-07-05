@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddy.utils
+package com.likethesalad.android.buddy.providers
 
 import java.io.File
 

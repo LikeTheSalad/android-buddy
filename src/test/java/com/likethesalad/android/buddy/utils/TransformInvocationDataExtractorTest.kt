@@ -2,6 +2,7 @@ package com.likethesalad.android.buddy.utils
 
 import com.android.build.api.transform.*
 import com.google.common.truth.Truth
+import com.likethesalad.android.buddy.providers.AndroidBootClasspathProvider
 import com.likethesalad.android.buddy.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

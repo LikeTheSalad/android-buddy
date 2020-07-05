@@ -5,6 +5,7 @@ import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.TransformInvocation
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
+import com.likethesalad.android.buddy.providers.AndroidBootClasspathProvider
 import java.io.File
 
 @AutoFactory

@@ -1,9 +1,9 @@
 package com.likethesalad.android.buddy.bytebuddy
 
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
+import com.likethesalad.android.buddy.providers.PluginClassNamesProvider
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.InstantiatorWrapper
-import com.likethesalad.android.buddy.utils.PluginClassNamesProvider
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.build.Plugin
 import java.io.File
