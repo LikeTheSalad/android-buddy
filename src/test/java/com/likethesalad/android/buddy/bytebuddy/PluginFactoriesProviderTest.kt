@@ -1,7 +1,7 @@
 package com.likethesalad.android.buddy.bytebuddy
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesMaker
+import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.testutils.BaseMockable
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.InstantiatorWrapper
@@ -28,7 +28,7 @@ class PluginFactoriesProviderTest : BaseMockable() {
     lateinit var instantiatorWrapper: InstantiatorWrapper
 
     @MockK
-    lateinit var byteBuddyClassesMaker: ByteBuddyClassesMaker
+    lateinit var byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator
 
     private lateinit var pluginFactoriesProvider: PluginFactoriesProvider
 
@@ -36,7 +36,7 @@ class PluginFactoriesProviderTest : BaseMockable() {
     fun setUp() {
         pluginFactoriesProvider = PluginFactoriesProvider(
             pluginClassNamesProvider, classLoaderCreator,
-            instantiatorWrapper, byteBuddyClassesMaker
+            instantiatorWrapper, byteBuddyClassesInstantiator
         )
     }
 
@@ -70,7 +70,7 @@ class PluginFactoriesProviderTest : BaseMockable() {
             instantiatorWrapper.getClassForName<Plugin>(name, false, classLoader)
         }.returns(clazz)
         every {
-            byteBuddyClassesMaker.makeFactoryUsingReflection(clazz)
+            byteBuddyClassesInstantiator.makeFactoryUsingReflection(clazz)
         }.returns(factory)
 
         return ClassNameAndPluginAndFactory(name, factory)

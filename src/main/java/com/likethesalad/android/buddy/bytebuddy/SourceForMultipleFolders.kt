@@ -2,7 +2,7 @@ package com.likethesalad.android.buddy.bytebuddy
 
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
-import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesMaker
+import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.utils.ConcatIterator
 import net.bytebuddy.build.Plugin
 import net.bytebuddy.dynamic.ClassFileLocator
@@ -12,7 +12,7 @@ import java.util.jar.Manifest
 @AutoFactory
 class SourceForMultipleFolders(
     @Provided private val folderIteratorFactory: FolderIteratorFactory,
-    @Provided private val byteBuddyClassesMaker: ByteBuddyClassesMaker,
+    @Provided private val byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator,
     private val folders: Set<File>
 ) : Plugin.Engine.Source, Plugin.Engine.Source.Origin {
 
@@ -26,9 +26,9 @@ class SourceForMultipleFolders(
 
     private val locator: ClassFileLocator by lazy {
         val locators = folders.map {
-            byteBuddyClassesMaker.makeFolderClassFileLocator(it)
+            byteBuddyClassesInstantiator.makeFolderClassFileLocator(it)
         }
-        byteBuddyClassesMaker.makeCompoundClassFileLocator(locators)
+        byteBuddyClassesInstantiator.makeCompoundClassFileLocator(locators)
     }
 
     override fun getManifest(): Manifest? = Plugin.Engine.Source.Origin.NO_MANIFEST

@@ -1,7 +1,7 @@
 package com.likethesalad.android.buddy.bytebuddy
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesMaker
+import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.testutils.BaseMockable
 import com.likethesalad.android.buddy.utils.FileTreeIteratorProvider
 import io.mockk.every
@@ -16,7 +16,7 @@ class FolderIteratorTest : BaseMockable() {
     lateinit var fileTreeIteratorProvider: FileTreeIteratorProvider
 
     @MockK
-    lateinit var byteBuddyClassesMaker: ByteBuddyClassesMaker
+    lateinit var byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator
 
     private lateinit var folderIterator: FolderIterator
 
@@ -30,7 +30,7 @@ class FolderIteratorTest : BaseMockable() {
             listOf(file1.file, file2.file, file3.file).iterator()
         )
 
-        folderIterator = FolderIterator(fileTreeIteratorProvider, byteBuddyClassesMaker, folder)
+        folderIterator = FolderIterator(fileTreeIteratorProvider, byteBuddyClassesInstantiator, folder)
 
         val iteratedElements = mutableListOf<Plugin.Engine.Source.Element>()
         for (element in folderIterator) {
@@ -45,7 +45,7 @@ class FolderIteratorTest : BaseMockable() {
     private fun createFileAndExpectedSource(folder: File): FileAndExpectedSourceElement {
         val file = mockk<File>()
         val sourceElement = mockk<Plugin.Engine.Source.Element>()
-        every { byteBuddyClassesMaker.makeSourceElementForFile(folder, file) }.returns(sourceElement)
+        every { byteBuddyClassesInstantiator.makeSourceElementForFile(folder, file) }.returns(sourceElement)
 
         return FileAndExpectedSourceElement(file, sourceElement)
     }

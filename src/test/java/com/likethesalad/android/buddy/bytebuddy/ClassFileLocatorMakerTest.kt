@@ -1,7 +1,7 @@
 package com.likethesalad.android.buddy.bytebuddy
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesMaker
+import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -14,13 +14,13 @@ import java.io.File
 class ClassFileLocatorMakerTest : BaseMockable() {
 
     @MockK
-    lateinit var byteBuddyClassesMaker: ByteBuddyClassesMaker
+    lateinit var byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator
 
     private lateinit var classFileLocatorMaker: ClassFileLocatorMaker
 
     @Before
     fun setUp() {
-        classFileLocatorMaker = ClassFileLocatorMaker(byteBuddyClassesMaker)
+        classFileLocatorMaker = ClassFileLocatorMaker(byteBuddyClassesInstantiator)
     }
 
     @Test
@@ -34,13 +34,13 @@ class ClassFileLocatorMakerTest : BaseMockable() {
         val files = listOf(file1.fileOrDir, file2.fileOrDir)
         val all = (dirs + files).toSet()
         val expectedResult = mockk<ClassFileLocator>()
-        every { byteBuddyClassesMaker.makeCompoundClassFileLocator(any()) }.returns(expectedResult)
+        every { byteBuddyClassesInstantiator.makeCompoundClassFileLocator(any()) }.returns(expectedResult)
 
         val result = classFileLocatorMaker.make(all)
 
         Truth.assertThat(result).isEqualTo(expectedResult)
         verify {
-            byteBuddyClassesMaker.makeCompoundClassFileLocator(
+            byteBuddyClassesInstantiator.makeCompoundClassFileLocator(
                 listOf(
                     dir1.expectedLocator, dir2.expectedLocator, dir3.expectedLocator,
                     file1.expectedLocator, file2.expectedLocator
@@ -53,7 +53,7 @@ class ClassFileLocatorMakerTest : BaseMockable() {
         val file = mockk<File>()
         val locator = mockk<ClassFileLocator>()
         every { file.isFile }.returns(true)
-        every { byteBuddyClassesMaker.makeJarClassFileLocator(file) }.returns(locator)
+        every { byteBuddyClassesInstantiator.makeJarClassFileLocator(file) }.returns(locator)
 
         return FileAndExpectedLocator(file, locator)
     }
@@ -62,7 +62,7 @@ class ClassFileLocatorMakerTest : BaseMockable() {
         val dir = mockk<File>()
         val locator = mockk<ClassFileLocator>()
         every { dir.isFile }.returns(false)
-        every { byteBuddyClassesMaker.makeFolderClassFileLocator(dir) }.returns(locator)
+        every { byteBuddyClassesInstantiator.makeFolderClassFileLocator(dir) }.returns(locator)
 
         return FileAndExpectedLocator(dir, locator)
     }

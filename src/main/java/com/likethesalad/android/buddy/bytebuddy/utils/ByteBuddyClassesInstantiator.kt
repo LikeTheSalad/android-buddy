@@ -7,7 +7,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ByteBuddyClassesMaker @Inject constructor() {
+class ByteBuddyClassesInstantiator @Inject constructor() {
 
     fun makeJarClassFileLocator(jarFile: File): ClassFileLocator {
         return ClassFileLocator.ForJarFile.of(jarFile)

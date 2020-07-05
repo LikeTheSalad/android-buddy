@@ -1,6 +1,6 @@
 package com.likethesalad.android.buddy.bytebuddy
 
-import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesMaker
+import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.InstantiatorWrapper
 import com.likethesalad.android.buddy.utils.PluginClassNamesProvider
@@ -16,7 +16,7 @@ class PluginFactoriesProvider
     private val pluginClassNamesProvider: PluginClassNamesProvider,
     private val classLoaderCreator: ClassLoaderCreator,
     private val instantiatorWrapper: InstantiatorWrapper,
-    private val byteBuddyClassesMaker: ByteBuddyClassesMaker
+    private val byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator
 ) {
 
     fun getFactories(folders: Set<File>): List<Plugin.Factory> {
@@ -25,7 +25,7 @@ class PluginFactoriesProvider
     }
 
     private fun nameToFactory(className: String, classLoader: ClassLoader): Plugin.Factory {
-        return byteBuddyClassesMaker.makeFactoryUsingReflection(
+        return byteBuddyClassesInstantiator.makeFactoryUsingReflection(
             instantiatorWrapper.getClassForName(className, false, classLoader)
         )
     }
