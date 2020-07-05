@@ -1,5 +1,5 @@
 package com.likethesalad.android.buddy.models
 
-class AndroidBuddyExtension {
+open class AndroidBuddyExtension {
     var plugins: List<String> = emptyList()
 }

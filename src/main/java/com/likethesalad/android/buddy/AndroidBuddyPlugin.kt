@@ -1,17 +1,16 @@
 package com.likethesalad.android.buddy
 
 import com.android.build.gradle.AppExtension
-import com.likethesalad.android.buddy.di.AndroidBuddyModule
-import com.likethesalad.android.buddy.di.DaggerAndroidBuddyComponent
 import com.likethesalad.android.buddy.models.AndroidBuddyExtension
 import com.likethesalad.android.buddy.providers.AndroidBootClasspathProvider
 import com.likethesalad.android.buddy.providers.FileTreeIteratorProvider
 import com.likethesalad.android.buddy.providers.PluginClassNamesProvider
+import com.likethesalad.android.buddy.utils.DaggerInjector
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
 
-class AndroidBuddyPlugin : Plugin<Project>,
+open class AndroidBuddyPlugin : Plugin<Project>,
     AndroidBootClasspathProvider, FileTreeIteratorProvider,
     PluginClassNamesProvider {
     private lateinit var project: Project
@@ -23,14 +22,11 @@ class AndroidBuddyPlugin : Plugin<Project>,
     }
 
     override fun apply(project: Project) {
-        val transform = DaggerAndroidBuddyComponent.builder()
-            .androidBuddyModule(AndroidBuddyModule(this))
-            .build()
-            .transform()
+        DaggerInjector.init(this)
         this.project = project
         androidBuddyExtension = createExtension()
         androidExtension = project.extensions.getByType(AppExtension::class.java)
-        androidExtension.registerTransform(transform)
+        androidExtension.registerTransform(DaggerInjector.getByteBuddyTransform())
     }
 
     private fun createExtension(): AndroidBuddyExtension {
