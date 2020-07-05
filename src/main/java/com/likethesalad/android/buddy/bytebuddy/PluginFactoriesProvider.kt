@@ -2,6 +2,7 @@ package com.likethesalad.android.buddy.bytebuddy
 
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesMaker
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
+import com.likethesalad.android.buddy.utils.InstantiatorWrapper
 import com.likethesalad.android.buddy.utils.PluginClassNamesProvider
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.build.Plugin
@@ -14,6 +15,7 @@ class PluginFactoriesProvider
 @Inject constructor(
     private val pluginClassNamesProvider: PluginClassNamesProvider,
     private val classLoaderCreator: ClassLoaderCreator,
+    private val instantiatorWrapper: InstantiatorWrapper,
     private val byteBuddyClassesMaker: ByteBuddyClassesMaker
 ) {
 
@@ -22,12 +24,9 @@ class PluginFactoriesProvider
         return pluginClassNamesProvider.getPluginClassNames().map { nameToFactory(it, classLoader) }
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun nameToFactory(className: String, classLoader: ClassLoader): Plugin.Factory {
         return byteBuddyClassesMaker.makeFactoryUsingReflection(
-            Class.forName(
-                className, false, classLoader
-            ) as Class<out Plugin>
+            instantiatorWrapper.getClassForName(className, false, classLoader)
         )
     }
 }

@@ -3,10 +3,11 @@ package com.likethesalad.android.buddy.bytebuddy.utils
 import net.bytebuddy.build.Plugin
 import net.bytebuddy.dynamic.ClassFileLocator
 import java.io.File
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ByteBuddyClassesMaker {
+class ByteBuddyClassesMaker @Inject constructor() {
 
     fun makeJarClassFileLocator(jarFile: File): ClassFileLocator {
         return ClassFileLocator.ForJarFile.of(jarFile)
