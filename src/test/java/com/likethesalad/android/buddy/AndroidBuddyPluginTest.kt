@@ -4,12 +4,14 @@ import com.android.build.gradle.AppExtension
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.models.AndroidBuddyExtension
 import com.likethesalad.android.buddy.testutils.BaseMockable
+import com.likethesalad.android.buddy.transform.ByteBuddyTransform
 import com.likethesalad.android.buddy.utils.DaggerInjector
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
 import io.mockk.verify
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.plugins.ExtensionContainer
 import org.junit.Before
 import org.junit.Test
@@ -29,6 +31,9 @@ class AndroidBuddyPluginTest : BaseMockable() {
     @MockK
     lateinit var androidBuddyExtension: AndroidBuddyExtension
 
+    @MockK
+    lateinit var byteBuddyTransform: ByteBuddyTransform
+
     private lateinit var androidBuddyPlugin: AndroidBuddyPlugin
 
     @Before
@@ -39,6 +44,9 @@ class AndroidBuddyPluginTest : BaseMockable() {
         every {
             extensionContainer.create("androidBuddy", AndroidBuddyExtension::class.java)
         }.returns(androidBuddyExtension)
+        every {
+            DaggerInjector.getByteBuddyTransform()
+        }.returns(byteBuddyTransform)
 
         androidBuddyPlugin = AndroidBuddyPlugin()
         androidBuddyPlugin.apply(project)
@@ -66,5 +74,39 @@ class AndroidBuddyPluginTest : BaseMockable() {
         }.returns(bootClasspath)
 
         Truth.assertThat(androidBuddyPlugin.getBootClasspath()).isEqualTo(bootClasspath.toSet())
+    }
+
+    @Test
+    fun `Verify byte buddy transform registration`() {
+        verify {
+            androidExtension.registerTransform(byteBuddyTransform)
+        }
+    }
+
+    @Test
+    fun `Create file tree iterator for folder`() {
+        val folder = mockk<File>()
+        val fileTree = mockk<ConfigurableFileTree>()
+        val expectedIterator = mockk<MutableIterator<File>>()
+        every {
+            project.fileTree(folder)
+        }.returns(fileTree)
+        every {
+            fileTree.iterator()
+        }.returns(expectedIterator)
+
+        val result = androidBuddyPlugin.createFileTreeIterator(folder)
+
+        Truth.assertThat(result).isEqualTo(expectedIterator)
+    }
+
+    @Test
+    fun `Get plugin class names from extension`() {
+        val plugins = listOf("some.class.name", "other.class.name")
+        every {
+            androidBuddyExtension.plugins
+        }.returns(plugins)
+
+        Truth.assertThat(androidBuddyPlugin.getPluginClassNames()).isEqualTo(plugins.toSet())
     }
 }
