@@ -1,5 +1,6 @@
 package com.likethesalad.android.buddy.utils
 
+import com.likethesalad.android.common.utils.InstantiatorWrapper
 import java.io.File
 import java.net.URL
 import javax.inject.Inject

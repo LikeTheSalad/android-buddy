@@ -1,11 +1,11 @@
 package com.likethesalad.android.buddy
 
 import com.android.build.gradle.AppExtension
-import com.likethesalad.android.buddy.models.AndroidBuddyExtension
 import com.likethesalad.android.buddy.providers.AndroidBootClasspathProvider
 import com.likethesalad.android.buddy.providers.FileTreeIteratorProvider
 import com.likethesalad.android.buddy.providers.PluginClassNamesProvider
 import com.likethesalad.android.buddy.utils.DaggerInjector
+import com.likethesalad.android.common.models.AndroidBuddyExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
@@ -42,6 +42,6 @@ open class AndroidBuddyPlugin : Plugin<Project>,
     }
 
     override fun getPluginClassNames(): Set<String> {
-        return androidBuddyExtension.plugins.toSet()
+        return androidBuddyExtension.getTransformations().map { it.plugin }.toSet()
     }
 }

@@ -2,10 +2,11 @@ package com.likethesalad.android.buddy
 
 import com.android.build.gradle.AppExtension
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.models.AndroidBuddyExtension
-import com.likethesalad.android.buddy.testutils.BaseMockable
 import com.likethesalad.android.buddy.transform.ByteBuddyTransform
 import com.likethesalad.android.buddy.utils.DaggerInjector
+import com.likethesalad.android.common.models.AndroidBuddyExtension
+import com.likethesalad.android.common.models.TransformationDeclaration
+import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
@@ -103,9 +104,12 @@ class AndroidBuddyPluginTest : BaseMockable() {
     @Test
     fun `Get plugin class names from extension`() {
         val plugins = listOf("some.class.name", "other.class.name")
+        val transformations = plugins.map {
+            TransformationDeclaration(it)
+        }.toSet()
         every {
-            androidBuddyExtension.plugins
-        }.returns(plugins)
+            androidBuddyExtension.getTransformations()
+        }.returns(transformations)
 
         Truth.assertThat(androidBuddyPlugin.getPluginClassNames()).isEqualTo(plugins.toSet())
     }

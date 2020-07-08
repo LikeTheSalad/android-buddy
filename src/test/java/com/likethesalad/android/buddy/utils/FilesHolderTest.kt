@@ -1,7 +1,7 @@
 package com.likethesalad.android.buddy.utils
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.testutils.BaseMockable
+import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import org.junit.Test
 import java.io.File

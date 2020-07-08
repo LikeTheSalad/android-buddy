@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddy.utils
+package com.likethesalad.android.common.utils
 
 import java.net.URL
 import java.net.URLClassLoader

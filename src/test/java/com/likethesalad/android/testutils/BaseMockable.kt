@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddy.testutils
+package com.likethesalad.android.testutils
 
 import io.mockk.MockKAnnotations
 import org.junit.Before

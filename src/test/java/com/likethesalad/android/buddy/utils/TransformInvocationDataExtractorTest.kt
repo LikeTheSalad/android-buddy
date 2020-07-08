@@ -1,9 +1,15 @@
 package com.likethesalad.android.buddy.utils
 
-import com.android.build.api.transform.*
+import com.android.build.api.transform.DirectoryInput
+import com.android.build.api.transform.Format
+import com.android.build.api.transform.JarInput
+import com.android.build.api.transform.QualifiedContent
+import com.android.build.api.transform.TransformInput
+import com.android.build.api.transform.TransformInvocation
+import com.android.build.api.transform.TransformOutputProvider
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.providers.AndroidBootClasspathProvider
-import com.likethesalad.android.buddy.testutils.BaseMockable
+import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
@@ -62,7 +68,7 @@ class TransformInvocationDataExtractorTest : BaseMockable() {
         val inputs = createInputs(setOf(dir1, dir2), setOf(jar1, jar2))
         val androidPath1 = mockk<File>()
         val androidPath2 = mockk<File>()
-        val androidBootClasspath = setOf<File>(androidPath1, androidPath2)
+        val androidBootClasspath = setOf(androidPath1, androidPath2)
         every {
             androidBootClasspathProvider.getBootClasspath()
         }.returns(androidBootClasspath)
