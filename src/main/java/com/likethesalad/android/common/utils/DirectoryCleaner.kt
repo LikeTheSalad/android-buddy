@@ -1,8 +1,11 @@
 package com.likethesalad.android.common.utils
 
 import java.io.File
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class DirectoryCleaner {
+@Singleton
+class DirectoryCleaner @Inject constructor() {
 
     fun cleanDirectory(directory: File) {
         directory.listFiles()?.forEach {

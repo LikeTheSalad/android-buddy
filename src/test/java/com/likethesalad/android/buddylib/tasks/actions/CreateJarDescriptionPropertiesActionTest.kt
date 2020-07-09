@@ -2,7 +2,6 @@ package com.likethesalad.android.buddylib.tasks.actions
 
 import com.google.common.truth.Truth
 import com.likethesalad.android.common.utils.DirectoryCleaner
-import com.likethesalad.android.testutils.BaseMockable
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -10,7 +9,7 @@ import org.junit.rules.TemporaryFolder
 import java.io.File
 import java.util.Properties
 
-class CreateJarDescriptionPropertiesActionTest : BaseMockable() {
+class CreateJarDescriptionPropertiesActionTest {
 
     @get:Rule
     val temporaryFolderRule = TemporaryFolder()
