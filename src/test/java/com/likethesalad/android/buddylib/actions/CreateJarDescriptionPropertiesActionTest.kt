@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddylib.tasks.actions
+package com.likethesalad.android.buddylib.actions
 
 import com.google.common.truth.Truth
 import com.likethesalad.android.common.utils.DirectoryCleaner

@@ -1,5 +1,6 @@
 package com.likethesalad.android.common.utils
 
+import io.github.classgraph.ClassGraph
 import java.net.URL
 import java.net.URLClassLoader
 import javax.inject.Inject
@@ -16,4 +17,6 @@ class InstantiatorWrapper @Inject constructor() {
     fun getUrlClassLoader(urls: Array<URL>, parent: ClassLoader): URLClassLoader {
         return URLClassLoader(urls, parent)
     }
+
+    fun getClassGraph(): ClassGraph = ClassGraph()
 }

@@ -1,18 +1,20 @@
 package com.likethesalad.android.common.utils
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.testutils.ResourcesFinder
+import com.likethesalad.android.testutils.BaseMockable
+import com.likethesalad.android.testutils.DummyResourcesFinder
 import io.github.classgraph.ClassGraph
+import io.mockk.every
 import org.junit.Test
 import java.io.File
 
-class PluginsFinderTest {
+class PluginsFinderTest : BaseMockable() {
 
-    private val resourcesFinder = ResourcesFinder(javaClass)
+    private val resourcesFinder = DummyResourcesFinder(javaClass)
 
     @Test
     fun `Give empty list when no plugin class is found`() {
-        val pluginsFinder = createInstance(getClassGraphWithoutPlugins())
+        val pluginsFinder = createInstance(createClassGraphProviderMock(getClassGraphWithoutPlugins()))
 
         val classesFound = pluginsFinder.findBuiltPluginClassNames()
 
@@ -21,7 +23,7 @@ class PluginsFinderTest {
 
     @Test
     fun `Give plugin list when plugin class are found`() {
-        val pluginsFinder = createInstance(getClassGraphWithPlugins())
+        val pluginsFinder = createInstance(createClassGraphProviderMock(getClassGraphWithPlugins()))
 
         val classesFound = pluginsFinder.findBuiltPluginClassNames()
 
@@ -32,6 +34,12 @@ class PluginsFinderTest {
             "com.likethesalad.android.common.plugins.BasePlugin",
             "com.likethesalad.android.common.plugins.AbstractPlugin"
         )
+    }
+
+    private fun createClassGraphProviderMock(classGraph: ClassGraph): ClassGraphProvider {
+        val provider = mockk<ClassGraphProvider>()
+        every { provider.classGraph }.returns(classGraph)
+        return provider
     }
 
     private fun getClassGraphWithPlugins(): ClassGraph {
@@ -50,7 +58,7 @@ class PluginsFinderTest {
         return resourcesFinder.getResourceFile("classdirs/withplugins")
     }
 
-    private fun createInstance(buildClassGraph: ClassGraph): PluginsFinder {
-        return PluginsFinder(buildClassGraph)
+    private fun createInstance(buildClassGraphProvider: ClassGraphProvider): PluginsFinder {
+        return PluginsFinder(buildClassGraphProvider)
     }
 }
