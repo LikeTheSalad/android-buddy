@@ -1,8 +1,10 @@
 package com.likethesalad.android.buddylib.actions
 
+import com.google.auto.factory.AutoFactory
 import com.likethesalad.android.buddylib.actions.base.BaseAction
 import com.likethesalad.android.common.utils.PluginsFinder
 
+@AutoFactory
 class VerifyPluginClassesProvidedAction(
     private val pluginNames: Set<String>,
     private val pluginsFinder: PluginsFinder

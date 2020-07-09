@@ -92,8 +92,7 @@ class CreateJarDescriptionPropertiesActionTest {
     private fun createInstance(pluginNames: Set<String>)
             : CreateJarDescriptionPropertiesAction {
         return CreateJarDescriptionPropertiesAction(
-            pluginNames, outputDir,
-            DirectoryCleaner()
+            DirectoryCleaner(), pluginNames, outputDir
         )
     }
 }
