@@ -2,7 +2,9 @@ package com.likethesalad.android.buddylib.tasks
 
 import com.likethesalad.android.buddylib.actions.CreateJarDescriptionPropertiesActionFactory
 import com.likethesalad.android.buddylib.actions.VerifyPluginClassesProvidedActionFactory
+import com.likethesalad.android.common.providers.impl.FileCollectionFileSetProvider
 import com.likethesalad.android.common.utils.ClassGraphProvider
+import com.likethesalad.android.common.utils.ClassGraphProviderFactory
 import com.likethesalad.android.common.utils.PluginsFinderFactory
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
@@ -21,7 +23,7 @@ class CreateJarDescriptionProperties
     private val createJarDescriptionPropertiesActionFactory: CreateJarDescriptionPropertiesActionFactory,
     private val verifyPluginClassesProvidedActionFactory: VerifyPluginClassesProvidedActionFactory,
     private val pluginsFinderFactory: PluginsFinderFactory,
-    private val classGraphProvider: ClassGraphProvider
+    private val classGraphProviderFactory: ClassGraphProviderFactory
 ) : DefaultTask() {
 
     @Inject
@@ -49,11 +51,17 @@ class CreateJarDescriptionProperties
         val pluginNames = getInputClassNames().get()
         verifyPluginClassesProvidedActionFactory.create(
             pluginNames,
-            pluginsFinderFactory.create(classGraphProvider)
+            pluginsFinderFactory.create(createClassGraphProvider())
         ).execute()
         createJarDescriptionPropertiesActionFactory.create(
             pluginNames,
             getOutputDir().asFile.get()
         ).execute()
+    }
+
+    private fun createClassGraphProvider(): ClassGraphProvider {
+        return classGraphProviderFactory.create(
+            FileCollectionFileSetProvider(getInputClassPaths())
+        )
     }
 }

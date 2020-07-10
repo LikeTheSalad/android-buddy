@@ -15,7 +15,7 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project> {
         project.pluginManager.apply(JavaLibraryPlugin::class.java)
         val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
         project.tasks.named("compileJava", JavaCompile::class.java) {
-            println("JAJJAJAJA: ${sourceSets.getByName("main")}")
+            println("JAJJAJAJA: ${sourceSets.getByName("main").output.classesDirs}")
         }
     }
 }
