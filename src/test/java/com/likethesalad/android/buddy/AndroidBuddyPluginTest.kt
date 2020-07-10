@@ -5,7 +5,6 @@ import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.transform.ByteBuddyTransform
 import com.likethesalad.android.buddy.utils.DaggerInjector
 import com.likethesalad.android.common.models.AndroidBuddyExtension
-import com.likethesalad.android.common.models.TransformationDeclaration
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -14,10 +13,12 @@ import io.mockk.verify
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.plugins.ExtensionContainer
+import org.gradle.api.provider.SetProperty
 import org.junit.Before
 import org.junit.Test
 import java.io.File
 
+@Suppress("UnstableApiUsage")
 class AndroidBuddyPluginTest : BaseMockable() {
 
     @MockK
@@ -103,13 +104,12 @@ class AndroidBuddyPluginTest : BaseMockable() {
 
     @Test
     fun `Get plugin class names from extension`() {
-        val plugins = listOf("some.class.name", "other.class.name")
-        val transformations = plugins.map {
-            TransformationDeclaration(it)
-        }.toSet()
+        val plugins = setOf("some.class.name", "other.class.name")
+        val setProperty = mockk<SetProperty<String>>()
+        every { setProperty.get() }.returns(plugins)
         every {
-            androidBuddyExtension.getTransformations()
-        }.returns(transformations)
+            androidBuddyExtension.pluginNames
+        }.returns(setProperty)
 
         Truth.assertThat(androidBuddyPlugin.getPluginClassNames()).isEqualTo(plugins.toSet())
     }

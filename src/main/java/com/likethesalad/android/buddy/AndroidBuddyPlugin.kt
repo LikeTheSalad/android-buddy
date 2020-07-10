@@ -10,6 +10,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
 
+@Suppress("UnstableApiUsage")
 open class AndroidBuddyPlugin : Plugin<Project>,
     AndroidBootClasspathProvider, FileTreeIteratorProvider,
     PluginClassNamesProvider {
@@ -42,6 +43,6 @@ open class AndroidBuddyPlugin : Plugin<Project>,
     }
 
     override fun getPluginClassNames(): Set<String> {
-        return androidBuddyExtension.getTransformations().map { it.plugin }.toSet()
+        return androidBuddyExtension.pluginNames.get()
     }
 }

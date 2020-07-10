@@ -1,16 +1,10 @@
 package com.likethesalad.android.common.models
 
-open class AndroidBuddyExtension {
+import org.gradle.api.model.ObjectFactory
+import javax.inject.Inject
 
-    private var transformationPlugins = setOf<String>()
+@Suppress("UnstableApiUsage")
+open class AndroidBuddyExtension @Inject constructor(objectFactory: ObjectFactory) {
 
-    fun setPlugins(names: Set<String>) {
-        transformationPlugins = names
-    }
-
-    fun getTransformations(): Set<TransformationDeclaration> {
-        return transformationPlugins.map {
-            TransformationDeclaration(it)
-        }.toSet()
-    }
+    val pluginNames = objectFactory.setProperty(String::class.java)
 }
