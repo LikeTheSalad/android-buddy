@@ -26,42 +26,42 @@ class CreateJarDescriptionProperties
     private val classGraphProviderFactory: ClassGraphProviderFactory
 ) : DefaultTask() {
 
+    @get:OutputDirectory
+    val outputDir: DirectoryProperty by lazy {
+        getObjectFactory().directoryProperty()
+    }
+
+    @get:Input
+    val inputClassNames: SetProperty<String> by lazy {
+        getObjectFactory().setProperty(String::class.java)
+    }
+
+    @get:InputFiles
+    val inputClassPaths: FileCollection by lazy {
+        getObjectFactory().fileCollection()
+    }
+
     @Inject
     fun getObjectFactory(): ObjectFactory {
         throw UnsupportedOperationException()
     }
 
-    @OutputDirectory
-    fun getOutputDir(): DirectoryProperty {
-        return getObjectFactory().directoryProperty()
-    }
-
-    @Input
-    fun getInputClassNames(): SetProperty<String> {
-        return getObjectFactory().setProperty(String::class.java)
-    }
-
-    @InputFiles
-    fun getInputClassPaths(): FileCollection {
-        return getObjectFactory().fileCollection()
-    }
-
     @TaskAction
     fun doAction() {
-        val pluginNames = getInputClassNames().get()
+        val pluginNames = inputClassNames.get()
         verifyPluginClassesProvidedActionFactory.create(
             pluginNames,
             pluginsFinderFactory.create(createClassGraphProvider())
         ).execute()
         createJarDescriptionPropertiesActionFactory.create(
             pluginNames,
-            getOutputDir().asFile.get()
+            outputDir.asFile.get()
         ).execute()
     }
 
     private fun createClassGraphProvider(): ClassGraphProvider {
         return classGraphProviderFactory.create(
-            FileCollectionFileSetProvider(getInputClassPaths())
+            FileCollectionFileSetProvider(inputClassPaths)
         )
     }
 }
