@@ -1,6 +1,7 @@
 package com.likethesalad.android.buddy.bytebuddy
 
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
+import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.providers.PluginClassNamesProvider
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.common.utils.InstantiatorWrapper
@@ -8,9 +9,8 @@ import net.bytebuddy.ByteBuddy
 import net.bytebuddy.build.Plugin
 import java.io.File
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@AppScope
 class PluginFactoriesProvider
 @Inject constructor(
     private val pluginClassNamesProvider: PluginClassNamesProvider,

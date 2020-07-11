@@ -2,8 +2,8 @@ package com.likethesalad.android.buddy
 
 import com.android.build.gradle.AppExtension
 import com.google.common.truth.Truth
+import com.likethesalad.android.buddy.di.AppInjector
 import com.likethesalad.android.buddy.transform.ByteBuddyTransform
-import com.likethesalad.android.buddy.utils.DaggerInjector
 import com.likethesalad.android.common.models.AndroidBuddyExtension
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
@@ -40,14 +40,14 @@ class AndroidBuddyPluginTest : BaseMockable() {
 
     @Before
     fun setUp() {
-        mockkObject(DaggerInjector)
+        mockkObject(AppInjector)
         every { project.extensions }.returns(extensionContainer)
         every { extensionContainer.getByType(AppExtension::class.java) }.returns(androidExtension)
         every {
             extensionContainer.create("androidBuddy", AndroidBuddyExtension::class.java)
         }.returns(androidBuddyExtension)
         every {
-            DaggerInjector.getByteBuddyTransform()
+            AppInjector.getByteBuddyTransform()
         }.returns(byteBuddyTransform)
 
         androidBuddyPlugin = AndroidBuddyPlugin()
@@ -57,7 +57,7 @@ class AndroidBuddyPluginTest : BaseMockable() {
     @Test
     fun `Check injector is initiated`() {
         verify {
-            DaggerInjector.init(androidBuddyPlugin)
+            AppInjector.init(androidBuddyPlugin)
         }
     }
 

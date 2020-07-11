@@ -1,5 +1,6 @@
 package com.likethesalad.android.buddylib
 
+import com.likethesalad.android.buddylib.di.LibraryInjector
 import com.likethesalad.android.buddylib.tasks.CreateJarDescriptionProperties
 import com.likethesalad.android.common.models.AndroidBuddyExtension
 import org.gradle.api.Plugin
@@ -30,8 +31,10 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project> {
 
         val createJarDescriptionProperties = project.tasks.register(
             CREATE_JAR_DESCRIPTION_PROPERTIES_TASK_NAME,
-            CreateJarDescriptionProperties::class.java //todo add class's args
-        ) {
+            CreateJarDescriptionProperties::class.java,
+            LibraryInjector.getCreateJarDescriptionPropertiesArgs()
+        )
+        createJarDescriptionProperties.configure {
             it.inputClassNames.set(extension.pluginNames)
             it.inputClassPaths.plus(getClassesOutputDirs(sourceSets))
             it.outputDir.set(project.file("${project.buildDir}/${it.name}"))

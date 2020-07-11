@@ -8,12 +8,12 @@ import com.likethesalad.android.buddy.bytebuddy.PluginEngineProvider
 import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
 import com.likethesalad.android.buddy.bytebuddy.SourceForMultipleFoldersFactory
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
+import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.utils.FilesHolderFactory
 import com.likethesalad.android.buddy.utils.TransformInvocationDataExtractorFactory
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@AppScope
 class ByteBuddyTransform @Inject constructor(
     private val classFileLocatorMaker: ClassFileLocatorMaker,
     private val pluginFactoriesProvider: PluginFactoriesProvider,

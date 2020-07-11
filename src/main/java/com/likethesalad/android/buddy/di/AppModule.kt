@@ -8,7 +8,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class AndroidBuddyModule(private val androidBuddyPlugin: AndroidBuddyPlugin) {
+class AppModule(private val androidBuddyPlugin: AndroidBuddyPlugin) {
 
     @Provides
     fun providePluginClassNamesProvider(): PluginClassNamesProvider {

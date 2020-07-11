@@ -1,12 +1,12 @@
 package com.likethesalad.android.buddy.bytebuddy.utils
 
+import com.likethesalad.android.buddy.di.AppScope
 import net.bytebuddy.build.Plugin
 import net.bytebuddy.dynamic.ClassFileLocator
 import java.io.File
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@AppScope
 class ByteBuddyClassesInstantiator @Inject constructor() {
 
     fun makeJarClassFileLocator(jarFile: File): ClassFileLocator {

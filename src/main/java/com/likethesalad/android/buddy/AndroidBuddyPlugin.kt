@@ -1,10 +1,10 @@
 package com.likethesalad.android.buddy
 
 import com.android.build.gradle.AppExtension
+import com.likethesalad.android.buddy.di.AppInjector
 import com.likethesalad.android.buddy.providers.AndroidBootClasspathProvider
 import com.likethesalad.android.buddy.providers.FileTreeIteratorProvider
 import com.likethesalad.android.buddy.providers.PluginClassNamesProvider
-import com.likethesalad.android.buddy.utils.DaggerInjector
 import com.likethesalad.android.common.models.AndroidBuddyExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -23,11 +23,11 @@ open class AndroidBuddyPlugin : Plugin<Project>,
     }
 
     override fun apply(project: Project) {
-        DaggerInjector.init(this)
+        AppInjector.init(this)
         this.project = project
         androidBuddyExtension = createExtension()
         androidExtension = project.extensions.getByType(AppExtension::class.java)
-        androidExtension.registerTransform(DaggerInjector.getByteBuddyTransform())
+        androidExtension.registerTransform(AppInjector.getByteBuddyTransform())
     }
 
     private fun createExtension(): AndroidBuddyExtension {
