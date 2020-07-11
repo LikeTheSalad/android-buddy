@@ -21,6 +21,9 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project> {
         private const val CREATE_JAR_DESCRIPTION_PROPERTIES_TASK_NAME = "createJarDescriptionProperties"
         private const val COPY_DESCRIPTION_PROPERTIES_TASK_NAME = "copyDescriptionProperties"
         private const val EXTENSION_NAME = "androidBuddyLibrary"
+        private const val BYTE_BUDDY_DEPENDENCY_FORMAT = "net.bytebuddy:byte-buddy:%s"
+        private const val BYTE_BUDDY_DEPENDENCY_DEFAULT_VERSION = "1.10.13"
+        private const val BYTE_BUDDY_DEPENDENCY_VERSION_PROPERTY_NAME = "android.buddy.byteBuddy.version"
     }
 
     override fun apply(project: Project) {
@@ -28,7 +31,7 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project> {
         project.pluginManager.apply(JavaLibraryPlugin::class.java)
         project.dependencies.add(
             "implementation",
-            "net.bytebuddy:byte-buddy:${project.properties["android.buddy.byteBuddy.version"]}"
+            BYTE_BUDDY_DEPENDENCY_FORMAT.format(getByteBuddyVersion(project))
         )
         val extension = project.extensions.create(EXTENSION_NAME, AndroidBuddyExtension::class.java)
         val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
@@ -56,5 +59,19 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project> {
 
     private fun getClassesOutputDirs(sourceSets: SourceSetContainer): FileCollection {
         return sourceSets.getByName("main").output.classesDirs
+    }
+
+    private fun getByteBuddyVersion(project: Project): String {
+        return getPropertyByteBuddyVersion(project) ?: BYTE_BUDDY_DEPENDENCY_DEFAULT_VERSION
+    }
+
+    private fun getPropertyByteBuddyVersion(project: Project): String? {
+        val propertyVersion = project.properties[BYTE_BUDDY_DEPENDENCY_VERSION_PROPERTY_NAME]
+
+        if (propertyVersion != null && propertyVersion is String) {
+            return propertyVersion.trim()
+        }
+
+        return null
     }
 }
