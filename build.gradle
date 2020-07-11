@@ -33,15 +33,16 @@ ext {
     dagger_version = '2.28.1'
     autoValue_version = '1.7.3'
     autoFactory_version = '1.0-beta8'
+    byteBuddy_version = ext["android.buddy.byteBuddy.version"]
 }
 
 dependencies {
+    implementation "net.bytebuddy:byte-buddy:$byteBuddy_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation "com.android.tools.build:gradle:3.5.3"
-    implementation 'net.bytebuddy:byte-buddy:1.10.13'
     implementation "com.google.dagger:dagger:$dagger_version"
     implementation "com.google.auto.factory:auto-factory:$autoFactory_version"
     implementation "io.github.classgraph:classgraph:4.8.87"
+    compileOnly "com.android.tools.build:gradle:3.5.3"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     kapt "com.google.auto.factory:auto-factory:$autoFactory_version"
     kapt "com.google.auto.value:auto-value:$autoValue_version"

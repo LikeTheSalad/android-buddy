@@ -26,6 +26,10 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         this.project = project
         project.pluginManager.apply(JavaLibraryPlugin::class.java)
+        project.dependencies.add(
+            "implementation",
+            "net.bytebuddy:byte-buddy:${project.properties["android.buddy.byteBuddy.version"]}"
+        )
         val extension = project.extensions.create(EXTENSION_NAME, AndroidBuddyExtension::class.java)
         val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
 

@@ -15,7 +15,7 @@ import org.gradle.api.tasks.TaskAction
 import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
-class CreateJarDescriptionProperties
+open class CreateJarDescriptionProperties
 @Inject constructor(args: CreateJarDescriptionPropertiesArgs) : DefaultTask() {
 
     private val createJarDescriptionPropertiesActionFactory = args.createJarDescriptionPropertiesActionFactory
@@ -39,7 +39,7 @@ class CreateJarDescriptionProperties
     }
 
     @Inject
-    fun getObjectFactory(): ObjectFactory {
+    open fun getObjectFactory(): ObjectFactory {
         throw UnsupportedOperationException()
     }
 
