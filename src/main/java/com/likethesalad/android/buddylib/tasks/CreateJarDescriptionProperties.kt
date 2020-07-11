@@ -1,11 +1,8 @@
 package com.likethesalad.android.buddylib.tasks
 
-import com.likethesalad.android.buddylib.actions.CreateJarDescriptionPropertiesActionFactory
-import com.likethesalad.android.buddylib.actions.VerifyPluginClassesProvidedActionFactory
+import com.likethesalad.android.buddylib.utils.CreateJarDescriptionPropertiesArgs
 import com.likethesalad.android.common.providers.impl.FileCollectionFileSetProvider
 import com.likethesalad.android.common.utils.ClassGraphProvider
-import com.likethesalad.android.common.utils.ClassGraphProviderFactory
-import com.likethesalad.android.common.utils.PluginsFinderFactory
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
@@ -19,12 +16,12 @@ import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
 class CreateJarDescriptionProperties
-@Inject constructor(
-    private val createJarDescriptionPropertiesActionFactory: CreateJarDescriptionPropertiesActionFactory,
-    private val verifyPluginClassesProvidedActionFactory: VerifyPluginClassesProvidedActionFactory,
-    private val pluginsFinderFactory: PluginsFinderFactory,
-    private val classGraphProviderFactory: ClassGraphProviderFactory
-) : DefaultTask() {
+@Inject constructor(args: CreateJarDescriptionPropertiesArgs) : DefaultTask() {
+
+    private val createJarDescriptionPropertiesActionFactory = args.createJarDescriptionPropertiesActionFactory
+    private val verifyPluginClassesProvidedActionFactory = args.verifyPluginClassesProvidedActionFactory
+    private val pluginsFinderFactory = args.pluginsFinderFactory
+    private val classGraphProviderFactory = args.classGraphProviderFactory
 
     @get:OutputDirectory
     val outputDir: DirectoryProperty by lazy {
