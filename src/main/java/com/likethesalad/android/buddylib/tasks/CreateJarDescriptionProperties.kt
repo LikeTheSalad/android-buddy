@@ -1,6 +1,6 @@
 package com.likethesalad.android.buddylib.tasks
 
-import com.likethesalad.android.buddylib.utils.CreateJarDescriptionPropertiesArgs
+import com.likethesalad.android.buddylib.models.CreateJarDescriptionPropertiesArgs
 import com.likethesalad.android.common.providers.impl.FileCollectionFileSetProvider
 import com.likethesalad.android.common.utils.ClassGraphProvider
 import org.gradle.api.DefaultTask
@@ -29,14 +29,10 @@ open class CreateJarDescriptionProperties
     }
 
     @get:Input
-    val inputClassNames: SetProperty<String> by lazy {
-        getObjectFactory().setProperty(String::class.java)
-    }
+    lateinit var inputClassNames: SetProperty<String>
 
     @get:InputFiles
-    val inputClassPaths: FileCollection by lazy {
-        getObjectFactory().fileCollection()
-    }
+    lateinit var inputClassPaths: FileCollection
 
     @Inject
     open fun getObjectFactory(): ObjectFactory {

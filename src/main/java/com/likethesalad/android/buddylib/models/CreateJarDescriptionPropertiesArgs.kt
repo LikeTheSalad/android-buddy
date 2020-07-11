@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddylib.utils
+package com.likethesalad.android.buddylib.models
 
 import com.likethesalad.android.buddylib.actions.CreateJarDescriptionPropertiesActionFactory
 import com.likethesalad.android.buddylib.di.LibraryScope

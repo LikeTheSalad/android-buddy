@@ -18,6 +18,7 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project> {
 
     companion object {
         private const val PROCESS_JAVA_RESOURCES_TASK_NAME = "processResources"
+        private const val CREATE_JAVA_LIBRARY_FILE_TASK_NAME = "jar"
         private const val CREATE_JAR_DESCRIPTION_PROPERTIES_TASK_NAME = "createJarDescriptionProperties"
         private const val COPY_DESCRIPTION_PROPERTIES_TASK_NAME = "copyDescriptionProperties"
         private const val EXTENSION_NAME = "androidBuddyLibrary"
@@ -42,18 +43,22 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project> {
             LibraryInjector.getCreateJarDescriptionPropertiesArgs()
         )
         createJarDescriptionProperties.configure {
-            it.inputClassNames.set(extension.pluginNames)
-            it.inputClassPaths.plus(getClassesOutputDirs(sourceSets))
+            it.inputClassNames = extension.pluginNames
+            it.inputClassPaths = getClassesOutputDirs(sourceSets)
             it.outputDir.set(project.file("${project.buildDir}/${it.name}"))
         }
 
         val javaProcessResourcesTask = project.tasks.named(PROCESS_JAVA_RESOURCES_TASK_NAME, Copy::class.java)
 
-        project.tasks.register(COPY_DESCRIPTION_PROPERTIES_TASK_NAME, Copy::class.java) {
+        val copyPropertiesTask = project.tasks.register(COPY_DESCRIPTION_PROPERTIES_TASK_NAME, Copy::class.java) {
             it.from(createJarDescriptionProperties)
             it.into({ "${javaProcessResourcesTask.get().destinationDir}/META-INF/android-buddy-plugins" })
 
             it.dependsOn(javaProcessResourcesTask)
+        }
+
+        project.tasks.named(CREATE_JAVA_LIBRARY_FILE_TASK_NAME) {
+            it.dependsOn(copyPropertiesTask)
         }
     }
 
