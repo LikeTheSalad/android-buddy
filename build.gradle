@@ -62,9 +62,13 @@ compileTestKotlin {
 
 gradlePlugin {
     plugins {
-        byteBuddyExecutor {
-            id = 'android-byte-buddy'
+        byteBuddyApp {
+            id = 'android-buddy'
             implementationClass = 'com.likethesalad.android.buddy.AndroidBuddyPlugin'
+        }
+        byteBuddyLibrary {
+            id = 'android-buddy-library'
+            implementationClass = 'com.likethesalad.android.buddylib.AndroidBuddyLibraryPlugin'
         }
     }
 }
@@ -83,10 +87,4 @@ publishing {
 
 kapt {
     correctErrorTypes = true
-}
-
-tasks.named("compileJava") {
-    doLast {
-        println("JAJJAJAJA: ${sourceSets.getByName("main").output.classesDirs.files}")
-    }
 }
