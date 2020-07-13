@@ -3,6 +3,7 @@ package com.likethesalad.android.buddylib
 import com.likethesalad.android.buddylib.di.LibraryInjector
 import com.likethesalad.android.buddylib.tasks.CreateJarDescriptionProperties
 import com.likethesalad.android.common.models.AndroidBuddyExtension
+import com.likethesalad.android.common.utils.Constants
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
@@ -52,7 +53,7 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project> {
 
         val copyPropertiesTask = project.tasks.register(COPY_DESCRIPTION_PROPERTIES_TASK_NAME, Copy::class.java) {
             it.from(createJarDescriptionProperties)
-            it.into({ "${javaProcessResourcesTask.get().destinationDir}/META-INF/android-buddy-plugins" })
+            it.into({ "${javaProcessResourcesTask.get().destinationDir}/${Constants.LIBRARY_PROPERTIES_DIR}" })
 
             it.dependsOn(javaProcessResourcesTask)
         }

@@ -3,6 +3,8 @@ package com.likethesalad.android.buddylib.actions
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
 import com.likethesalad.android.buddylib.actions.base.BaseAction
+import com.likethesalad.android.common.utils.Constants.PLUGINS_PROPERTIES_CLASSES_KEY
+import com.likethesalad.android.common.utils.Constants.PLUGINS_PROPERTIES_FILE_NAME
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import java.io.File
 import java.util.Properties
@@ -13,10 +15,6 @@ class CreateJarDescriptionPropertiesAction(
     private val pluginNames: Set<String>,
     private val outputDir: File
 ) : BaseAction {
-    companion object {
-        private const val PLUGINS_PROPERTIES_FILE_NAME = "plugins.properties"
-        private const val PLUGINS_PROPERTIES_CLASSES_KEY = "plugin-classes"
-    }
 
     override fun execute() {
         cleanUpDir()

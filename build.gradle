@@ -33,6 +33,7 @@ ext {
     dagger_version = '2.28.1'
     autoValue_version = '1.7.3'
     autoFactory_version = '1.0-beta8'
+    androidBuild_version = '3.3.2'
     byteBuddy_version = ext["android.buddy.byteBuddy.version"]
 }
 
@@ -42,7 +43,7 @@ dependencies {
     implementation "com.google.dagger:dagger:$dagger_version"
     implementation "com.google.auto.factory:auto-factory:$autoFactory_version"
     implementation "io.github.classgraph:classgraph:4.8.87"
-    compileOnly "com.android.tools.build:gradle:3.5.3"
+    compileOnly "com.android.tools.build:gradle:$androidBuild_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     kapt "com.google.auto.factory:auto-factory:$autoFactory_version"
     kapt "com.google.auto.value:auto-value:$autoValue_version"
@@ -51,6 +52,7 @@ dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     testImplementation "com.google.truth:truth:1.0.1"
     testImplementation "io.mockk:mockk:1.10.0"
+    testImplementation "com.android.tools.build:gradle:$androidBuild_version"
 }
 
 compileKotlin {
