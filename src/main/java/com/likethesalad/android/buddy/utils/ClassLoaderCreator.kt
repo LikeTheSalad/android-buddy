@@ -9,10 +9,10 @@ import javax.inject.Inject
 @AppScope
 class ClassLoaderCreator @Inject constructor(private val instantiatorWrapper: InstantiatorWrapper) {
 
-    fun create(folders: Set<File>, parent: ClassLoader): ClassLoader {
+    fun create(classpath: Set<File>, parent: ClassLoader): ClassLoader {
         val urls = mutableListOf<URL>()
-        for (folder in folders) {
-            urls.add(folder.toURI().toURL())
+        for (file in classpath) {
+            urls.add(file.toURI().toURL())
         }
         return instantiatorWrapper.getUrlClassLoader(urls.toTypedArray(), parent)
     }

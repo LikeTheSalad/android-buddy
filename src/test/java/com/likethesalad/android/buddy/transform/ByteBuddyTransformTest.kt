@@ -108,7 +108,7 @@ class ByteBuddyTransformTest : BaseMockable() {
         every { sourceForMultipleFoldersFactory.create(folders) }.returns(source)
         every { byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder) }.returns(target)
         every { pluginEngine.with(any<ClassFileLocator>()) }.returns(pluginEngine)
-        every { pluginFactoriesProvider.getFactories(folders) }.returns(factories)
+        every { pluginFactoriesProvider.getFactories(filesHolder) }.returns(factories)
         every {
             pluginEngine.apply(any(), any<Plugin.Engine.Target>(), any<List<Plugin.Factory>>())
         }.returns(mockk())

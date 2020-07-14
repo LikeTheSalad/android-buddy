@@ -9,4 +9,8 @@ class FilesHolder(val allFiles: Set<File>) {
     val dirs: Set<File> by lazy {
         allFiles.filter { it.isDirectory }.toSet()
     }
+
+    val jarFiles: Set<File> by lazy {
+        allFiles.filter { it.isFile }.toSet()
+    }
 }
