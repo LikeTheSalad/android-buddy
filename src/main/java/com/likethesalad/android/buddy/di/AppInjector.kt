@@ -1,6 +1,7 @@
 package com.likethesalad.android.buddy.di
 
 import com.likethesalad.android.buddy.AndroidBuddyPlugin
+import com.likethesalad.android.buddy.bytebuddy.TransformationLoggerFactory
 import com.likethesalad.android.buddy.transform.ByteBuddyTransform
 import com.likethesalad.android.common.di.GeneralInjector
 
@@ -17,5 +18,9 @@ object AppInjector {
 
     fun getByteBuddyTransform(): ByteBuddyTransform {
         return component.transform()
+    }
+
+    fun getTransformationLoggerFactory(): TransformationLoggerFactory {
+        return component.transformationLoggerFactory()
     }
 }
