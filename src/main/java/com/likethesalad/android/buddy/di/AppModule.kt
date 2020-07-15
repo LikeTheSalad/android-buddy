@@ -25,8 +25,8 @@ class AppModule(private val androidBuddyPlugin: AndroidBuddyPlugin) {
 
     @Provides
     @AppScope
-    fun provideAndroidPluginDataProvider(): AndroidPluginDataProvider {
-        val factory = AppAndroidPluginDataProviderFactory()
-        return factory.create(androidBuddyPlugin.appExtension!!)
+    fun provideAndroidPluginDataProvider(appFactory: AppAndroidPluginDataProviderFactory)
+            : AndroidPluginDataProvider {
+        return appFactory.create(androidBuddyPlugin.appExtension!!)
     }
 }

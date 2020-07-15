@@ -47,7 +47,7 @@ class ByteBuddyTransform @Inject constructor(
         val classpath = filesHolderFactory.create(transformInvocationDataExtractor.getClasspath())
         val outputFolder = transformInvocationDataExtractor.getOutputFolder()
 
-        pluginEngineProvider.makeEngine()
+        pluginEngineProvider.makeEngine(transformInvocation.context.variantName)
             .with(classFileLocatorMaker.make(classpath.allFiles))
             .apply(
                 sourceForMultipleFoldersFactory.create(classpath.dirs),

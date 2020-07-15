@@ -1,5 +1,6 @@
 package com.likethesalad.android.buddy.transform
 
+import com.android.build.api.transform.Context
 import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.TransformInvocation
 import com.google.common.truth.Truth
@@ -91,6 +92,9 @@ class ByteBuddyTransformTest : BaseMockable() {
         val source = mockk<SourceForMultipleFolders>()
         val target = mockk<Plugin.Engine.Target>()
         val factories = listOf<Plugin.Factory>()
+        val context = mockk<Context>()
+        val variantName = "someName"
+        every { context.variantName }.returns(variantName)
         every {
             transformInvocationDataExtractorFactory.create(transformInvocation)
         }.returns(transformInvocationDataExtractor)
@@ -103,7 +107,7 @@ class ByteBuddyTransformTest : BaseMockable() {
         every { filesHolderFactory.create(classpath) }.returns(filesHolder)
         every { filesHolder.dirs }.returns(folders)
         every { filesHolder.allFiles }.returns(classpath)
-        every { pluginEngineProvider.makeEngine() }.returns(pluginEngine)
+        every { pluginEngineProvider.makeEngine(variantName) }.returns(pluginEngine)
         every { classFileLocatorMaker.make(classpath) }.returns(classFileLocator)
         every { sourceForMultipleFoldersFactory.create(folders) }.returns(source)
         every { byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder) }.returns(target)
@@ -112,7 +116,7 @@ class ByteBuddyTransformTest : BaseMockable() {
         every {
             pluginEngine.apply(any(), any<Plugin.Engine.Target>(), any<List<Plugin.Factory>>())
         }.returns(mockk())
-        every { transformInvocation.context }.returns(mockk())
+        every { transformInvocation.context }.returns(context)
         every { transformInvocation.inputs }.returns(mockk())
         every { transformInvocation.referencedInputs }.returns(mockk())
         every { transformInvocation.outputProvider }.returns(mockk())
