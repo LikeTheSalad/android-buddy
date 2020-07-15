@@ -2,6 +2,9 @@ package com.likethesalad.android.buddy.providers
 
 import java.io.File
 
-interface AndroidBootClasspathProvider {
+interface AndroidPluginDataProvider {
+
     fun getBootClasspath(): Set<File>
+
+    fun getTargetCompatibility(variantName: String): Int
 }

@@ -8,7 +8,7 @@ import com.android.build.api.transform.TransformInput
 import com.android.build.api.transform.TransformInvocation
 import com.android.build.api.transform.TransformOutputProvider
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.providers.AndroidBootClasspathProvider
+import com.likethesalad.android.buddy.providers.AndroidPluginDataProvider
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -20,7 +20,7 @@ import java.io.File
 class TransformInvocationDataExtractorTest : BaseMockable() {
 
     @MockK
-    lateinit var androidBootClasspathProvider: AndroidBootClasspathProvider
+    lateinit var androidPluginDataProvider: AndroidPluginDataProvider
 
     @MockK
     lateinit var transformInvocation: TransformInvocation
@@ -30,7 +30,7 @@ class TransformInvocationDataExtractorTest : BaseMockable() {
     @Before
     fun setUp() {
         transformInvocationDataExtractor = TransformInvocationDataExtractor(
-            androidBootClasspathProvider,
+            androidPluginDataProvider,
             transformInvocation
         )
     }
@@ -70,7 +70,7 @@ class TransformInvocationDataExtractorTest : BaseMockable() {
         val androidPath2 = mockk<File>()
         val androidBootClasspath = setOf(androidPath1, androidPath2)
         every {
-            androidBootClasspathProvider.getBootClasspath()
+            androidPluginDataProvider.getBootClasspath()
         }.returns(androidBootClasspath)
         every {
             transformInvocation.inputs

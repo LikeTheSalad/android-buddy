@@ -74,16 +74,6 @@ class AndroidBuddyPluginTest : BaseMockable() {
     }
 
     @Test
-    fun `Get android booth classpath`() {
-        val bootClasspath = mutableListOf<File>(mockk())
-        every {
-            androidExtension.bootClasspath
-        }.returns(bootClasspath)
-
-        Truth.assertThat(androidBuddyPlugin.getBootClasspath()).isEqualTo(bootClasspath.toSet())
-    }
-
-    @Test
     fun `Verify byte buddy transform registration`() {
         verify {
             androidExtension.registerTransform(byteBuddyTransform)

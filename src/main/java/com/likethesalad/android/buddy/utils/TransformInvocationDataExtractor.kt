@@ -5,12 +5,12 @@ import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.TransformInvocation
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
-import com.likethesalad.android.buddy.providers.AndroidBootClasspathProvider
+import com.likethesalad.android.buddy.providers.AndroidPluginDataProvider
 import java.io.File
 
 @AutoFactory
 class TransformInvocationDataExtractor(
-    @Provided private val androidBootClasspathProvider: AndroidBootClasspathProvider,
+    @Provided private val androidPluginDataProvider: AndroidPluginDataProvider,
     private val transformInvocation: TransformInvocation
 ) {
 
@@ -39,7 +39,7 @@ class TransformInvocationDataExtractor(
             }
         }
 
-        classpath.addAll(androidBootClasspathProvider.getBootClasspath())
+        classpath.addAll(androidPluginDataProvider.getBootClasspath())
 
         return classpath
     }
