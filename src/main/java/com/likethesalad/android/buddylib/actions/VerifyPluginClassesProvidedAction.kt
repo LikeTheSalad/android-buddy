@@ -1,4 +1,4 @@
-package com.likethesalad.android.common.actions
+package com.likethesalad.android.buddylib.actions
 
 import com.google.auto.factory.AutoFactory
 import com.likethesalad.android.buddylib.actions.base.BaseAction

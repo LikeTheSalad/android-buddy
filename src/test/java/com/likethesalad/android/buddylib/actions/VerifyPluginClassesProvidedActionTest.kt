@@ -1,7 +1,6 @@
 package com.likethesalad.android.buddylib.actions
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.common.actions.VerifyPluginClassesProvidedAction
 import com.likethesalad.android.common.utils.PluginsFinder
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every

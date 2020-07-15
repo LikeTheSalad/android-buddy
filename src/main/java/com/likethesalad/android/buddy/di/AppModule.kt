@@ -4,6 +4,7 @@ import com.likethesalad.android.buddy.AndroidBuddyPlugin
 import com.likethesalad.android.buddy.providers.AndroidPluginDataProvider
 import com.likethesalad.android.buddy.providers.FileTreeIteratorProvider
 import com.likethesalad.android.buddy.providers.PluginClassNamesProvider
+import com.likethesalad.android.buddy.providers.ProjectLoggerProvider
 import com.likethesalad.android.buddy.providers.impl.AppAndroidPluginDataProviderFactory
 import dagger.Module
 import dagger.Provides
@@ -20,6 +21,12 @@ class AppModule(private val androidBuddyPlugin: AndroidBuddyPlugin) {
     @Provides
     @AppScope
     fun provideFileTreeCreator(): FileTreeIteratorProvider {
+        return androidBuddyPlugin
+    }
+
+    @Provides
+    @AppScope
+    fun provideProjectLoggerProvider(): ProjectLoggerProvider {
         return androidBuddyPlugin
     }
 

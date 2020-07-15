@@ -1,6 +1,6 @@
 package com.likethesalad.android.common.di
 
-import com.likethesalad.android.common.actions.VerifyPluginClassesProvidedActionFactory
+import com.likethesalad.android.buddylib.actions.VerifyPluginClassesProvidedActionFactory
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import com.likethesalad.android.common.utils.InstantiatorWrapper
 import dagger.Component
