@@ -1,24 +1,22 @@
 package com.likethesalad.android.buddy
 
 import com.android.build.gradle.AppExtension
-import com.likethesalad.android.buddy.bytebuddy.TransformationLogger
-import com.likethesalad.android.buddy.bytebuddy.TransformationLoggerFactory
 import com.likethesalad.android.buddy.di.AppInjector
 import com.likethesalad.android.buddy.providers.FileTreeIteratorProvider
 import com.likethesalad.android.buddy.providers.PluginClassNamesProvider
-import com.likethesalad.android.buddy.providers.TransformationLoggerProvider
+import com.likethesalad.android.buddy.providers.ProjectLoggerProvider
 import com.likethesalad.android.common.models.AndroidBuddyExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 import java.io.File
 
 @Suppress("UnstableApiUsage")
 open class AndroidBuddyPlugin : Plugin<Project>, FileTreeIteratorProvider, PluginClassNamesProvider,
-    TransformationLoggerProvider {
+    ProjectLoggerProvider {
 
     private lateinit var project: Project
     private lateinit var androidBuddyExtension: AndroidBuddyExtension
-    private lateinit var transformationLoggerFactory: TransformationLoggerFactory
     var appExtension: AppExtension? = null
 
     companion object {
@@ -28,7 +26,6 @@ open class AndroidBuddyPlugin : Plugin<Project>, FileTreeIteratorProvider, Plugi
     override fun apply(project: Project) {
         AppInjector.init(this)
         this.project = project
-        this.transformationLoggerFactory = AppInjector.getTransformationLoggerFactory()
         androidBuddyExtension = createExtension()
         appExtension = project.extensions.getByType(AppExtension::class.java)
         appExtension?.registerTransform(AppInjector.getByteBuddyTransform())
@@ -46,7 +43,7 @@ open class AndroidBuddyPlugin : Plugin<Project>, FileTreeIteratorProvider, Plugi
         return androidBuddyExtension.pluginNames.get()
     }
 
-    override fun getTransformationLogger(): TransformationLogger {
-        return transformationLoggerFactory.create(project.logger)
+    override fun getLogger(): Logger {
+        return project.logger
     }
 }

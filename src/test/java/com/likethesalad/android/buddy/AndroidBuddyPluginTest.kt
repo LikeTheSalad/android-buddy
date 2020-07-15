@@ -2,8 +2,6 @@ package com.likethesalad.android.buddy
 
 import com.android.build.gradle.AppExtension
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.bytebuddy.TransformationLogger
-import com.likethesalad.android.buddy.bytebuddy.TransformationLoggerFactory
 import com.likethesalad.android.buddy.di.AppInjector
 import com.likethesalad.android.buddy.transform.ByteBuddyTransform
 import com.likethesalad.android.common.models.AndroidBuddyExtension
@@ -39,9 +37,6 @@ class AndroidBuddyPluginTest : BaseMockable() {
     @MockK
     lateinit var byteBuddyTransform: ByteBuddyTransform
 
-    @MockK
-    lateinit var transformationLoggerFactory: TransformationLoggerFactory
-
     private lateinit var androidBuddyPlugin: AndroidBuddyPlugin
 
     @Before
@@ -53,7 +48,6 @@ class AndroidBuddyPluginTest : BaseMockable() {
             extensionContainer.create("androidBuddy", AndroidBuddyExtension::class.java)
         }.returns(androidBuddyExtension)
         every { AppInjector.getByteBuddyTransform() }.returns(byteBuddyTransform)
-        every { AppInjector.getTransformationLoggerFactory() }.returns(transformationLoggerFactory)
 
         androidBuddyPlugin = AndroidBuddyPlugin()
         androidBuddyPlugin.apply(project)
@@ -110,16 +104,13 @@ class AndroidBuddyPluginTest : BaseMockable() {
     }
 
     @Test
-    fun `Provide transformation logger`() {
+    fun `Provide project logger`() {
         val projectLogger = mockk<Logger>()
-        val transformationLogger = mockk<TransformationLogger>()
         every { project.logger }.returns(projectLogger)
-        every { transformationLoggerFactory.create(projectLogger) }.returns(transformationLogger)
 
-        Truth.assertThat(androidBuddyPlugin.getTransformationLogger()).isEqualTo(transformationLogger)
+        Truth.assertThat(androidBuddyPlugin.getLogger()).isEqualTo(projectLogger)
         verify {
             project.logger
-            transformationLoggerFactory.create(projectLogger)
         }
     }
 }
