@@ -26,7 +26,6 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin {
         private const val COPY_DESCRIPTION_PROPERTIES_TASK_NAME = "copyDescriptionProperties"
         private const val EXTENSION_NAME = "androidBuddyLibrary"
         private const val BYTE_BUDDY_DEPENDENCY_FORMAT = "net.bytebuddy:byte-buddy:%s"
-        private const val BYTE_BUDDY_DEPENDENCY_DEFAULT_VERSION = "1.10.13"
         private const val BYTE_BUDDY_DEPENDENCY_VERSION_PROPERTY_NAME = "android.buddy.byteBuddy.version"
     }
 
@@ -71,7 +70,7 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin {
     }
 
     private fun getByteBuddyVersion(project: Project): String {
-        return getPropertyByteBuddyVersion(project) ?: BYTE_BUDDY_DEPENDENCY_DEFAULT_VERSION
+        return getPropertyByteBuddyVersion(project) ?: Constants.BYTE_BUDDY_DEPENDENCY_VERSION
     }
 
     private fun getPropertyByteBuddyVersion(project: Project): String? {
