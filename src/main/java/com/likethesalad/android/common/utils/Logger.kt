@@ -9,15 +9,19 @@ class Logger @Inject constructor(projectLoggerProvider: ProjectLoggerProvider) {
 
     private val projectLogger by lazy { projectLoggerProvider.getLogger() }
 
+    companion object {
+        private const val PREFIX = "[AndroidBuddy]"
+    }
+
     fun d(text: String, vararg extra: Any) {
-        projectLogger.debug(text, *extra)
+        projectLogger.debug("$PREFIX $text", *extra)
     }
 
     fun i(text: String, vararg extra: Any) {
-        projectLogger.info(text, *extra)
+        projectLogger.info("$PREFIX $text", *extra)
     }
 
     fun w(text: String, vararg extra: Any) {
-        projectLogger.warn(text, *extra)
+        projectLogger.warn("$PREFIX $text", *extra)
     }
 }

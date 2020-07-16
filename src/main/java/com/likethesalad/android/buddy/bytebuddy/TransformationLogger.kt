@@ -12,8 +12,12 @@ import org.gradle.api.logging.Logger
 @AutoFactory
 class TransformationLogger(private val logger: Logger) : Plugin.Engine.Listener.Adapter() {
 
+    companion object {
+        private const val PREFIX = "[ByteBuddy]"
+    }
+
     override fun onTransformation(typeDescription: TypeDescription, plugins: List<Plugin>) {
-        logger.debug("Transformed {} using {}", typeDescription, plugins)
+        logger.debug("{} Transformed {} using {}", PREFIX, typeDescription, plugins)
     }
 
     override fun onError(
@@ -21,18 +25,23 @@ class TransformationLogger(private val logger: Logger) : Plugin.Engine.Listener.
         plugin: Plugin,
         throwable: Throwable
     ) {
-        logger.warn("Failed to transform {} using {}", typeDescription, plugin, throwable)
+        logger.warn("{} Failed to transform {} using {}", PREFIX, typeDescription, plugin, throwable)
     }
 
     override fun onError(throwables: Map<TypeDescription, List<Throwable>>) {
-        logger.warn("Failed to transform {} types", throwables.size)
+        logger.warn("{} Failed to transform {} types", PREFIX, throwables.size)
     }
 
     override fun onError(plugin: Plugin, throwable: Throwable) {
-        logger.error("Failed to close {}", plugin, throwable)
+        logger.error("{} Failed to close {}", PREFIX, plugin, throwable)
     }
 
     override fun onLiveInitializer(typeDescription: TypeDescription, definingType: TypeDescription) {
-        logger.debug("Discovered live initializer for {} as a result of transforming {}", definingType, typeDescription)
+        logger.debug(
+            "{} Discovered live initializer for {} as a result of transforming {}",
+            PREFIX,
+            definingType,
+            typeDescription
+        )
     }
 }

@@ -24,7 +24,7 @@ class ByteBuddyTransform @Inject constructor(
     private val filesHolderFactory: FilesHolderFactory
 ) : Transform() {
 
-    override fun getName(): String = "Android ByteBuddy Transform"
+    override fun getName(): String = "androidBuddy"
 
     override fun getInputTypes(): Set<QualifiedContent.ContentType> {
         return setOf(QualifiedContent.DefaultContentType.CLASSES)
