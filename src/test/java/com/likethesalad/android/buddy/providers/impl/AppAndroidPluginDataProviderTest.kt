@@ -6,7 +6,9 @@ import com.google.common.truth.Truth
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockkStatic
 import org.gradle.api.DomainObjectSet
+import org.gradle.api.JavaVersion
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.junit.Before
@@ -54,11 +56,29 @@ class AppAndroidPluginDataProviderTest : BaseMockable() {
         Truth.assertThat(result).isEqualTo(7)
     }
 
+    @Test
+    fun `Fallback to current JVM target compatibility version when variant not found`() {
+        val appVariants = mockk<DomainObjectSet<ApplicationVariant>>()
+        val variantName = "someName"
+        val currentJdkJavaVersion = JavaVersion.VERSION_1_7
+        mockkStatic(JavaVersion::class)
+        every { JavaVersion.current() }.returns(currentJdkJavaVersion)
+        every { appExtension.applicationVariants }.returns(appVariants)
+        every { appVariants.iterator() }.returns(getVariantsIterator(null, "otherName"))
+
+        val result = appAndroidPluginDataProvider.getJavaTargetCompatibilityVersion(variantName)
+
+        Truth.assertThat(result).isEqualTo(7)
+    }
+
     private fun getVariantsIterator(
-        chosen: ApplicationVariant,
+        chosen: ApplicationVariant?,
         vararg variantNames: String
     ): MutableIterator<ApplicationVariant> {
-        val list = mutableListOf(chosen)
+        val list = mutableListOf<ApplicationVariant>()
+        if (chosen != null) {
+            list.add(chosen)
+        }
         val others = variantNames.map {
             createApplicationVariantMock(it)
         }
