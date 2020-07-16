@@ -1,5 +1,6 @@
 package com.likethesalad.android.buddylib
 
+import com.google.common.truth.Truth
 import com.likethesalad.android.buddylib.di.LibraryInjector
 import com.likethesalad.android.buddylib.models.CreateJarDescriptionPropertiesArgs
 import com.likethesalad.android.buddylib.tasks.CreateJarDescriptionProperties
@@ -91,6 +92,7 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
     private val copyDescriptionPropertiesTaskRegisterActionCaptor = slot<Action<Copy>>()
     private val jarTaskNamedActionCaptor = slot<Action<Task>>()
     private val createJarDescriptionPropertiesName = "createJarDescriptionProperties"
+    private val copyDescriptionTaskName = "copyDescriptionProperties"
 
     private lateinit var androidBuddyLibraryPlugin: AndroidBuddyLibraryPlugin
 
@@ -117,7 +119,7 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
         }.returns(createJarDescriptionPropertiesProvider)
         every {
             tasks.register(
-                "copyDescriptionProperties",
+                copyDescriptionTaskName,
                 Copy::class.java,
                 capture(copyDescriptionPropertiesTaskRegisterActionCaptor)
             )
@@ -205,11 +207,37 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
 
     @Test
     fun `Create copy description properties to generated resources task`() {
+        val configurationAction = copyDescriptionPropertiesTaskRegisterActionCaptor.captured
+        val javaPropertiesDestinationDir = mockk<File>()
+        val javaPropertiesDestinationPath = "some/path"
+        val expectedCopyDestinationPath = "$javaPropertiesDestinationPath/META-INF/android-buddy-plugins"
+        val lambdaCaptor = slot<() -> String>()
+        every { javaPropertiesDestinationDir.toString() }.returns(javaPropertiesDestinationPath)
+        every { javaProcessResourcesTask.destinationDir }.returns(javaPropertiesDestinationDir)
+        every { copyDescriptionPropertiesTask.from(any()) }.returns(copyDescriptionPropertiesTask)
+        every { copyDescriptionPropertiesTask.into(any()) }.returns(copyDescriptionPropertiesTask)
+        every { copyDescriptionPropertiesTask.dependsOn(any()) }.returns(mockk())
 
+        configurationAction.execute(copyDescriptionPropertiesTask)
+
+        verify {
+            copyDescriptionPropertiesTask.from(createJarDescriptionPropertiesProvider)
+            copyDescriptionPropertiesTask.into(capture(lambdaCaptor))
+            copyDescriptionPropertiesTask.dependsOn(javaProcessResourcesTaskProvider)
+        }
+
+        Truth.assertThat(lambdaCaptor.captured.invoke()).isEqualTo(expectedCopyDestinationPath)
     }
 
     @Test
     fun `Add dependency for Jar task on the new copy description properties task`() {
+        val jarConfiguration = jarTaskNamedActionCaptor.captured
+        every { jarTask.dependsOn(any()) }.returns(jarTask)
 
+        jarConfiguration.execute(jarTask)
+
+        verify {
+            jarTask.dependsOn(copyDescriptionPropertiesTaskProvider)
+        }
     }
 }
