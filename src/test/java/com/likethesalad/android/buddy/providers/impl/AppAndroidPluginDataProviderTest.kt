@@ -3,6 +3,7 @@ package com.likethesalad.android.buddy.providers.impl
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.google.common.truth.Truth
+import com.likethesalad.android.common.utils.Logger
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -20,11 +21,14 @@ class AppAndroidPluginDataProviderTest : BaseMockable() {
     @MockK
     lateinit var appExtension: AppExtension
 
+    @MockK
+    lateinit var logger: Logger
+
     private lateinit var appAndroidPluginDataProvider: AppAndroidPluginDataProvider
 
     @Before
     fun setUp() {
-        appAndroidPluginDataProvider = AppAndroidPluginDataProvider(appExtension)
+        appAndroidPluginDataProvider = AppAndroidPluginDataProvider(appExtension, logger)
     }
 
     @Test

@@ -3,7 +3,7 @@ package com.likethesalad.android.buddy.bytebuddy
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.providers.AndroidPluginDataProvider
-import com.likethesalad.android.buddy.providers.ProjectLoggerProvider
+import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import net.bytebuddy.build.Plugin
 import javax.inject.Inject
 

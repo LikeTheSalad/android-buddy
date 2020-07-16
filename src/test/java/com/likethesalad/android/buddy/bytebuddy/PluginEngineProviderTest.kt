@@ -3,7 +3,7 @@ package com.likethesalad.android.buddy.bytebuddy
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.providers.AndroidPluginDataProvider
-import com.likethesalad.android.buddy.providers.ProjectLoggerProvider
+import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddy.providers
+package com.likethesalad.android.common.providers
 
 import org.gradle.api.logging.Logger
 

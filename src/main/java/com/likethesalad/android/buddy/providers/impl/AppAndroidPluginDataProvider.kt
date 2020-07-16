@@ -4,12 +4,16 @@ import com.android.build.gradle.AppExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.google.auto.factory.AutoFactory
 import com.likethesalad.android.buddy.providers.AndroidPluginDataProvider
+import com.likethesalad.android.common.utils.Logger
 import org.gradle.api.JavaVersion
 import java.io.File
 
 @Suppress("UnstableApiUsage")
 @AutoFactory
-class AppAndroidPluginDataProvider(private val appExtension: AppExtension) : AndroidPluginDataProvider {
+class AppAndroidPluginDataProvider(
+    private val appExtension: AppExtension,
+    private val logger: Logger
+) : AndroidPluginDataProvider {
 
     override fun getBootClasspath(): Set<File> {
         return appExtension.bootClasspath.toSet()

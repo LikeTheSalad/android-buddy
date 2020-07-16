@@ -9,6 +9,7 @@ object AppInjector {
     private lateinit var component: AppComponent
 
     fun init(plugin: AndroidBuddyPlugin) {
+        GeneralInjector.init(plugin)
         component = DaggerAppComponent.builder()
             .generalComponent(GeneralInjector.component)
             .appModule(AppModule(plugin))

@@ -2,18 +2,20 @@ package com.likethesalad.android.buddylib
 
 import com.likethesalad.android.buddylib.di.LibraryInjector
 import com.likethesalad.android.buddylib.tasks.CreateJarDescriptionProperties
+import com.likethesalad.android.common.base.BuddyPlugin
 import com.likethesalad.android.common.models.AndroidBuddyExtension
 import com.likethesalad.android.common.utils.Constants
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.SourceSetContainer
 
 
 @Suppress("UnstableApiUsage")
-open class AndroidBuddyLibraryPlugin : Plugin<Project> {
+open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin {
 
     private lateinit var project: Project
 
@@ -29,6 +31,7 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project> {
     }
 
     override fun apply(project: Project) {
+        LibraryInjector.init(this)
         this.project = project
         project.pluginManager.apply(JavaLibraryPlugin::class.java)
         project.dependencies.add(
@@ -79,5 +82,9 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project> {
         }
 
         return null
+    }
+
+    override fun getLogger(): Logger {
+        return project.logger
     }
 }

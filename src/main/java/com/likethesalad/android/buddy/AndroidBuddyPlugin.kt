@@ -4,7 +4,7 @@ import com.android.build.gradle.AppExtension
 import com.likethesalad.android.buddy.di.AppInjector
 import com.likethesalad.android.buddy.providers.FileTreeIteratorProvider
 import com.likethesalad.android.buddy.providers.PluginClassNamesProvider
-import com.likethesalad.android.buddy.providers.ProjectLoggerProvider
+import com.likethesalad.android.common.base.BuddyPlugin
 import com.likethesalad.android.common.models.AndroidBuddyExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -12,8 +12,7 @@ import org.gradle.api.logging.Logger
 import java.io.File
 
 @Suppress("UnstableApiUsage")
-open class AndroidBuddyPlugin : Plugin<Project>, FileTreeIteratorProvider, PluginClassNamesProvider,
-    ProjectLoggerProvider {
+open class AndroidBuddyPlugin : Plugin<Project>, BuddyPlugin, FileTreeIteratorProvider, PluginClassNamesProvider {
 
     private lateinit var project: Project
     private lateinit var androidBuddyExtension: AndroidBuddyExtension
