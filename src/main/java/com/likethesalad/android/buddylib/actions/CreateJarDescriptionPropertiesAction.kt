@@ -6,12 +6,14 @@ import com.likethesalad.android.buddylib.actions.base.BaseAction
 import com.likethesalad.android.common.utils.Constants.PLUGINS_PROPERTIES_CLASSES_KEY
 import com.likethesalad.android.common.utils.Constants.PLUGINS_PROPERTIES_FILE_NAME
 import com.likethesalad.android.common.utils.DirectoryCleaner
+import com.likethesalad.android.common.utils.Logger
 import java.io.File
 import java.util.Properties
 
 @AutoFactory
 class CreateJarDescriptionPropertiesAction(
     @Provided private val directoryCleaner: DirectoryCleaner,
+    @Provided private val logger: Logger,
     private val pluginNames: Set<String>,
     private val outputDir: File
 ) : BaseAction {
@@ -27,6 +29,7 @@ class CreateJarDescriptionPropertiesAction(
         propertiesFile.writer().use {
             properties.store(it, null)
         }
+        logger.d("Plugins found {}", pluginNames)
     }
 
     private fun cleanUpDir() {

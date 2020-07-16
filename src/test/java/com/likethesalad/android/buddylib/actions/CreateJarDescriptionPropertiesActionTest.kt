@@ -2,6 +2,10 @@ package com.likethesalad.android.buddylib.actions
 
 import com.google.common.truth.Truth
 import com.likethesalad.android.common.utils.DirectoryCleaner
+import com.likethesalad.android.common.utils.Logger
+import com.likethesalad.android.testutils.BaseMockable
+import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -9,10 +13,13 @@ import org.junit.rules.TemporaryFolder
 import java.io.File
 import java.util.Properties
 
-class CreateJarDescriptionPropertiesActionTest {
+class CreateJarDescriptionPropertiesActionTest : BaseMockable() {
 
     @get:Rule
     val temporaryFolderRule = TemporaryFolder()
+
+    @MockK
+    lateinit var logger: Logger
 
     private lateinit var outputDir: File
     private val outputDirName = "android-buddy"
@@ -37,6 +44,7 @@ class CreateJarDescriptionPropertiesActionTest {
             Truth.assertThat(storedProperties.getProperty("plugin-classes"))
                 .isEqualTo("some.class.Name,some.other.class.Name")
         }
+        verifyCommonSuccessActions(pluginNames)
     }
 
     @Test
@@ -53,6 +61,7 @@ class CreateJarDescriptionPropertiesActionTest {
             Truth.assertThat(storedProperties.count()).isEqualTo(1)
             Truth.assertThat(storedProperties.getProperty("plugin-classes")).isEmpty()
         }
+        verifyCommonSuccessActions(pluginNames)
     }
 
     @Test
@@ -70,6 +79,7 @@ class CreateJarDescriptionPropertiesActionTest {
             Truth.assertThat(storedProperties.getProperty("plugin-classes"))
                 .isEqualTo("the.one.Class")
         }
+        verifyCommonSuccessActions(pluginNames)
     }
 
     @Test
@@ -83,6 +93,13 @@ class CreateJarDescriptionPropertiesActionTest {
         action.execute()
 
         Truth.assertThat(outputDir.listFiles()).asList().containsExactly(getGeneratedPropertiesFile())
+        verifyCommonSuccessActions(pluginNames)
+    }
+
+    private fun verifyCommonSuccessActions(pluginNames: Set<String>) {
+        verify {
+            logger.d("Plugins found {}", pluginNames)
+        }
     }
 
     private fun getGeneratedPropertiesFile(): File {
@@ -92,7 +109,7 @@ class CreateJarDescriptionPropertiesActionTest {
     private fun createInstance(pluginNames: Set<String>)
             : CreateJarDescriptionPropertiesAction {
         return CreateJarDescriptionPropertiesAction(
-            DirectoryCleaner(), pluginNames, outputDir
+            DirectoryCleaner(), logger, pluginNames, outputDir
         )
     }
 }
