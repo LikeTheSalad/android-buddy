@@ -7,9 +7,11 @@ import com.likethesalad.android.buddy.utils.AndroidBuddyLibraryPluginsExtractor
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.FilesHolder
 import com.likethesalad.android.common.utils.InstantiatorWrapper
+import com.likethesalad.android.common.utils.Logger
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import net.bytebuddy.build.Plugin
 import net.bytebuddy.description.type.TypeDescription
 import net.bytebuddy.dynamic.ClassFileLocator
@@ -35,13 +37,17 @@ class PluginFactoriesProviderTest : BaseMockable() {
     @MockK
     lateinit var androidBuddyLibraryPluginsExtractor: AndroidBuddyLibraryPluginsExtractor
 
+    @MockK
+    lateinit var logger: Logger
+
     private lateinit var pluginFactoriesProvider: PluginFactoriesProvider
 
     @Before
     fun setUp() {
         pluginFactoriesProvider = PluginFactoriesProvider(
             pluginClassNamesProvider, classLoaderCreator,
-            instantiatorWrapper, byteBuddyClassesInstantiator, androidBuddyLibraryPluginsExtractor
+            instantiatorWrapper, byteBuddyClassesInstantiator,
+            androidBuddyLibraryPluginsExtractor, logger
         )
     }
 
@@ -70,6 +76,10 @@ class PluginFactoriesProviderTest : BaseMockable() {
 
         Truth.assertThat(factories)
             .containsExactly(name1.expectedFactory, name2.expectedFactory, libName1.expectedFactory)
+        verify {
+            logger.d("Local plugins found: {}", setOf(name1.name, name2.name))
+            logger.d("Dependencies plugins found: {}", setOf(libName1.name))
+        }
     }
 
     private fun createNameAndPluginAndFactory(

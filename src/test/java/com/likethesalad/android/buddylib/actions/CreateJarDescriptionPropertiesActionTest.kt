@@ -98,7 +98,7 @@ class CreateJarDescriptionPropertiesActionTest : BaseMockable() {
 
     private fun verifyCommonSuccessActions(pluginNames: Set<String>) {
         verify {
-            logger.d("Plugins found {}", pluginNames)
+            logger.d("Plugins found: {}", pluginNames)
         }
     }
 

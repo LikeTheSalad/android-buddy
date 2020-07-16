@@ -7,6 +7,7 @@ import com.likethesalad.android.buddy.utils.AndroidBuddyLibraryPluginsExtractor
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.FilesHolder
 import com.likethesalad.android.common.utils.InstantiatorWrapper
+import com.likethesalad.android.common.utils.Logger
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.build.Plugin
 import java.io.File
@@ -19,7 +20,8 @@ class PluginFactoriesProvider
     private val classLoaderCreator: ClassLoaderCreator,
     private val instantiatorWrapper: InstantiatorWrapper,
     private val byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator,
-    private val androidBuddyLibraryPluginsExtractor: AndroidBuddyLibraryPluginsExtractor
+    private val androidBuddyLibraryPluginsExtractor: AndroidBuddyLibraryPluginsExtractor,
+    private val logger: Logger
 ) {
 
     fun getFactories(filesHolder: FilesHolder): List<Plugin.Factory> {
@@ -32,11 +34,15 @@ class PluginFactoriesProvider
     }
 
     private fun getLocalPluginNames(): Set<String> {
-        return pluginClassNamesProvider.getPluginClassNames()
+        val pluginNames = pluginClassNamesProvider.getPluginClassNames()
+        logger.d("Local plugins found: {}", pluginNames)
+        return pluginNames
     }
 
     private fun getLibraryPluginNames(jarFiles: Set<File>): Set<String> {
-        return androidBuddyLibraryPluginsExtractor.extractPluginNames(jarFiles)
+        val pluginNames = androidBuddyLibraryPluginsExtractor.extractPluginNames(jarFiles)
+        logger.d("Dependencies plugins found: {}", pluginNames)
+        return pluginNames
     }
 
     private fun nameToFactory(className: String, classLoader: ClassLoader): Plugin.Factory {

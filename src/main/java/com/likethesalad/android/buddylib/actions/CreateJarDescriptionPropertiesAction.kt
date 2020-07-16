@@ -29,7 +29,7 @@ class CreateJarDescriptionPropertiesAction(
         propertiesFile.writer().use {
             properties.store(it, null)
         }
-        logger.d("Plugins found {}", pluginNames)
+        logger.d("Plugins found: {}", pluginNames)
     }
 
     private fun cleanUpDir() {
