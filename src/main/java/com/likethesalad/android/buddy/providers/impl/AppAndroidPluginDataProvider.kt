@@ -20,11 +20,17 @@ class AppAndroidPluginDataProvider(
     }
 
     override fun getJavaTargetCompatibilityVersion(variantName: String): Int {
-        val variant = getVariantByName(variantName) ?: return getLocalJvmTargetCompatibility()
+        val variant = getVariantByName(variantName)
+        val javaVersion = if (variant == null) {
+            logger.w("Java target version for android variant {} not found, falling back to JVM's", variantName)
+            getLocalJvmTargetCompatibility()
+        } else {
+            val targetCompatibilityStr = variant.javaCompileProvider.get().targetCompatibility
+            javaVersionToInt(JavaVersion.toVersion(targetCompatibilityStr))
+        }
 
-        val targetCompatibilityStr = variant.javaCompileProvider.get().targetCompatibility
-
-        return javaVersionToInt(JavaVersion.toVersion(targetCompatibilityStr))
+        logger.i("Using java target version {}", javaVersion)
+        return javaVersion
     }
 
     private fun getLocalJvmTargetCompatibility(): Int {

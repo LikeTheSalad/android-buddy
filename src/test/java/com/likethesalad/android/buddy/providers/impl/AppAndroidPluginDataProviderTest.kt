@@ -8,6 +8,7 @@ import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
+import io.mockk.verify
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.JavaVersion
 import org.gradle.api.tasks.TaskProvider
@@ -58,6 +59,9 @@ class AppAndroidPluginDataProviderTest : BaseMockable() {
         val result = appAndroidPluginDataProvider.getJavaTargetCompatibilityVersion(variantName)
 
         Truth.assertThat(result).isEqualTo(7)
+        verify {
+            logger.i("Using java target version {}", 7)
+        }
     }
 
     @Test
@@ -73,6 +77,10 @@ class AppAndroidPluginDataProviderTest : BaseMockable() {
         val result = appAndroidPluginDataProvider.getJavaTargetCompatibilityVersion(variantName)
 
         Truth.assertThat(result).isEqualTo(7)
+        verify {
+            logger.w("Java target version for android variant {} not found, falling back to JVM's", variantName)
+            logger.i("Using java target version {}", 7)
+        }
     }
 
     private fun getVariantsIterator(
