@@ -6,5 +6,5 @@ interface AndroidPluginDataProvider {
 
     fun getBootClasspath(): Set<File>
 
-    fun getTargetCompatibility(variantName: String): Int
+    fun getJavaTargetCompatibilityVersion(variantName: String): Int
 }

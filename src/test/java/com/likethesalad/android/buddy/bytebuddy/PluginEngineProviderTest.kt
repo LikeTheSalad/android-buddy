@@ -50,7 +50,7 @@ class PluginEngineProviderTest : BaseMockable() {
         val javaTargetCompatibility = 7
         val variantName = "someName"
         val expectedPluginEngine = mockk<Plugin.Engine>()
-        every { androidPluginDataProvider.getTargetCompatibility(variantName) }.returns(javaTargetCompatibility)
+        every { androidPluginDataProvider.getJavaTargetCompatibilityVersion(variantName) }.returns(javaTargetCompatibility)
         every { instantiator.makeDefaultEntryPoint() }.returns(entryPoint)
         every { instantiator.makeClassFileVersionOfJavaVersion(javaTargetCompatibility) }.returns(classFileVersion)
         every { instantiator.makeDefaultMethodNameTransformer() }.returns(methodNameTransformer)

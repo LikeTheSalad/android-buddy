@@ -15,7 +15,7 @@ class AppAndroidPluginDataProvider(private val appExtension: AppExtension) : And
         return appExtension.bootClasspath.toSet()
     }
 
-    override fun getTargetCompatibility(variantName: String): Int {
+    override fun getJavaTargetCompatibilityVersion(variantName: String): Int {
         val variant = getVariantByName(variantName) ?: return getLocalJvmTargetCompatibility()
 
         val targetCompatibilityStr = variant.javaCompileProvider.get().targetCompatibility

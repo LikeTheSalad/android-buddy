@@ -19,7 +19,7 @@ class PluginEngineProvider
     fun makeEngine(variantName: String): Plugin.Engine {
         val entryPoint = instantiator.makeDefaultEntryPoint()
         val classFileVersion = instantiator
-            .makeClassFileVersionOfJavaVersion(androidPluginDataProvider.getTargetCompatibility(variantName))
+            .makeClassFileVersionOfJavaVersion(androidPluginDataProvider.getJavaTargetCompatibilityVersion(variantName))
         val methodNameTransformer = instantiator.makeDefaultMethodNameTransformer()
         val logger = transformationLoggerFactory.create(projectLoggerProvider.getLogger())
 
