@@ -18,6 +18,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
+import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.PluginManager
@@ -239,5 +240,13 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
         verify {
             jarTask.dependsOn(copyDescriptionPropertiesTaskProvider)
         }
+    }
+
+    @Test
+    fun `Get project logger`() {
+        val logger = mockk<Logger>()
+        every { project.logger }.returns(logger)
+
+        Truth.assertThat(androidBuddyLibraryPlugin.getLogger()).isEqualTo(logger)
     }
 }
