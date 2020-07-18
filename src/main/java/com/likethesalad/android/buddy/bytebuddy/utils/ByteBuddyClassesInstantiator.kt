@@ -7,6 +7,7 @@ import net.bytebuddy.build.Plugin
 import net.bytebuddy.dynamic.ClassFileLocator
 import net.bytebuddy.dynamic.scaffold.inline.MethodNameTransformer
 import java.io.File
+import java.util.jar.JarFile
 import javax.inject.Inject
 
 @AppScope
@@ -46,6 +47,10 @@ class ByteBuddyClassesInstantiator @Inject constructor() {
 
     fun makeDefaultMethodNameTransformer(): MethodNameTransformer {
         return MethodNameTransformer.Suffixing.withRandomSuffix()
+    }
+
+    fun makeJarFileSourceOrigin(file: File): Plugin.Engine.Source.Origin.ForJarFile {
+        return Plugin.Engine.Source.Origin.ForJarFile(JarFile(file))
     }
 
     fun makePluginEngineOf(

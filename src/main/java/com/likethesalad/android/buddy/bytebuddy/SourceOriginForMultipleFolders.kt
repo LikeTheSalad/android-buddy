@@ -10,11 +10,11 @@ import java.io.File
 import java.util.jar.Manifest
 
 @AutoFactory
-class SourceForMultipleFolders(
+class SourceOriginForMultipleFolders(
     @Provided private val folderIteratorFactory: FolderIteratorFactory,
     @Provided private val byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator,
     private val folders: Set<File>
-) : Plugin.Engine.Source, Plugin.Engine.Source.Origin {
+) : Plugin.Engine.Source.Origin {
 
     private val elementIterator: MutableIterator<Plugin.Engine.Source.Element> by lazy {
         val folderIterators = folders.map {
@@ -40,6 +40,4 @@ class SourceForMultipleFolders(
     }
 
     override fun getClassFileLocator(): ClassFileLocator = locator
-
-    override fun read(): Plugin.Engine.Source.Origin = this
 }

@@ -12,7 +12,7 @@ import org.junit.Before
 import org.junit.Test
 import java.io.File
 
-class SourceForMultipleFoldersTest : BaseMockable() {
+class SourceOriginForMultipleFoldersTest : BaseMockable() {
 
     @MockK
     lateinit var folderIteratorFactory: FolderIteratorFactory
@@ -20,7 +20,7 @@ class SourceForMultipleFoldersTest : BaseMockable() {
     @MockK
     lateinit var byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator
 
-    private lateinit var sourceForMultipleFolders: SourceForMultipleFolders
+    private lateinit var sourceOriginForMultipleFolders: SourceOriginForMultipleFolders
 
     private val folder1 = mockk<File>()
     private val folder2 = mockk<File>()
@@ -28,19 +28,19 @@ class SourceForMultipleFoldersTest : BaseMockable() {
 
     @Before
     fun setUp() {
-        sourceForMultipleFolders = SourceForMultipleFolders(
+        sourceOriginForMultipleFolders = SourceOriginForMultipleFolders(
             folderIteratorFactory, byteBuddyClassesInstantiator, folders
         )
     }
 
     @Test
     fun `Check manifest is null`() {
-        Truth.assertThat(sourceForMultipleFolders.manifest).isNull()
+        Truth.assertThat(sourceOriginForMultipleFolders.manifest).isNull()
     }
 
     @Test
     fun `Check read origin is self`() {
-        Truth.assertThat(sourceForMultipleFolders.read()).isEqualTo(sourceForMultipleFolders)
+        Truth.assertThat(sourceOriginForMultipleFolders.read()).isEqualTo(sourceOriginForMultipleFolders)
     }
 
     @Test
@@ -50,7 +50,7 @@ class SourceForMultipleFoldersTest : BaseMockable() {
         every { folderIteratorFactory.create(folder1) }.returns(iterator1)
         every { folderIteratorFactory.create(folder2) }.returns(iterator2)
 
-        val result = sourceForMultipleFolders.iterator()
+        val result = sourceOriginForMultipleFolders.iterator()
 
         Truth.assertThat(result.javaClass).isEqualTo(ConcatIterator::class.java)
         Truth.assertThat((result as ConcatIterator).iterators).containsExactly(
@@ -73,7 +73,7 @@ class SourceForMultipleFoldersTest : BaseMockable() {
             byteBuddyClassesInstantiator.makeCompoundClassFileLocator(listOf(locator1, locator2))
         }.returns(allLocator)
 
-        val result = sourceForMultipleFolders.classFileLocator
+        val result = sourceOriginForMultipleFolders.classFileLocator
 
         Truth.assertThat(result).isEqualTo(allLocator)
         verify {

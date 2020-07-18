@@ -33,6 +33,11 @@ class AppAndroidPluginDataProvider(
         return javaVersion
     }
 
+    override fun getJavaClassPath(variantName: String): Set<File> {
+        val variant = getVariantByName(variantName) ?: throw IllegalArgumentException()
+        return variant.javaCompileProvider.get().classpath.files
+    }
+
     private fun getLocalJvmTargetCompatibility(): Int {
         return javaVersionToInt(JavaVersion.current())
     }

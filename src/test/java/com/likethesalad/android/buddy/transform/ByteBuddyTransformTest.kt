@@ -7,8 +7,8 @@ import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.bytebuddy.ClassFileLocatorMaker
 import com.likethesalad.android.buddy.bytebuddy.PluginEngineProvider
 import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
-import com.likethesalad.android.buddy.bytebuddy.SourceForMultipleFolders
 import com.likethesalad.android.buddy.bytebuddy.SourceForMultipleFoldersFactory
+import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFolders
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.utils.FilesHolder
 import com.likethesalad.android.buddy.utils.FilesHolderFactory
@@ -60,7 +60,7 @@ class ByteBuddyTransformTest : BaseMockable() {
 
     @Test
     fun `Get name`() {
-        Truth.assertThat(byteBuddyTransform.name).isEqualTo("Android ByteBuddy Transform")
+        Truth.assertThat(byteBuddyTransform.name).isEqualTo("androidBuddy")
     }
 
     @Test
@@ -89,7 +89,7 @@ class ByteBuddyTransformTest : BaseMockable() {
         val filesHolder = mockk<FilesHolder>()
         val pluginEngine = mockk<Plugin.Engine>()
         val classFileLocator = mockk<ClassFileLocator>()
-        val source = mockk<SourceForMultipleFolders>()
+        val source = mockk<SourceOriginForMultipleFolders>()
         val target = mockk<Plugin.Engine.Target>()
         val factories = listOf<Plugin.Factory>()
         val context = mockk<Context>()
@@ -99,7 +99,7 @@ class ByteBuddyTransformTest : BaseMockable() {
             transformInvocationDataExtractorFactory.create(transformInvocation)
         }.returns(transformInvocationDataExtractor)
         every {
-            transformInvocationDataExtractor.getClasspath()
+            transformInvocationDataExtractor.getScopeClasspath()
         }.returns(classpath)
         every {
             transformInvocationDataExtractor.getOutputFolder()

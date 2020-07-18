@@ -76,7 +76,7 @@ class TransformInvocationDataExtractorTest : BaseMockable() {
             transformInvocation.inputs
         }.returns(inputs)
 
-        val result = transformInvocationDataExtractor.getClasspath()
+        val result = transformInvocationDataExtractor.getScopeClasspath()
 
         Truth.assertThat(result).containsExactly(dir1, dir2, jar1, jar2, androidPath1, androidPath2)
     }
