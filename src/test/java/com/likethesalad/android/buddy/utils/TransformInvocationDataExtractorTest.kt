@@ -8,7 +8,6 @@ import com.android.build.api.transform.TransformInput
 import com.android.build.api.transform.TransformInvocation
 import com.android.build.api.transform.TransformOutputProvider
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.providers.AndroidPluginDataProvider
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -20,9 +19,6 @@ import java.io.File
 class TransformInvocationDataExtractorTest : BaseMockable() {
 
     @MockK
-    lateinit var androidPluginDataProvider: AndroidPluginDataProvider
-
-    @MockK
     lateinit var transformInvocation: TransformInvocation
 
     private lateinit var transformInvocationDataExtractor: TransformInvocationDataExtractor
@@ -30,7 +26,6 @@ class TransformInvocationDataExtractorTest : BaseMockable() {
     @Before
     fun setUp() {
         transformInvocationDataExtractor = TransformInvocationDataExtractor(
-            androidPluginDataProvider,
             transformInvocation
         )
     }
@@ -38,6 +33,7 @@ class TransformInvocationDataExtractorTest : BaseMockable() {
     @Test
     fun `Get output folder`() {
         val outputProvider = mockk<TransformOutputProvider>()
+        val scopes = mutableSetOf(QualifiedContent.Scope.PROJECT)
         val expectedFolder = mockk<File>()
         every {
             transformInvocation.outputProvider
@@ -46,14 +42,14 @@ class TransformInvocationDataExtractorTest : BaseMockable() {
             outputProvider.getContentLocation(any(), any(), any(), any())
         }.returns(expectedFolder)
 
-        val result = transformInvocationDataExtractor.getOutputFolder()
+        val result = transformInvocationDataExtractor.getOutputFolder(scopes)
 
         Truth.assertThat(result).isEqualTo(expectedFolder)
         verify {
             outputProvider.getContentLocation(
                 "androidBuddyTransform",
                 setOf(QualifiedContent.DefaultContentType.CLASSES),
-                mutableSetOf(QualifiedContent.Scope.PROJECT),
+                scopes,
                 Format.DIRECTORY
             )
         }
@@ -66,19 +62,15 @@ class TransformInvocationDataExtractorTest : BaseMockable() {
         val jar1 = mockk<File>()
         val jar2 = mockk<File>()
         val inputs = createInputs(setOf(dir1, dir2), setOf(jar1, jar2))
-        val androidPath1 = mockk<File>()
-        val androidPath2 = mockk<File>()
-        val androidBootClasspath = setOf(androidPath1, androidPath2)
-        every {
-            androidPluginDataProvider.getBootClasspath()
-        }.returns(androidBootClasspath)
         every {
             transformInvocation.inputs
         }.returns(inputs)
 
         val result = transformInvocationDataExtractor.getScopeClasspath()
 
-        Truth.assertThat(result).containsExactly(dir1, dir2, jar1, jar2, androidPath1, androidPath2)
+        Truth.assertThat(result.allFiles).containsExactly(dir1, dir2, jar1, jar2)
+        Truth.assertThat(result.dirFiles).containsExactly(dir1, dir2)
+        Truth.assertThat(result.jarFiles).containsExactly(jar1, jar2)
     }
 
     private fun createInputs(dirs: Set<File>, jars: Set<File>): MutableCollection<TransformInput> {

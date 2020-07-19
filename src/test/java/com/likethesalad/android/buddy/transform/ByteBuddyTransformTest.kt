@@ -5,13 +5,15 @@ import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.TransformInvocation
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.bytebuddy.ClassFileLocatorMaker
+import com.likethesalad.android.buddy.bytebuddy.CompoundSource
+import com.likethesalad.android.buddy.bytebuddy.CompoundSourceFactory
 import com.likethesalad.android.buddy.bytebuddy.PluginEngineProvider
 import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
-import com.likethesalad.android.buddy.bytebuddy.SourceForMultipleFoldersFactory
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFolders
+import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
+import com.likethesalad.android.buddy.providers.AndroidPluginDataProvider
 import com.likethesalad.android.buddy.utils.FilesHolder
-import com.likethesalad.android.buddy.utils.FilesHolderFactory
 import com.likethesalad.android.buddy.utils.TransformInvocationDataExtractor
 import com.likethesalad.android.buddy.utils.TransformInvocationDataExtractorFactory
 import com.likethesalad.android.testutils.BaseMockable
@@ -39,13 +41,16 @@ class ByteBuddyTransformTest : BaseMockable() {
     lateinit var byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator
 
     @MockK
-    lateinit var sourceForMultipleFoldersFactory: SourceForMultipleFoldersFactory
+    lateinit var sourceOriginForMultipleFoldersFactory: SourceOriginForMultipleFoldersFactory
 
     @MockK
     lateinit var transformInvocationDataExtractorFactory: TransformInvocationDataExtractorFactory
 
     @MockK
-    lateinit var filesHolderFactory: FilesHolderFactory
+    lateinit var androidPluginDataProvider: AndroidPluginDataProvider
+
+    @MockK
+    lateinit var compoundSourceFactory: CompoundSourceFactory
 
     private lateinit var byteBuddyTransform: ByteBuddyTransform
 
@@ -53,8 +58,9 @@ class ByteBuddyTransformTest : BaseMockable() {
     fun setUp() {
         byteBuddyTransform = ByteBuddyTransform(
             classFileLocatorMaker, pluginFactoriesProvider, pluginEngineProvider,
-            byteBuddyClassesInstantiator, sourceForMultipleFoldersFactory,
-            transformInvocationDataExtractorFactory, filesHolderFactory
+            byteBuddyClassesInstantiator, sourceOriginForMultipleFoldersFactory,
+            transformInvocationDataExtractorFactory, androidPluginDataProvider,
+            compoundSourceFactory
         )
     }
 
@@ -73,9 +79,7 @@ class ByteBuddyTransformTest : BaseMockable() {
     @Test
     fun `Get scopes`() {
         Truth.assertThat(byteBuddyTransform.scopes).containsExactly(
-            QualifiedContent.Scope.PROJECT,
-            QualifiedContent.Scope.SUB_PROJECTS,
-            QualifiedContent.Scope.EXTERNAL_LIBRARIES
+            QualifiedContent.Scope.PROJECT
         )
     }
 
@@ -83,33 +87,49 @@ class ByteBuddyTransformTest : BaseMockable() {
     fun `Do transform`() {
         val transformInvocation = mockk<TransformInvocation>()
         val transformInvocationDataExtractor = mockk<TransformInvocationDataExtractor>()
-        val classpath = setOf<File>()
         val folders = setOf<File>()
+        val jarFile1 = mockk<File>()
+        val jarFile2 = mockk<File>()
+        val jarFiles = setOf(jarFile1, jarFile2)
+        val allFiles = setOf<File>()
         val outputFolder = mockk<File>()
         val filesHolder = mockk<FilesHolder>()
         val pluginEngine = mockk<Plugin.Engine>()
+        val transformScopes = mutableSetOf(QualifiedContent.Scope.PROJECT)
         val classFileLocator = mockk<ClassFileLocator>()
-        val source = mockk<SourceOriginForMultipleFolders>()
+        val compoundSource = mockk<CompoundSource>()
+        val jarOrigin1 = mockk<Plugin.Engine.Source.Origin.ForJarFile>()
+        val jarOrigin2 = mockk<Plugin.Engine.Source.Origin.ForJarFile>()
+        val foldersOrigin = mockk<SourceOriginForMultipleFolders>()
+        val javaClasspath = setOf<File>()
+        val androidBootClasspath = setOf<File>()
         val target = mockk<Plugin.Engine.Target>()
         val factories = listOf<Plugin.Factory>()
         val context = mockk<Context>()
         val variantName = "someName"
         every { context.variantName }.returns(variantName)
+        every { androidPluginDataProvider.getJavaClassPath(variantName) }.returns(javaClasspath)
+        every { androidPluginDataProvider.getBootClasspath() }.returns(androidBootClasspath)
         every {
             transformInvocationDataExtractorFactory.create(transformInvocation)
         }.returns(transformInvocationDataExtractor)
         every {
             transformInvocationDataExtractor.getScopeClasspath()
-        }.returns(classpath)
+        }.returns(filesHolder)
         every {
-            transformInvocationDataExtractor.getOutputFolder()
+            transformInvocationDataExtractor.getOutputFolder(transformScopes)
         }.returns(outputFolder)
-        every { filesHolderFactory.create(classpath) }.returns(filesHolder)
-        every { filesHolder.dirs }.returns(folders)
-        every { filesHolder.allFiles }.returns(classpath)
+        every { filesHolder.dirFiles }.returns(folders)
+        every { filesHolder.jarFiles }.returns(jarFiles)
+        every { filesHolder.allFiles }.returns(allFiles)
         every { pluginEngineProvider.makeEngine(variantName) }.returns(pluginEngine)
-        every { classFileLocatorMaker.make(classpath) }.returns(classFileLocator)
-        every { sourceForMultipleFoldersFactory.create(folders) }.returns(source)
+        every { classFileLocatorMaker.make(allFiles) }.returns(classFileLocator)
+        every { sourceOriginForMultipleFoldersFactory.create(folders) }.returns(foldersOrigin)
+        every { byteBuddyClassesInstantiator.makeJarFileSourceOrigin(jarFile1) }.returns(jarOrigin1)
+        every { byteBuddyClassesInstantiator.makeJarFileSourceOrigin(jarFile2) }.returns(jarOrigin2)
+        every {
+            compoundSourceFactory.create(setOf(foldersOrigin, jarOrigin1, jarOrigin2))
+        }.returns(compoundSource)
         every { byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder) }.returns(target)
         every { pluginEngine.with(any<ClassFileLocator>()) }.returns(pluginEngine)
         every { pluginFactoriesProvider.getFactories(filesHolder) }.returns(factories)
@@ -126,7 +146,7 @@ class ByteBuddyTransformTest : BaseMockable() {
 
         verify {
             pluginEngine.with(classFileLocator)
-            pluginEngine.apply(source, target, factories)
+            pluginEngine.apply(compoundSource, target, factories)
         }
     }
 }

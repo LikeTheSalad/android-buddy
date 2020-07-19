@@ -39,11 +39,6 @@ class SourceOriginForMultipleFoldersTest : BaseMockable() {
     }
 
     @Test
-    fun `Check read origin is self`() {
-        Truth.assertThat(sourceOriginForMultipleFolders.read()).isEqualTo(sourceOriginForMultipleFolders)
-    }
-
-    @Test
     fun `Check iterator comes from folders's concatenated`() {
         val iterator1 = mockk<FolderIterator>()
         val iterator2 = mockk<FolderIterator>()
