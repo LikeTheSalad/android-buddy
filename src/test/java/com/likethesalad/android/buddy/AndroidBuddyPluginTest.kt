@@ -5,6 +5,7 @@ import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.di.AppInjector
 import com.likethesalad.android.buddy.transform.ByteBuddyTransform
 import com.likethesalad.android.common.models.AndroidBuddyExtension
+import com.likethesalad.android.common.utils.ByteBuddyDependencyHandler
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -37,6 +38,9 @@ class AndroidBuddyPluginTest : BaseMockable() {
     @MockK
     lateinit var byteBuddyTransform: ByteBuddyTransform
 
+    @MockK
+    lateinit var byteBuddyDependencyHandler: ByteBuddyDependencyHandler
+
     private lateinit var androidBuddyPlugin: AndroidBuddyPlugin
 
     @Before
@@ -48,6 +52,7 @@ class AndroidBuddyPluginTest : BaseMockable() {
             extensionContainer.create("androidBuddy", AndroidBuddyExtension::class.java)
         }.returns(androidBuddyExtension)
         every { AppInjector.getByteBuddyTransform() }.returns(byteBuddyTransform)
+        every { AppInjector.getByteBuddyDependencyHandler() }.returns(byteBuddyDependencyHandler)
 
         androidBuddyPlugin = AndroidBuddyPlugin()
         androidBuddyPlugin.apply(project)
@@ -111,6 +116,13 @@ class AndroidBuddyPluginTest : BaseMockable() {
         Truth.assertThat(androidBuddyPlugin.getLogger()).isEqualTo(projectLogger)
         verify {
             project.logger
+        }
+    }
+
+    @Test
+    fun `Apply bytebuddy dependency`() {
+        verify {
+            byteBuddyDependencyHandler.addDependency(project)
         }
     }
 }
