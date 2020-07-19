@@ -12,6 +12,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
 import io.mockk.verify
 import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.ExtensionContainer
@@ -41,12 +42,19 @@ class AndroidBuddyPluginTest : BaseMockable() {
     @MockK
     lateinit var byteBuddyDependencyHandler: ByteBuddyDependencyHandler
 
+    @MockK
+    lateinit var dependencyHandler: DependencyHandler
+
+    val projectProperties = mutableMapOf<String, Any?>()
+
     private lateinit var androidBuddyPlugin: AndroidBuddyPlugin
 
     @Before
     fun setUp() {
         mockkObject(AppInjector)
         every { project.extensions }.returns(extensionContainer)
+        every { project.dependencies }.returns(dependencyHandler)
+        every { project.properties }.returns(projectProperties)
         every { extensionContainer.getByType(AppExtension::class.java) }.returns(androidExtension)
         every {
             extensionContainer.create("androidBuddy", AndroidBuddyExtension::class.java)
@@ -122,7 +130,7 @@ class AndroidBuddyPluginTest : BaseMockable() {
     @Test
     fun `Apply bytebuddy dependency`() {
         verify {
-            byteBuddyDependencyHandler.addDependency(project)
+            byteBuddyDependencyHandler.addDependency(dependencyHandler, projectProperties)
         }
     }
 }

@@ -164,7 +164,7 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
     @Test
     fun `Apply bytebuddy dependency`() {
         verify {
-            byteBuddyDependencyHandler.addDependency(project)
+            byteBuddyDependencyHandler.addDependency(dependencies, properties)
         }
     }
 
