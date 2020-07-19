@@ -14,6 +14,7 @@ import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.providers.AndroidPluginDataProvider
 import com.likethesalad.android.buddy.utils.FilesHolder
 import com.likethesalad.android.buddy.utils.TransformInvocationDataExtractorFactory
+import com.likethesalad.android.common.utils.DirectoryCleaner
 import net.bytebuddy.build.Plugin
 import net.bytebuddy.dynamic.ClassFileLocator
 import java.io.File
@@ -28,7 +29,8 @@ class ByteBuddyTransform @Inject constructor(
     private val sourceOriginForMultipleFoldersFactory: SourceOriginForMultipleFoldersFactory,
     private val transformInvocationDataExtractorFactory: TransformInvocationDataExtractorFactory,
     private val androidPluginDataProvider: AndroidPluginDataProvider,
-    private val compoundSourceFactory: CompoundSourceFactory
+    private val compoundSourceFactory: CompoundSourceFactory,
+    private val directoryCleaner: DirectoryCleaner
 ) : Transform() {
 
     override fun getName(): String = "androidBuddy"
@@ -52,6 +54,7 @@ class ByteBuddyTransform @Inject constructor(
         val transformInvocationDataExtractor = transformInvocationDataExtractorFactory.create(transformInvocation)
         val scopeClasspath = transformInvocationDataExtractor.getScopeClasspath()
         val outputFolder = transformInvocationDataExtractor.getOutputFolder(scopes)
+        directoryCleaner.cleanDirectory(outputFolder)
 
         pluginEngineProvider.makeEngine(variantName)
             .with(getExtraClassFileLocatorExcludingScope(variantName, scopeClasspath.allFiles))

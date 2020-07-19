@@ -16,6 +16,7 @@ import com.likethesalad.android.buddy.providers.AndroidPluginDataProvider
 import com.likethesalad.android.buddy.utils.FilesHolder
 import com.likethesalad.android.buddy.utils.TransformInvocationDataExtractor
 import com.likethesalad.android.buddy.utils.TransformInvocationDataExtractorFactory
+import com.likethesalad.android.common.utils.DirectoryCleaner
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -52,6 +53,9 @@ class ByteBuddyTransformTest : BaseMockable() {
     @MockK
     lateinit var compoundSourceFactory: CompoundSourceFactory
 
+    @MockK
+    lateinit var directoryCleaner: DirectoryCleaner
+
     private lateinit var byteBuddyTransform: ByteBuddyTransform
 
     @Before
@@ -60,7 +64,7 @@ class ByteBuddyTransformTest : BaseMockable() {
             classFileLocatorMaker, pluginFactoriesProvider, pluginEngineProvider,
             byteBuddyClassesInstantiator, sourceOriginForMultipleFoldersFactory,
             transformInvocationDataExtractorFactory, androidPluginDataProvider,
-            compoundSourceFactory
+            compoundSourceFactory, directoryCleaner
         )
     }
 
@@ -145,6 +149,7 @@ class ByteBuddyTransformTest : BaseMockable() {
         byteBuddyTransform.transform(transformInvocation)
 
         verify {
+            directoryCleaner.cleanDirectory(outputFolder)
             pluginEngine.with(classFileLocator)
             pluginEngine.apply(compoundSource, target, factories)
         }
