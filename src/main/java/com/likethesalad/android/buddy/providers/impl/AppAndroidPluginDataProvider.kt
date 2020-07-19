@@ -34,7 +34,11 @@ class AppAndroidPluginDataProvider(
     }
 
     override fun getJavaClassPath(variantName: String): Set<File> {
-        val variant = getVariantByName(variantName) ?: throw IllegalArgumentException()
+        val variant = getVariantByName(variantName)
+        if (variant == null) {
+            logger.w("Could not find variant '{}' - returning empty java classpath", variantName)
+            return emptySet()
+        }
         return variant.javaCompileProvider.get().classpath.files
     }
 

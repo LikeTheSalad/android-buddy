@@ -15,6 +15,8 @@ import com.likethesalad.android.buddy.providers.AndroidPluginDataProvider
 import com.likethesalad.android.buddy.utils.FilesHolder
 import com.likethesalad.android.buddy.utils.TransformInvocationDataExtractorFactory
 import net.bytebuddy.build.Plugin
+import net.bytebuddy.dynamic.ClassFileLocator
+import java.io.File
 import javax.inject.Inject
 
 @AppScope
@@ -39,9 +41,7 @@ class ByteBuddyTransform @Inject constructor(
 
     override fun getScopes(): MutableSet<in QualifiedContent.Scope> {
         return mutableSetOf(
-            QualifiedContent.Scope.PROJECT,
-            QualifiedContent.Scope.SUB_PROJECTS,
-            QualifiedContent.Scope.EXTERNAL_LIBRARIES
+            QualifiedContent.Scope.PROJECT
         )
     }
 
@@ -54,7 +54,7 @@ class ByteBuddyTransform @Inject constructor(
         val outputFolder = transformInvocationDataExtractor.getOutputFolder(scopes)
 
         pluginEngineProvider.makeEngine(variantName)
-            .with(classFileLocatorMaker.make(androidPluginDataProvider.getBootClasspath()))
+            .with(getExtraClassFileLocatorExcludingScope(variantName, scopeClasspath.allFiles))
             .apply(
                 getCompoundSource(scopeClasspath),
                 byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder),
@@ -70,5 +70,22 @@ class ByteBuddyTransform @Inject constructor(
         }
 
         return compoundSourceFactory.create(origins)
+    }
+
+    private fun getExtraClassFileLocatorExcludingScope(
+        variantName: String,
+        scopeFiles: Set<File>
+    ): ClassFileLocator {
+        val extraFiles = mutableSetOf<File>()
+        val javaClasspath = androidPluginDataProvider.getJavaClassPath(variantName)
+        extraFiles.addAll(androidPluginDataProvider.getBootClasspath())
+
+        for (extra in javaClasspath) {
+            if (extra !in scopeFiles) {
+                extraFiles.add(extra)
+            }
+        }
+
+        return classFileLocatorMaker.make(extraFiles)
     }
 }

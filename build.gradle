@@ -18,7 +18,7 @@ apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'kotlin-kapt'
 
 group 'com.likethesalad.android'
-version '0.1.9-SNAPSHOT'
+version '0.1.12-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
@@ -78,8 +78,8 @@ gradlePlugin {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId project.group.toString()
-            version project.version.toString()
+            groupId project.group
+            version project.version
 
             from components.java
         }
