@@ -28,15 +28,14 @@ class PluginEngineProviderTest : BaseMockable() {
     lateinit var projectLoggerProvider: ProjectLoggerProvider
 
     @MockK
-    lateinit var transformationLoggerFactory: TransformationLoggerFactory
+    lateinit var transformationLogger: TransformationLogger
 
     private lateinit var pluginEngineProvider: PluginEngineProvider
 
     @Before
     fun setUp() {
         pluginEngineProvider = PluginEngineProvider(
-            instantiator, androidPluginDataProvider,
-            projectLoggerProvider, transformationLoggerFactory
+            instantiator, androidPluginDataProvider, transformationLogger
         )
     }
 
@@ -46,16 +45,16 @@ class PluginEngineProviderTest : BaseMockable() {
         val classFileVersion = mockk<ClassFileVersion>()
         val methodNameTransformer = mockk<MethodNameTransformer>()
         val projectLogger = mockk<Logger>()
-        val transformationLogger = mockk<TransformationLogger>()
         val javaTargetCompatibility = 7
         val variantName = "someName"
         val expectedPluginEngine = mockk<Plugin.Engine>()
-        every { androidPluginDataProvider.getJavaTargetCompatibilityVersion(variantName) }.returns(javaTargetCompatibility)
+        every { androidPluginDataProvider.getJavaTargetCompatibilityVersion(variantName) }.returns(
+            javaTargetCompatibility
+        )
         every { instantiator.makeDefaultEntryPoint() }.returns(entryPoint)
         every { instantiator.makeClassFileVersionOfJavaVersion(javaTargetCompatibility) }.returns(classFileVersion)
         every { instantiator.makeDefaultMethodNameTransformer() }.returns(methodNameTransformer)
         every { projectLoggerProvider.getLogger() }.returns(projectLogger)
-        every { transformationLoggerFactory.create(projectLogger) }.returns(transformationLogger)
         every {
             instantiator.makePluginEngineOf(entryPoint, classFileVersion, methodNameTransformer)
         }.returns(expectedPluginEngine)
