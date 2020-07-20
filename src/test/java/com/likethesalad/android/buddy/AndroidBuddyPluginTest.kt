@@ -5,7 +5,7 @@ import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.di.AppInjector
 import com.likethesalad.android.buddy.transform.ByteBuddyTransform
 import com.likethesalad.android.common.models.AndroidBuddyExtension
-import com.likethesalad.android.common.utils.ByteBuddyDependencyHandler
+import com.likethesalad.android.common.utils.DependencyHandlerUtil
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -40,7 +40,7 @@ class AndroidBuddyPluginTest : BaseMockable() {
     lateinit var byteBuddyTransform: ByteBuddyTransform
 
     @MockK
-    lateinit var byteBuddyDependencyHandler: ByteBuddyDependencyHandler
+    lateinit var dependencyHandlerUtil: DependencyHandlerUtil
 
     @MockK
     lateinit var dependencyHandler: DependencyHandler
@@ -60,7 +60,7 @@ class AndroidBuddyPluginTest : BaseMockable() {
             extensionContainer.create("androidBuddy", AndroidBuddyExtension::class.java)
         }.returns(androidBuddyExtension)
         every { AppInjector.getByteBuddyTransform() }.returns(byteBuddyTransform)
-        every { AppInjector.getByteBuddyDependencyHandler() }.returns(byteBuddyDependencyHandler)
+        every { AppInjector.getByteBuddyDependencyHandler() }.returns(dependencyHandlerUtil)
 
         androidBuddyPlugin = AndroidBuddyPlugin()
         androidBuddyPlugin.apply(project)
@@ -130,7 +130,7 @@ class AndroidBuddyPluginTest : BaseMockable() {
     @Test
     fun `Apply bytebuddy dependency`() {
         verify {
-            byteBuddyDependencyHandler.addDependency(dependencyHandler, projectProperties)
+            dependencyHandlerUtil.addDependencies(dependencyHandler, projectProperties)
         }
     }
 }

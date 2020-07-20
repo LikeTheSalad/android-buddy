@@ -5,17 +5,21 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ByteBuddyDependencyHandler @Inject constructor() {
+class DependencyHandlerUtil @Inject constructor() {
 
     companion object {
         private const val BYTE_BUDDY_DEPENDENCY_FORMAT = "net.bytebuddy:byte-buddy:%s"
         private const val BYTE_BUDDY_DEPENDENCY_VERSION_PROPERTY_NAME = "android.buddy.byteBuddy.version"
     }
 
-    fun addDependency(dependencyHandler: DependencyHandler, projectProperties: Map<String, Any?>) {
+    fun addDependencies(dependencyHandler: DependencyHandler, projectProperties: Map<String, Any?>) {
+        addCompileOnly(dependencyHandler, BYTE_BUDDY_DEPENDENCY_FORMAT.format(getByteBuddyVersion(projectProperties)))
+        addCompileOnly(dependencyHandler, dependencyHandler.gradleApi())
+    }
+
+    private fun addCompileOnly(dependencyHandler: DependencyHandler, dependency: Any) {
         dependencyHandler.add(
-            "compileOnly",
-            BYTE_BUDDY_DEPENDENCY_FORMAT.format(getByteBuddyVersion(projectProperties))
+            "compileOnly", dependency
         )
     }
 

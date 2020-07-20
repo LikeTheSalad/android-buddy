@@ -5,7 +5,7 @@ import com.likethesalad.android.buddylib.di.LibraryInjector
 import com.likethesalad.android.buddylib.models.CreateJarDescriptionPropertiesArgs
 import com.likethesalad.android.buddylib.tasks.CreateJarDescriptionProperties
 import com.likethesalad.android.common.models.AndroidBuddyExtension
-import com.likethesalad.android.common.utils.ByteBuddyDependencyHandler
+import com.likethesalad.android.common.utils.DependencyHandlerUtil
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -90,7 +90,7 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
     lateinit var jarTaskProvider: TaskProvider<Task>
 
     @MockK
-    lateinit var byteBuddyDependencyHandler: ByteBuddyDependencyHandler
+    lateinit var dependencyHandlerUtil: DependencyHandlerUtil
 
     private val properties = mutableMapOf<String, Any?>()
     private val copyDescriptionPropertiesTaskRegisterActionCaptor = slot<Action<Copy>>()
@@ -108,7 +108,7 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
         }.returns(createJarDescriptionPropertiesArgs)
         every {
             LibraryInjector.getByteBuddyDependencyHandler()
-        }.returns(byteBuddyDependencyHandler)
+        }.returns(dependencyHandlerUtil)
         every { project.pluginManager }.returns(pluginManager)
         every { project.dependencies }.returns(dependencies)
         every { project.properties }.returns(properties)
@@ -164,7 +164,7 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
     @Test
     fun `Apply bytebuddy dependency`() {
         verify {
-            byteBuddyDependencyHandler.addDependency(dependencies, properties)
+            dependencyHandlerUtil.addDependencies(dependencies, properties)
         }
     }
 

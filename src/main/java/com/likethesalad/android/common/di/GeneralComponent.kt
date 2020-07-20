@@ -2,7 +2,7 @@ package com.likethesalad.android.common.di
 
 import com.likethesalad.android.buddylib.actions.VerifyPluginClassesProvidedActionFactory
 import com.likethesalad.android.common.providers.ProjectLoggerProvider
-import com.likethesalad.android.common.utils.ByteBuddyDependencyHandler
+import com.likethesalad.android.common.utils.DependencyHandlerUtil
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import com.likethesalad.android.common.utils.InstantiatorWrapper
 import com.likethesalad.android.common.utils.Logger
@@ -22,5 +22,5 @@ interface GeneralComponent {
 
     fun logger(): Logger
 
-    fun byteBuddyDependencyHandler(): ByteBuddyDependencyHandler
+    fun byteBuddyDependencyHandler(): DependencyHandlerUtil
 }

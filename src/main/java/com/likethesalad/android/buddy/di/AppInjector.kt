@@ -3,7 +3,7 @@ package com.likethesalad.android.buddy.di
 import com.likethesalad.android.buddy.AndroidBuddyPlugin
 import com.likethesalad.android.buddy.transform.ByteBuddyTransform
 import com.likethesalad.android.common.di.GeneralInjector
-import com.likethesalad.android.common.utils.ByteBuddyDependencyHandler
+import com.likethesalad.android.common.utils.DependencyHandlerUtil
 
 object AppInjector {
 
@@ -21,7 +21,7 @@ object AppInjector {
         return component.transform()
     }
 
-    fun getByteBuddyDependencyHandler(): ByteBuddyDependencyHandler {
+    fun getByteBuddyDependencyHandler(): DependencyHandlerUtil {
         return component.byteBuddyDependencyHandler()
     }
 }
