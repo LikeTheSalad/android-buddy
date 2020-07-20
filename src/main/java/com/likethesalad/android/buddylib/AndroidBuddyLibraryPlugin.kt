@@ -7,6 +7,8 @@ import com.likethesalad.android.common.models.AndroidBuddyExtension
 import com.likethesalad.android.common.utils.Constants
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.JavaLibraryPlugin
@@ -31,7 +33,7 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin {
         LibraryInjector.init(this)
         this.project = project
         project.pluginManager.apply(JavaLibraryPlugin::class.java)
-        LibraryInjector.getDependencyHandlerUtil().addDependencies(project.dependencies, project.properties)
+        LibraryInjector.getDependencyHandlerUtil().addDependencies(project.properties)
         val extension = project.extensions.create(EXTENSION_NAME, AndroidBuddyExtension::class.java)
         val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
 
@@ -66,5 +68,13 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin {
 
     override fun getLogger(): Logger {
         return project.logger
+    }
+
+    override fun getDependencyHandler(): DependencyHandler {
+        return project.dependencies
+    }
+
+    override fun getRepositoryHandler(): RepositoryHandler {
+        return project.repositories
     }
 }

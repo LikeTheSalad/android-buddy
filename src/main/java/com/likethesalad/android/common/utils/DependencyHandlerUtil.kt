@@ -1,25 +1,33 @@
 package com.likethesalad.android.common.utils
 
+import com.likethesalad.android.common.providers.ProjectDependencyToolsProvider
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DependencyHandlerUtil @Inject constructor() {
+class DependencyHandlerUtil @Inject constructor(
+    projectDependencyToolsProvider: ProjectDependencyToolsProvider
+) {
+
+    private val dependencyHandler = projectDependencyToolsProvider.getDependencyHandler()
+    private val repositoryHandler = projectDependencyToolsProvider.getRepositoryHandler()
 
     companion object {
         private const val BYTE_BUDDY_DEPENDENCY_FORMAT = "net.bytebuddy:byte-buddy:%s"
         private const val BYTE_BUDDY_DEPENDENCY_VERSION_PROPERTY_NAME = "android.buddy.byteBuddy.version"
+        private const val GRADLE_CORE_DEPENDENCY_URI = "org.gradle:gradle-core:4.10.1"
     }
 
-    fun addDependencies(dependencyHandler: DependencyHandler, projectProperties: Map<String, Any?>) {
+    fun addDependencies(projectProperties: Map<String, Any?>) {
+        addGradleReleasesRepo()
         addCompileOnly(dependencyHandler, BYTE_BUDDY_DEPENDENCY_FORMAT.format(getByteBuddyVersion(projectProperties)))
-        addCompileOnly(dependencyHandler, dependencyHandler.gradleApi())
+        addCompileOnly(dependencyHandler, GRADLE_CORE_DEPENDENCY_URI)
     }
 
-    private fun addCompileOnly(dependencyHandler: DependencyHandler, dependency: Any) {
+    private fun addCompileOnly(dependencyHandler: DependencyHandler, dependencyUri: String) {
         dependencyHandler.add(
-            "compileOnly", dependency
+            "compileOnly", dependencyUri
         )
     }
 
@@ -35,5 +43,11 @@ class DependencyHandlerUtil @Inject constructor() {
         }
 
         return null
+    }
+
+    private fun addGradleReleasesRepo() {
+        repositoryHandler.maven {
+            it.setUrl("https://repo.gradle.org/gradle/libs-releases-local/")
+        }
     }
 }

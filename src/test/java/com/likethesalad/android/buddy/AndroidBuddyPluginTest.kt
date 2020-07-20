@@ -13,6 +13,7 @@ import io.mockk.mockkObject
 import io.mockk.verify
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.ExtensionContainer
@@ -45,6 +46,9 @@ class AndroidBuddyPluginTest : BaseMockable() {
     @MockK
     lateinit var dependencyHandler: DependencyHandler
 
+    @MockK
+    lateinit var repositoryHandler: RepositoryHandler
+
     val projectProperties = mutableMapOf<String, Any?>()
 
     private lateinit var androidBuddyPlugin: AndroidBuddyPlugin
@@ -55,6 +59,7 @@ class AndroidBuddyPluginTest : BaseMockable() {
         every { project.extensions }.returns(extensionContainer)
         every { project.dependencies }.returns(dependencyHandler)
         every { project.properties }.returns(projectProperties)
+        every { project.repositories }.returns(repositoryHandler)
         every { extensionContainer.getByType(AppExtension::class.java) }.returns(androidExtension)
         every {
             extensionContainer.create("androidBuddy", AndroidBuddyExtension::class.java)
@@ -130,7 +135,17 @@ class AndroidBuddyPluginTest : BaseMockable() {
     @Test
     fun `Apply bytebuddy dependency`() {
         verify {
-            dependencyHandlerUtil.addDependencies(dependencyHandler, projectProperties)
+            dependencyHandlerUtil.addDependencies(projectProperties)
         }
+    }
+
+    @Test
+    fun `Provide DependencyHandler`() {
+        Truth.assertThat(androidBuddyPlugin.getDependencyHandler()).isEqualTo(dependencyHandler)
+    }
+
+    @Test
+    fun `Provide RepositoryHandler`() {
+        Truth.assertThat(androidBuddyPlugin.getRepositoryHandler()).isEqualTo(repositoryHandler)
     }
 }

@@ -16,6 +16,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logger
@@ -92,6 +93,9 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
     @MockK
     lateinit var dependencyHandlerUtil: DependencyHandlerUtil
 
+    @MockK
+    lateinit var repositoryHandler: RepositoryHandler
+
     private val properties = mutableMapOf<String, Any?>()
     private val copyDescriptionPropertiesTaskRegisterActionCaptor = slot<Action<Copy>>()
     private val jarTaskNamedActionCaptor = slot<Action<Task>>()
@@ -114,6 +118,7 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
         every { project.properties }.returns(properties)
         every { project.extensions }.returns(extensions)
         every { project.tasks }.returns(tasks)
+        every { project.repositories }.returns(repositoryHandler)
         every { dependencies.add(any(), any()) }.returns(mockk())
         every { extensions.create(any(), AndroidBuddyExtension::class.java) }.returns(androidBuddyExtension)
         every { extensions.getByType(SourceSetContainer::class.java) }.returns(sourceSetContainer)
@@ -164,7 +169,7 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
     @Test
     fun `Apply bytebuddy dependency`() {
         verify {
-            dependencyHandlerUtil.addDependencies(dependencies, properties)
+            dependencyHandlerUtil.addDependencies(properties)
         }
     }
 
@@ -251,5 +256,15 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
         every { project.logger }.returns(logger)
 
         Truth.assertThat(androidBuddyLibraryPlugin.getLogger()).isEqualTo(logger)
+    }
+
+    @Test
+    fun `Provide DependencyHandler`() {
+        Truth.assertThat(androidBuddyLibraryPlugin.getDependencyHandler()).isEqualTo(dependencies)
+    }
+
+    @Test
+    fun `Provide RepositoryHandler`() {
+        Truth.assertThat(androidBuddyLibraryPlugin.getRepositoryHandler()).isEqualTo(repositoryHandler)
     }
 }
