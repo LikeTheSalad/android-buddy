@@ -64,7 +64,14 @@ class DependencyHandlerUtilTest : BaseMockable() {
     fun `Add gradle logging dependency`() {
         dependencyHandlerUtil.addDependencies(emptyMap())
 
-        verifyGradleLoggingDependencyAdded()
+        verifyDependencyAdded("org.gradle:gradle-logging:4.10.1")
+    }
+
+    @Test
+    fun `Add slf4j api dependency`() {
+        dependencyHandlerUtil.addDependencies(emptyMap())
+
+        verifyDependencyAdded("org.slf4j:slf4j-api:1.7.30")
     }
 
     @Test
@@ -84,10 +91,6 @@ class DependencyHandlerUtilTest : BaseMockable() {
 
     private fun verifyByteBuddyDependencyAdded(version: String) {
         verifyDependencyAdded("net.bytebuddy:byte-buddy:$version")
-    }
-
-    private fun verifyGradleLoggingDependencyAdded() {
-        verifyDependencyAdded("org.gradle:gradle-logging:4.10.1")
     }
 
     private fun verifyDependencyAdded(dependency: Any) {
