@@ -6,6 +6,7 @@ import com.likethesalad.android.buddy.providers.PluginClassNamesProvider
 import com.likethesalad.android.buddy.utils.AndroidBuddyLibraryPluginsExtractor
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.FilesHolder
+import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import com.likethesalad.android.common.utils.InstantiatorWrapper
 import com.likethesalad.android.common.utils.Logger
 import net.bytebuddy.ByteBuddy
@@ -21,8 +22,16 @@ class PluginFactoriesProvider
     private val instantiatorWrapper: InstantiatorWrapper,
     private val byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator,
     private val androidBuddyLibraryPluginsExtractor: AndroidBuddyLibraryPluginsExtractor,
-    private val logger: Logger
+    private val logger: Logger,
+    projectLoggerProvider: ProjectLoggerProvider
 ) {
+
+    private val loggerArgumentResolver by lazy {
+        byteBuddyClassesInstantiator.makeFactoryArgumentResolverFor(
+            org.gradle.api.logging.Logger::class.java,
+            projectLoggerProvider.getLogger()
+        )
+    }
 
     fun getFactories(filesHolder: FilesHolder): List<Plugin.Factory> {
         val pluginNames = mutableSetOf<String>()
@@ -48,6 +57,6 @@ class PluginFactoriesProvider
     private fun nameToFactory(className: String, classLoader: ClassLoader): Plugin.Factory {
         return byteBuddyClassesInstantiator.makeFactoryUsingReflection(
             instantiatorWrapper.getClassForName(className, false, classLoader)
-        )
+        ).with(loggerArgumentResolver)
     }
 }

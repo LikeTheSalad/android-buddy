@@ -29,7 +29,7 @@ class ByteBuddyClassesInstantiator @Inject constructor() {
         return Plugin.Engine.Source.Element.ForFile(root, file)
     }
 
-    fun makeFactoryUsingReflection(type: Class<out Plugin>): Plugin.Factory {
+    fun makeFactoryUsingReflection(type: Class<out Plugin>): Plugin.Factory.UsingReflection {
         return Plugin.Factory.UsingReflection(type)
     }
 
@@ -51,6 +51,11 @@ class ByteBuddyClassesInstantiator @Inject constructor() {
 
     fun makeJarFileSourceOrigin(file: File): Plugin.Engine.Source.Origin.ForJarFile {
         return Plugin.Engine.Source.Origin.ForJarFile(JarFile(file))
+    }
+
+    fun <T> makeFactoryArgumentResolverFor(type: Class<T>, value: T)
+            : Plugin.Factory.UsingReflection.ArgumentResolver {
+        return Plugin.Factory.UsingReflection.ArgumentResolver.ForType.of(type, value)
     }
 
     fun makePluginEngineOf(

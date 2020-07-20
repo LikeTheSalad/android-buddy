@@ -6,6 +6,7 @@ import com.likethesalad.android.buddy.providers.PluginClassNamesProvider
 import com.likethesalad.android.buddy.utils.AndroidBuddyLibraryPluginsExtractor
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.FilesHolder
+import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import com.likethesalad.android.common.utils.InstantiatorWrapper
 import com.likethesalad.android.common.utils.Logger
 import com.likethesalad.android.testutils.BaseMockable
@@ -40,14 +41,30 @@ class PluginFactoriesProviderTest : BaseMockable() {
     @MockK
     lateinit var logger: Logger
 
+    @MockK
+    lateinit var projectLoggerProvider: ProjectLoggerProvider
+
+    @MockK
+    lateinit var projectLogger: org.gradle.api.logging.Logger
+
+    @MockK
+    lateinit var loggerArgumentResolver: Plugin.Factory.UsingReflection.ArgumentResolver
+
     private lateinit var pluginFactoriesProvider: PluginFactoriesProvider
 
     @Before
     fun setUp() {
+        every { projectLoggerProvider.getLogger() }.returns(projectLogger)
+        every {
+            byteBuddyClassesInstantiator.makeFactoryArgumentResolverFor(
+                org.gradle.api.logging.Logger::class.java,
+                projectLogger
+            )
+        }.returns(loggerArgumentResolver)
         pluginFactoriesProvider = PluginFactoriesProvider(
             pluginClassNamesProvider, classLoaderCreator,
             instantiatorWrapper, byteBuddyClassesInstantiator,
-            androidBuddyLibraryPluginsExtractor, logger
+            androidBuddyLibraryPluginsExtractor, logger, projectLoggerProvider
         )
     }
 
@@ -79,6 +96,9 @@ class PluginFactoriesProviderTest : BaseMockable() {
         verify {
             logger.d("Local plugins found: {}", setOf(name1.name, name2.name))
             logger.d("Dependencies plugins found: {}", setOf(libName1.name))
+            name1.expectedFactory.with(loggerArgumentResolver)
+            name2.expectedFactory.with(loggerArgumentResolver)
+            libName1.expectedFactory.with(loggerArgumentResolver)
         }
     }
 
@@ -87,7 +107,7 @@ class PluginFactoriesProviderTest : BaseMockable() {
         classLoader: ClassLoader
     ): ClassNameAndPluginAndFactory {
         val name = clazz.name
-        val factory = mockk<Plugin.Factory>()
+        val factory = mockk<Plugin.Factory.UsingReflection>()
 
         every {
             instantiatorWrapper.getClassForName<Plugin>(name, false, classLoader)
@@ -95,13 +115,16 @@ class PluginFactoriesProviderTest : BaseMockable() {
         every {
             byteBuddyClassesInstantiator.makeFactoryUsingReflection(clazz)
         }.returns(factory)
+        every {
+            factory.with(any<Plugin.Factory.UsingReflection.ArgumentResolver>())
+        }.returns(factory)
 
         return ClassNameAndPluginAndFactory(name, factory)
     }
 
     class ClassNameAndPluginAndFactory(
         val name: String,
-        val expectedFactory: Plugin.Factory
+        val expectedFactory: Plugin.Factory.UsingReflection
     )
 
     class SomePlugin1 : BaseMockPlugin()
