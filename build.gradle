@@ -18,7 +18,7 @@ apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'kotlin-kapt'
 
 group 'com.likethesalad.android'
-version '0.3.2-SNAPSHOT'
+version '0.3.3-SNAPSHOT'
 
 sourceCompatibility = 1.8
 

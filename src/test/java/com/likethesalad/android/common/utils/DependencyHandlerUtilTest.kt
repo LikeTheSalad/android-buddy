@@ -61,10 +61,10 @@ class DependencyHandlerUtilTest : BaseMockable() {
     }
 
     @Test
-    fun `Add gradleApi dependency`() {
+    fun `Add gradle logging dependency`() {
         dependencyHandlerUtil.addDependencies(emptyMap())
 
-        verifyGradleCoreDependencyAdded()
+        verifyGradleLoggingDependencyAdded()
     }
 
     @Test
@@ -86,8 +86,8 @@ class DependencyHandlerUtilTest : BaseMockable() {
         verifyDependencyAdded("net.bytebuddy:byte-buddy:$version")
     }
 
-    private fun verifyGradleCoreDependencyAdded() {
-        verifyDependencyAdded("org.gradle:gradle-core:4.10.1")
+    private fun verifyGradleLoggingDependencyAdded() {
+        verifyDependencyAdded("org.gradle:gradle-logging:4.10.1")
     }
 
     private fun verifyDependencyAdded(dependency: Any) {

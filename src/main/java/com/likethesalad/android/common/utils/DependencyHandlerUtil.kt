@@ -16,13 +16,13 @@ class DependencyHandlerUtil @Inject constructor(
     companion object {
         private const val BYTE_BUDDY_DEPENDENCY_FORMAT = "net.bytebuddy:byte-buddy:%s"
         private const val BYTE_BUDDY_DEPENDENCY_VERSION_PROPERTY_NAME = "android.buddy.byteBuddy.version"
-        private const val GRADLE_CORE_DEPENDENCY_URI = "org.gradle:gradle-core:4.10.1"
+        private const val GRADLE_LOGGING_DEPENDENCY_URI = "org.gradle:gradle-logging:4.10.1"
     }
 
     fun addDependencies(projectProperties: Map<String, Any?>) {
         addGradleReleasesRepo()
         addCompileOnly(dependencyHandler, BYTE_BUDDY_DEPENDENCY_FORMAT.format(getByteBuddyVersion(projectProperties)))
-        addCompileOnly(dependencyHandler, GRADLE_CORE_DEPENDENCY_URI)
+        addCompileOnly(dependencyHandler, GRADLE_LOGGING_DEPENDENCY_URI)
     }
 
     private fun addCompileOnly(dependencyHandler: DependencyHandler, dependencyUri: String) {
