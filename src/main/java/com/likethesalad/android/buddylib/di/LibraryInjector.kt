@@ -13,8 +13,8 @@ object LibraryInjector {
         return component.createJarDescriptionPropertiesArgs()
     }
 
-    fun getByteBuddyDependencyHandler(): DependencyHandlerUtil {
-        return component.byteBuddyDependencyHandler()
+    fun getDependencyHandlerUtil(): DependencyHandlerUtil {
+        return component.dependencyHandlerUtil()
     }
 
     fun init(plugin: AndroidBuddyLibraryPlugin) {

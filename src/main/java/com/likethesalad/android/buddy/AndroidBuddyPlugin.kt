@@ -25,7 +25,7 @@ open class AndroidBuddyPlugin : Plugin<Project>, BuddyPlugin, FileTreeIteratorPr
     override fun apply(project: Project) {
         AppInjector.init(this)
         this.project = project
-        AppInjector.getByteBuddyDependencyHandler().addDependencies(project.dependencies, project.properties)
+        AppInjector.getDependencyHandlerUtil().addDependencies(project.dependencies, project.properties)
         androidBuddyExtension = createExtension()
         appExtension = project.extensions.getByType(AppExtension::class.java)
         appExtension?.registerTransform(AppInjector.getByteBuddyTransform())

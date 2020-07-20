@@ -107,7 +107,7 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
             LibraryInjector.getCreateJarDescriptionPropertiesArgs()
         }.returns(createJarDescriptionPropertiesArgs)
         every {
-            LibraryInjector.getByteBuddyDependencyHandler()
+            LibraryInjector.getDependencyHandlerUtil()
         }.returns(dependencyHandlerUtil)
         every { project.pluginManager }.returns(pluginManager)
         every { project.dependencies }.returns(dependencies)

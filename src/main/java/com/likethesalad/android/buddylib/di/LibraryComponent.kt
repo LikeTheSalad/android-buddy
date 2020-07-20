@@ -9,5 +9,5 @@ import dagger.Component
 @Component(dependencies = [GeneralComponent::class])
 interface LibraryComponent {
     fun createJarDescriptionPropertiesArgs(): CreateJarDescriptionPropertiesArgs
-    fun byteBuddyDependencyHandler(): DependencyHandlerUtil
+    fun dependencyHandlerUtil(): DependencyHandlerUtil
 }

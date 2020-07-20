@@ -9,5 +9,5 @@ import dagger.Component
 @Component(modules = [AppModule::class], dependencies = [GeneralComponent::class])
 interface AppComponent {
     fun transform(): ByteBuddyTransform
-    fun byteBuddyDependencyHandler(): DependencyHandlerUtil
+    fun dependencyHandlerUtil(): DependencyHandlerUtil
 }

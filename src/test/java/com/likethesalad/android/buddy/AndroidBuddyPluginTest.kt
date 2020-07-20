@@ -60,7 +60,7 @@ class AndroidBuddyPluginTest : BaseMockable() {
             extensionContainer.create("androidBuddy", AndroidBuddyExtension::class.java)
         }.returns(androidBuddyExtension)
         every { AppInjector.getByteBuddyTransform() }.returns(byteBuddyTransform)
-        every { AppInjector.getByteBuddyDependencyHandler() }.returns(dependencyHandlerUtil)
+        every { AppInjector.getDependencyHandlerUtil() }.returns(dependencyHandlerUtil)
 
         androidBuddyPlugin = AndroidBuddyPlugin()
         androidBuddyPlugin.apply(project)

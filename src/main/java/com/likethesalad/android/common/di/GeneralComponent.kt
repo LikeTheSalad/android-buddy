@@ -22,5 +22,5 @@ interface GeneralComponent {
 
     fun logger(): Logger
 
-    fun byteBuddyDependencyHandler(): DependencyHandlerUtil
+    fun dependencyHandlerUtil(): DependencyHandlerUtil
 }
