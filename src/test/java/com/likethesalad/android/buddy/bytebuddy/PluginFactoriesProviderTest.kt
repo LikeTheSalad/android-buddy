@@ -4,8 +4,6 @@ import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.providers.PluginClassNamesProvider
 import com.likethesalad.android.buddy.utils.AndroidBuddyLibraryPluginsExtractor
-import com.likethesalad.android.buddy.utils.ClassLoaderCreator
-import com.likethesalad.android.buddy.utils.FilesHolder
 import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import com.likethesalad.android.common.utils.InstantiatorWrapper
 import com.likethesalad.android.common.utils.Logger
@@ -25,9 +23,6 @@ class PluginFactoriesProviderTest : BaseMockable() {
 
     @MockK
     lateinit var pluginClassNamesProvider: PluginClassNamesProvider
-
-    @MockK
-    lateinit var classLoaderCreator: ClassLoaderCreator
 
     @MockK
     lateinit var instantiatorWrapper: InstantiatorWrapper
@@ -62,26 +57,18 @@ class PluginFactoriesProviderTest : BaseMockable() {
             )
         }.returns(loggerArgumentResolver)
         pluginFactoriesProvider = PluginFactoriesProvider(
-            pluginClassNamesProvider, classLoaderCreator,
-            instantiatorWrapper, byteBuddyClassesInstantiator,
+            pluginClassNamesProvider, instantiatorWrapper, byteBuddyClassesInstantiator,
             androidBuddyLibraryPluginsExtractor, logger, projectLoggerProvider
         )
     }
 
     @Test
     fun `Get factories from local and external classpath`() {
-        val allFiles = setOf<File>(mockk(), mockk())
         val jarFiles = setOf<File>(mockk(), mockk())
-        val classpath = mockk<FilesHolder>()
         val classLoader = mockk<ClassLoader>()
         val name1 = createNameAndPluginAndFactory(SomePlugin1::class.java, classLoader)
         val name2 = createNameAndPluginAndFactory(SomePlugin2::class.java, classLoader)
         val libName1 = createNameAndPluginAndFactory(SomeLibPlugin1::class.java, classLoader)
-        every {
-            classLoaderCreator.create(allFiles, any())
-        }.returns(classLoader)
-        every { classpath.allFiles }.returns(allFiles)
-        every { classpath.jarFiles }.returns(jarFiles)
         every { pluginClassNamesProvider.getPluginClassNames() }.returns(
             setOf(name1.name, name2.name)
         )
@@ -89,7 +76,7 @@ class PluginFactoriesProviderTest : BaseMockable() {
             androidBuddyLibraryPluginsExtractor.extractPluginNames(jarFiles)
         }.returns(setOf(libName1.name))
 
-        val factories = pluginFactoriesProvider.getFactories(classpath)
+        val factories = pluginFactoriesProvider.getFactories(jarFiles, classLoader)
 
         Truth.assertThat(factories)
             .containsExactly(name1.expectedFactory, name2.expectedFactory, libName1.expectedFactory)

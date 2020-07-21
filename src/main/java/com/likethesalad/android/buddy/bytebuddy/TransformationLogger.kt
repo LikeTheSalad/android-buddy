@@ -26,7 +26,7 @@ class TransformationLogger @Inject constructor(private val logger: Logger) : Plu
         plugin: Plugin,
         throwable: Throwable
     ) {
-        logger.w("{} Failed to transform {} using {} error: {}", PREFIX, typeDescription, plugin, throwable)
+        logger.w("{} Failed to transform {} using {}", PREFIX, typeDescription, plugin, throwable)
     }
 
     override fun onError(throwables: Map<TypeDescription, List<Throwable>>) {
@@ -34,7 +34,7 @@ class TransformationLogger @Inject constructor(private val logger: Logger) : Plu
     }
 
     override fun onError(plugin: Plugin, throwable: Throwable) {
-        logger.e("{} Failed to close {} error: {}", PREFIX, plugin, throwable)
+        logger.e("{} Failed to close {}", PREFIX, plugin, throwable)
     }
 
     override fun onLiveInitializer(typeDescription: TypeDescription, definingType: TypeDescription) {
