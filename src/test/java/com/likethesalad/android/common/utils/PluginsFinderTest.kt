@@ -13,7 +13,7 @@ class PluginsFinderTest : BaseMockable() {
     private val resourcesFinder = DummyResourcesFinder(javaClass)
 
     @Test
-    fun `Give empty list when no plugin class is found`() {
+    fun `Give empty list when no annotated plugin class is found`() {
         val pluginsFinder = createInstance(createClassGraphProviderMock(getClassGraphWithoutPlugins()))
 
         val classesFound = pluginsFinder.findBuiltPluginClassNames()
@@ -22,17 +22,14 @@ class PluginsFinderTest : BaseMockable() {
     }
 
     @Test
-    fun `Give plugin list when plugin class are found`() {
+    fun `Give plugin list when annotated plugin classes are found`() {
         val pluginsFinder = createInstance(createClassGraphProviderMock(getClassGraphWithPlugins()))
 
         val classesFound = pluginsFinder.findBuiltPluginClassNames()
 
         Truth.assertThat(classesFound).containsExactly(
-            "com.likethesalad.android.common.plugins.WhyUHere",
-            "com.likethesalad.android.common.plugins.subplugins.SubAbstractPlugin",
-            "com.likethesalad.android.common.plugins.subplugins.SubBasePlugin",
-            "com.likethesalad.android.common.plugins.BasePlugin",
-            "com.likethesalad.android.common.plugins.AbstractPlugin"
+            "com.likethesalad.android.buddy.transform.pluginstemp.ProperPlugin",
+            "com.likethesalad.android.buddy.transform.pluginstemp.subdir.AnotherProperPlugin"
         )
     }
 

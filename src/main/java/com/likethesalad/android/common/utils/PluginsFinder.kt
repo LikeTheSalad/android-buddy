@@ -1,6 +1,7 @@
 package com.likethesalad.android.common.utils
 
 import com.google.auto.factory.AutoFactory
+import com.likethesalad.android.buddy.transform.Transformation
 
 @AutoFactory
 class PluginsFinder(private val classGraphProvider: ClassGraphProvider) {
@@ -10,8 +11,11 @@ class PluginsFinder(private val classGraphProvider: ClassGraphProvider) {
     }
 
     fun findBuiltPluginClassNames(): Set<String> {
-        val scanResult = classGraphProvider.classGraph.enableClassInfo().scan()
-        val info = scanResult.getClassesImplementing(PLUGIN_INTERFACE_NAME)
+        val scanResult = classGraphProvider.classGraph.enableClassInfo().enableAnnotationInfo().scan()
+        val info = scanResult.getClassesWithAnnotation(Transformation::class.java.name)
+            .filter {
+                it.isStandardClass && it.implementsInterface(PLUGIN_INTERFACE_NAME) && !it.isAbstract
+            }
         return info.names.toSet()
     }
 }
