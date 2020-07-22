@@ -15,6 +15,7 @@ ext {
 }
 
 dependencies {
+    implementation project(':android-buddy-tools')
     implementation "net.bytebuddy:byte-buddy:$byteBuddy_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "com.google.dagger:dagger:$dagger_version"

@@ -1,7 +1,7 @@
 package com.likethesalad.android.common.utils
 
 import com.google.auto.factory.AutoFactory
-import com.likethesalad.android.buddy.transform.Transformation
+import com.likethesalad.android.buddy.tools.Transformation
 
 @AutoFactory
 class PluginsFinder(private val classGraphProvider: ClassGraphProvider) {
