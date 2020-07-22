@@ -1,2 +1,2 @@
 rootProject.name = 'android-buddy'
-include ':android-buddy', ':android-buddy-tools'
+include ':android-buddy-plugin', ':android-buddy-tools'
