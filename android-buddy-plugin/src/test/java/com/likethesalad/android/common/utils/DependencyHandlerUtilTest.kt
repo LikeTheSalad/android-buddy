@@ -1,5 +1,6 @@
 package com.likethesalad.android.common.utils
 
+import com.likethesalad.android.buddy.plugin.generated.BuildConfig
 import com.likethesalad.android.common.providers.ProjectDependencyToolsProvider
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
@@ -80,7 +81,7 @@ class DependencyHandlerUtilTest : BaseMockable() {
     }
 
     private fun verifyByteBuddyDependencyAdded() {
-        verifyDependencyAdded("net.bytebuddy:byte-buddy:${Constants.BYTE_BUDDY_DEPENDENCY_VERSION}")
+        verifyDependencyAdded("net.bytebuddy:byte-buddy:${BuildConfig.BYTE_BUDDY_VERSION}")
     }
 
     private fun verifyDependencyAdded(dependency: Any) {

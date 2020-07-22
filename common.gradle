@@ -16,7 +16,7 @@ publishing {
 }
 
 buildConfig {
-    packageName("${project.group}.generated")
+    packageName("com.likethesalad.${project.name.replaceAll("-", "\\.")}.generated")
 
     buildConfigField("String", "BYTE_BUDDY_VERSION", "\"$byteBuddy_version\"")
 }

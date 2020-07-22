@@ -1,6 +1,6 @@
 package com.likethesalad.android.common.utils
 
-import com.likethesalad.android.generated.BuildConfig
+import com.likethesalad.android.buddy.plugin.generated.BuildConfig
 
 object Constants {
     const val LIBRARY_PROPERTIES_DIR = "META-INF/android-buddy-plugins"
