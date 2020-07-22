@@ -96,7 +96,6 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
     @MockK
     lateinit var repositoryHandler: RepositoryHandler
 
-    private val properties = mutableMapOf<String, Any?>()
     private val copyDescriptionPropertiesTaskRegisterActionCaptor = slot<Action<Copy>>()
     private val jarTaskNamedActionCaptor = slot<Action<Task>>()
     private val createJarDescriptionPropertiesName = "createJarDescriptionProperties"
@@ -115,7 +114,6 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
         }.returns(dependencyHandlerUtil)
         every { project.pluginManager }.returns(pluginManager)
         every { project.dependencies }.returns(dependencies)
-        every { project.properties }.returns(properties)
         every { project.extensions }.returns(extensions)
         every { project.tasks }.returns(tasks)
         every { project.repositories }.returns(repositoryHandler)
@@ -169,7 +167,7 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
     @Test
     fun `Apply bytebuddy dependency`() {
         verify {
-            dependencyHandlerUtil.addDependencies(properties)
+            dependencyHandlerUtil.addDependencies()
         }
     }
 

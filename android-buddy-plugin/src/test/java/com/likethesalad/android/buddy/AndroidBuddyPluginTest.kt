@@ -49,8 +49,6 @@ class AndroidBuddyPluginTest : BaseMockable() {
     @MockK
     lateinit var repositoryHandler: RepositoryHandler
 
-    val projectProperties = mutableMapOf<String, Any?>()
-
     private lateinit var androidBuddyPlugin: AndroidBuddyPlugin
 
     @Before
@@ -58,7 +56,6 @@ class AndroidBuddyPluginTest : BaseMockable() {
         mockkObject(AppInjector)
         every { project.extensions }.returns(extensionContainer)
         every { project.dependencies }.returns(dependencyHandler)
-        every { project.properties }.returns(projectProperties)
         every { project.repositories }.returns(repositoryHandler)
         every { extensionContainer.getByType(AppExtension::class.java) }.returns(androidExtension)
         every {
@@ -135,7 +132,7 @@ class AndroidBuddyPluginTest : BaseMockable() {
     @Test
     fun `Apply bytebuddy dependency`() {
         verify {
-            dependencyHandlerUtil.addDependencies(projectProperties)
+            dependencyHandlerUtil.addDependencies()
         }
     }
 

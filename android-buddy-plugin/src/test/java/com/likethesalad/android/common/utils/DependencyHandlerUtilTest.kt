@@ -44,32 +44,22 @@ class DependencyHandlerUtilTest : BaseMockable() {
     }
 
     @Test
-    fun `Add byte buddy dependency with default version`() {
-        dependencyHandlerUtil.addDependencies(mapOf())
+    fun `Add byte buddy dependency with plugin version`() {
+        dependencyHandlerUtil.addDependencies()
 
-        verifyByteBuddyDependencyAdded(Constants.BYTE_BUDDY_DEPENDENCY_VERSION)
-    }
-
-    @Test
-    fun `Add byte buddy dependency with properties version`() {
-        val propertiesVersion = "someVersion"
-        val properties = mapOf<String, Any?>("android.buddy.byteBuddy.version" to propertiesVersion)
-
-        dependencyHandlerUtil.addDependencies(properties)
-
-        verifyByteBuddyDependencyAdded(propertiesVersion)
+        verifyByteBuddyDependencyAdded()
     }
 
     @Test
     fun `Add gradle logging dependency`() {
-        dependencyHandlerUtil.addDependencies(emptyMap())
+        dependencyHandlerUtil.addDependencies()
 
         verifyDependencyAdded("org.gradle:gradle-logging:4.10.1")
     }
 
     @Test
     fun `Add slf4j api dependency`() {
-        dependencyHandlerUtil.addDependencies(emptyMap())
+        dependencyHandlerUtil.addDependencies()
 
         verifyDependencyAdded("org.slf4j:slf4j-api:1.7.30")
     }
@@ -78,7 +68,7 @@ class DependencyHandlerUtilTest : BaseMockable() {
     fun `Add gradle releases maven repo`() {
         val mavenAction = slot<Action<MavenArtifactRepository>>()
 
-        dependencyHandlerUtil.addDependencies(emptyMap())
+        dependencyHandlerUtil.addDependencies()
 
         verify {
             repositoryHandler.maven(capture(mavenAction))
@@ -89,8 +79,8 @@ class DependencyHandlerUtilTest : BaseMockable() {
         }
     }
 
-    private fun verifyByteBuddyDependencyAdded(version: String) {
-        verifyDependencyAdded("net.bytebuddy:byte-buddy:$version")
+    private fun verifyByteBuddyDependencyAdded() {
+        verifyDependencyAdded("net.bytebuddy:byte-buddy:${Constants.BYTE_BUDDY_DEPENDENCY_VERSION}")
     }
 
     private fun verifyDependencyAdded(dependency: Any) {

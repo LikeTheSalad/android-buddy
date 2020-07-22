@@ -33,7 +33,7 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin {
         LibraryInjector.init(this)
         this.project = project
         project.pluginManager.apply(JavaLibraryPlugin::class.java)
-        LibraryInjector.getDependencyHandlerUtil().addDependencies(project.properties)
+        LibraryInjector.getDependencyHandlerUtil().addDependencies()
         val extension = project.extensions.create(EXTENSION_NAME, AndroidBuddyExtension::class.java)
         val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
 
