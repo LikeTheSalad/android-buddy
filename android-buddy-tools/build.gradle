@@ -1,7 +1,4 @@
-plugins {
-    id 'java-library'
-}
-
+apply plugin: 'java-library'
 apply plugin: 'org.jetbrains.kotlin.jvm'
 apply from: "../common.gradle"
 
