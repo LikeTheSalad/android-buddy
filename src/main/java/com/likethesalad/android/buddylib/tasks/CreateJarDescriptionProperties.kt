@@ -1,7 +1,7 @@
 package com.likethesalad.android.buddylib.tasks
 
 import com.likethesalad.android.buddylib.models.CreateJarDescriptionPropertiesArgs
-import com.likethesalad.android.common.providers.impl.FileCollectionFileSetProvider
+import com.likethesalad.android.common.providers.impl.FileCollectionClassGraphFilesProvider
 import com.likethesalad.android.common.utils.ClassGraphProvider
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
@@ -54,7 +54,7 @@ open class CreateJarDescriptionProperties
 
     private fun createClassGraphProvider(): ClassGraphProvider {
         return classGraphProviderFactory.create(
-            FileCollectionFileSetProvider(inputClassPaths)
+            FileCollectionClassGraphFilesProvider(inputClassPaths)
         )
     }
 }

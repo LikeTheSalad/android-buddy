@@ -2,6 +2,6 @@ package com.likethesalad.android.common.providers
 
 import java.io.File
 
-interface FileSetProvider {
+interface ClassGraphFilesProvider {
     fun provideFiles(): Set<File>
 }

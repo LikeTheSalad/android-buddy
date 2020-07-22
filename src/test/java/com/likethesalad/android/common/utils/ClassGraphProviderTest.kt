@@ -1,7 +1,7 @@
 package com.likethesalad.android.common.utils
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.common.providers.FileSetProvider
+import com.likethesalad.android.common.providers.ClassGraphFilesProvider
 import com.likethesalad.android.testutils.BaseMockable
 import io.github.classgraph.ClassGraph
 import io.mockk.every
@@ -20,7 +20,7 @@ class ClassGraphProviderTest : BaseMockable() {
     lateinit var classGraph: ClassGraph
 
     @MockK
-    lateinit var fileSetProvider: FileSetProvider
+    lateinit var classGraphFilesProvider: ClassGraphFilesProvider
 
     private lateinit var classGraphProvider: ClassGraphProvider
 
@@ -29,7 +29,7 @@ class ClassGraphProviderTest : BaseMockable() {
         every {
             instantiatorWrapper.getClassGraph()
         }.returns(classGraph)
-        classGraphProvider = ClassGraphProvider(instantiatorWrapper, fileSetProvider)
+        classGraphProvider = ClassGraphProvider(instantiatorWrapper, classGraphFilesProvider)
     }
 
     @Test
@@ -39,7 +39,7 @@ class ClassGraphProviderTest : BaseMockable() {
             classGraph.overrideClasspath(any<Set<File>>())
         }.returns(classGraph)
         every {
-            fileSetProvider.provideFiles()
+            classGraphFilesProvider.provideFiles()
         }.returns(classPaths)
 
         val result = classGraphProvider.classGraph

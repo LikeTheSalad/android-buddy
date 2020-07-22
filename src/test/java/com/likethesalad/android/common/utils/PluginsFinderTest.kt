@@ -40,11 +40,11 @@ class PluginsFinderTest : BaseMockable() {
     }
 
     private fun getClassGraphWithPlugins(): ClassGraph {
-        return ClassGraph().overrideClasspath(getWithPluginClassesDir().path)
+        return ClassGraph().overrideClasspath(getWithPluginClassesDir())
     }
 
     private fun getClassGraphWithoutPlugins(): ClassGraph {
-        return ClassGraph().overrideClasspath(getWithoutPluginClassesDir().path)
+        return ClassGraph().overrideClasspath(getWithoutPluginClassesDir())
     }
 
     private fun getWithoutPluginClassesDir(): File {
