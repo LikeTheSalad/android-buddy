@@ -1,22 +1,10 @@
 plugins {
     id 'java-gradle-plugin'
-    id 'maven-publish'
 }
 
 apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'kotlin-kapt'
-
-group 'com.likethesalad.android'
-version '0.3.6-SNAPSHOT'
-
-sourceCompatibility = 1.8
-
-
-repositories {
-    mavenCentral()
-    google()
-    jcenter()
-}
+apply from: "../common.gradle"
 
 ext {
     dagger_version = '2.28.1'
@@ -60,17 +48,6 @@ gradlePlugin {
         byteBuddyLibrary {
             id = 'android-buddy-library'
             implementationClass = 'com.likethesalad.android.buddylib.AndroidBuddyLibraryPlugin'
-        }
-    }
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId project.group
-            version project.version
-
-            from components.java
         }
     }
 }

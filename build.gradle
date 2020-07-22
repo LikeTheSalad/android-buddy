@@ -8,3 +8,14 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
+
+group 'com.likethesalad.android'
+version '0.3.6-SNAPSHOT'
+
+subprojects {
+    repositories {
+        mavenCentral()
+        google()
+        jcenter()
+    }
+}
