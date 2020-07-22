@@ -45,10 +45,10 @@ class DependencyHandlerUtilTest : BaseMockable() {
     }
 
     @Test
-    fun `Add byte buddy dependency with plugin version`() {
+    fun `Add android buddy tools dependency with plugin version`() {
         dependencyHandlerUtil.addDependencies()
 
-        verifyByteBuddyDependencyAdded()
+        verifyAndroidBuddyToolsDependencyAdded()
     }
 
     @Test
@@ -80,8 +80,8 @@ class DependencyHandlerUtilTest : BaseMockable() {
         }
     }
 
-    private fun verifyByteBuddyDependencyAdded() {
-        verifyDependencyAdded("net.bytebuddy:byte-buddy:${BuildConfig.BYTE_BUDDY_VERSION}")
+    private fun verifyAndroidBuddyToolsDependencyAdded() {
+        verifyDependencyAdded(BuildConfig.ANDROID_BUDDY_TOOLS_URI)
     }
 
     private fun verifyDependencyAdded(dependency: Any) {

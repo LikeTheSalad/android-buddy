@@ -14,14 +14,13 @@ class DependencyHandlerUtil @Inject constructor(
     private val repositoryHandler = projectDependencyToolsProvider.getRepositoryHandler()
 
     companion object {
-        private const val BYTE_BUDDY_DEPENDENCY_FORMAT = "net.bytebuddy:byte-buddy:%s"
         private const val GRADLE_LOGGING_DEPENDENCY_URI = "org.gradle:gradle-logging:4.10.1"
         private const val SLF4J_API_DEPENDENCY_URI = "org.slf4j:slf4j-api:1.7.30"
     }
 
     fun addDependencies() {
         addGradleReleasesRepo()
-        addCompileOnly(dependencyHandler, BYTE_BUDDY_DEPENDENCY_FORMAT.format(Constants.BYTE_BUDDY_DEPENDENCY_VERSION))
+        addCompileOnly(dependencyHandler, Constants.ANDROID_BUDDY_TOOLS_DEPENDENCY_URI)
         addCompileOnly(dependencyHandler, SLF4J_API_DEPENDENCY_URI)
         addCompileOnly(dependencyHandler, GRADLE_LOGGING_DEPENDENCY_URI)
     }
