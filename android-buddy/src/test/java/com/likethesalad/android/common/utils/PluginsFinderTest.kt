@@ -28,8 +28,8 @@ class PluginsFinderTest : BaseMockable() {
         val classesFound = pluginsFinder.findBuiltPluginClassNames()
 
         Truth.assertThat(classesFound).containsExactly(
-            "com.likethesalad.android.buddy.transform.pluginstemp.ProperPlugin",
-            "com.likethesalad.android.buddy.transform.pluginstemp.subdir.AnotherProperPlugin"
+            "com.likethesalad.android.buddy.transform.temptransforms.ProperTransform",
+            "com.likethesalad.android.buddy.transform.temptransforms.subdir.AnotherProperTransform"
         )
     }
 
