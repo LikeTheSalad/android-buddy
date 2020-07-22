@@ -3,14 +3,6 @@ apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'kotlin-kapt'
 apply from: "../common.gradle"
 
-ext {
-    dagger_version = '2.28.1'
-    autoValue_version = '1.7.3'
-    autoFactory_version = '1.0-beta8'
-    androidBuild_version = '3.3.2'
-    byteBuddy_version = ext["android.buddy.byteBuddy.version"]
-}
-
 dependencies {
     implementation project(':android-buddy-tools')
     implementation "net.bytebuddy:byte-buddy:$byteBuddy_version"

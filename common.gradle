@@ -1,4 +1,8 @@
 apply plugin: 'maven-publish'
+apply plugin: "com.github.gmazzo.buildconfig"
+
+project.group = rootProject.group
+project.version = rootProject.version
 
 publishing {
     publications {
@@ -9,4 +13,10 @@ publishing {
             from components.java
         }
     }
+}
+
+buildConfig {
+    packageName("${project.group}.generated")
+
+    buildConfigField("String", "BYTE_BUDDY_VERSION", "\"$byteBuddy_version\"")
 }
