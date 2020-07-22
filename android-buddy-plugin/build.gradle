@@ -1,11 +1,15 @@
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'kotlin-kapt'
+apply plugin: "com.github.gmazzo.buildconfig"
 apply from: "../common.gradle"
 
+ext {
+    tools_dependency_name = 'android-buddy-tools'
+}
+
 dependencies {
-    implementation project(':android-buddy-tools')
-    implementation "net.bytebuddy:byte-buddy:$byteBuddy_version"
+    implementation project(":$tools_dependency_name")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "com.google.dagger:dagger:$dagger_version"
     implementation "com.google.auto.factory:auto-factory:$autoFactory_version"
@@ -27,6 +31,17 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+buildConfig {
+    packageName("com.likethesalad.${project.name.replaceAll("-", ".")}.generated")
+
+    buildConfigField("String", "BYTE_BUDDY_VERSION", "\"$byteBuddy_version\"")
+    buildConfigField(
+            "String",
+            "ANDROID_BUDDY_TOOLS_URI",
+            "\"${project.group}:$tools_dependency_name:${project.version}\""
+    )
 }
 
 gradlePlugin {
