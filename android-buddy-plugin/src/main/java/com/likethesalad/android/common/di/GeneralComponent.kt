@@ -1,6 +1,5 @@
 package com.likethesalad.android.common.di
 
-import com.likethesalad.android.buddylib.actions.VerifyPluginClassesProvidedActionFactory
 import com.likethesalad.android.common.providers.ProjectDependencyToolsProvider
 import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import com.likethesalad.android.common.utils.DependencyHandlerUtil
@@ -13,7 +12,6 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [GeneralModule::class])
 interface GeneralComponent {
-    fun verifyPluginClassesProvidedActionFactory(): VerifyPluginClassesProvidedActionFactory
 
     fun instantiatorWrapper(): InstantiatorWrapper
 
