@@ -4,7 +4,6 @@ import com.android.build.gradle.AppExtension
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.di.AppInjector
 import com.likethesalad.android.buddy.transform.ByteBuddyTransform
-import com.likethesalad.android.common.models.AndroidBuddyExtension
 import com.likethesalad.android.common.utils.DependencyHandlerUtil
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
@@ -17,7 +16,6 @@ import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.ExtensionContainer
-import org.gradle.api.provider.SetProperty
 import org.junit.Before
 import org.junit.Test
 import java.io.File
@@ -33,9 +31,6 @@ class AndroidBuddyPluginTest : BaseMockable() {
 
     @MockK
     lateinit var extensionContainer: ExtensionContainer
-
-    @MockK
-    lateinit var androidBuddyExtension: AndroidBuddyExtension
 
     @MockK
     lateinit var byteBuddyTransform: ByteBuddyTransform
@@ -58,9 +53,6 @@ class AndroidBuddyPluginTest : BaseMockable() {
         every { project.dependencies }.returns(dependencyHandler)
         every { project.repositories }.returns(repositoryHandler)
         every { extensionContainer.getByType(AppExtension::class.java) }.returns(androidExtension)
-        every {
-            extensionContainer.create("androidBuddy", AndroidBuddyExtension::class.java)
-        }.returns(androidBuddyExtension)
         every { AppInjector.getByteBuddyTransform() }.returns(byteBuddyTransform)
         every { AppInjector.getDependencyHandlerUtil() }.returns(dependencyHandlerUtil)
 
@@ -72,13 +64,6 @@ class AndroidBuddyPluginTest : BaseMockable() {
     fun `Check injector is initiated`() {
         verify {
             AppInjector.init(androidBuddyPlugin)
-        }
-    }
-
-    @Test
-    fun `Verify extension is created`() {
-        verify {
-            extensionContainer.create("androidBuddy", AndroidBuddyExtension::class.java)
         }
     }
 
@@ -104,18 +89,6 @@ class AndroidBuddyPluginTest : BaseMockable() {
         val result = androidBuddyPlugin.createFileTreeIterator(folder)
 
         Truth.assertThat(result).isEqualTo(expectedIterator)
-    }
-
-    @Test
-    fun `Get plugin class names from extension`() {
-        val plugins = setOf("some.class.name", "other.class.name")
-        val setProperty = mockk<SetProperty<String>>()
-        every { setProperty.get() }.returns(plugins)
-        every {
-            androidBuddyExtension.pluginNames
-        }.returns(setProperty)
-
-        Truth.assertThat(androidBuddyPlugin.getPluginClassNames()).isEqualTo(plugins.toSet())
     }
 
     @Test

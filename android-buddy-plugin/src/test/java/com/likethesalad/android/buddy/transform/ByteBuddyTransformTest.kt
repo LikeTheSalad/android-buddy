@@ -149,7 +149,7 @@ class ByteBuddyTransformTest : BaseMockable() {
         }.returns(compoundSource)
         every { byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder) }.returns(target)
         every { pluginEngine.with(any<ClassFileLocator>()) }.returns(pluginEngine)
-        every { pluginFactoriesProvider.getFactories(jarFiles, factoriesClassLoader) }.returns(factories)
+        every { pluginFactoriesProvider.getFactories(filesHolder, factoriesClassLoader) }.returns(factories)
         every {
             pluginEngine.apply(any(), any<Plugin.Engine.Target>(), any<List<Plugin.Factory>>())
         }.returns(mockk())

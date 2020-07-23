@@ -66,7 +66,7 @@ class ByteBuddyTransform @Inject constructor(
             .apply(
                 getCompoundSource(scopeClasspath),
                 byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder),
-                pluginFactoriesProvider.getFactories(scopeClasspath.jarFiles, factoriesClassLoader)
+                pluginFactoriesProvider.getFactories(scopeClasspath, factoriesClassLoader)
             )
     }
 
