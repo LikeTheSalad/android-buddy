@@ -14,7 +14,8 @@ class PluginsFinderTest : BaseMockable() {
 
     @Test
     fun `Give empty list when no annotated plugin class is found`() {
-        val pluginsFinder = createInstance(createClassGraphProviderMock(getClassGraphWithoutPlugins()))
+        val classGraphProvider = createClassGraphProviderMock(getClassGraphWithoutPlugins(SourceType.DIR))
+        val pluginsFinder = createInstance(classGraphProvider)
 
         val classesFound = pluginsFinder.findBuiltPluginClassNames()
 
@@ -23,11 +24,55 @@ class PluginsFinderTest : BaseMockable() {
 
     @Test
     fun `Give plugin list when annotated plugin classes are found`() {
-        val pluginsFinder = createInstance(createClassGraphProviderMock(getClassGraphWithPlugins()))
+        val classGraphProvider = createClassGraphProviderMock(getClassGraphWithPlugins(SourceType.DIR))
+        val pluginsFinder = createInstance(classGraphProvider)
 
         val classesFound = pluginsFinder.findBuiltPluginClassNames()
 
         Truth.assertThat(classesFound).containsExactly(
+            "com.likethesalad.android.buddy.transform.temptransforms.ProperTransform",
+            "com.likethesalad.android.buddy.transform.temptransforms.subdir.AnotherProperTransform"
+        )
+    }
+
+    @Test
+    fun `Give annotated plugins from JAR file`() {
+        val classGraphProvider = createClassGraphProviderMock(getClassGraphWithPlugins(SourceType.JAR))
+        val pluginsFinder = createInstance(classGraphProvider)
+
+        val classesFound = pluginsFinder.findBuiltPluginClassNames()
+
+        Truth.assertThat(classesFound).containsExactly(
+            "com.my.test.lib.ProperPlugin",
+            "com.my.test.lib.subdir.AnotherProperPlugin"
+        )
+    }
+
+    @Test
+    fun `Give empty list when no annotated plugin class is found in JAR`() {
+        val classGraphProvider = createClassGraphProviderMock(getClassGraphWithoutPlugins(SourceType.JAR))
+        val pluginsFinder = createInstance(classGraphProvider)
+
+        val classesFound = pluginsFinder.findBuiltPluginClassNames()
+
+        Truth.assertThat(classesFound).isEmpty()
+    }
+
+    @Test
+    fun `Give annotated plugins from JAR and DIR files`() {
+        val classGraphProvider = createClassGraphProviderMock(
+            getClassGraphWithClasspath(
+                getWithPluginClassesDir(),
+                getWithPluginClassesJar()
+            )
+        )
+        val pluginsFinder = createInstance(classGraphProvider)
+
+        val classesFound = pluginsFinder.findBuiltPluginClassNames()
+
+        Truth.assertThat(classesFound).containsExactly(
+            "com.my.test.lib.ProperPlugin",
+            "com.my.test.lib.subdir.AnotherProperPlugin",
             "com.likethesalad.android.buddy.transform.temptransforms.ProperTransform",
             "com.likethesalad.android.buddy.transform.temptransforms.subdir.AnotherProperTransform"
         )
@@ -39,12 +84,24 @@ class PluginsFinderTest : BaseMockable() {
         return provider
     }
 
-    private fun getClassGraphWithPlugins(): ClassGraph {
-        return ClassGraph().overrideClasspath(getWithPluginClassesDir())
+    private fun getClassGraphWithPlugins(sourceType: SourceType): ClassGraph {
+        val file = when (sourceType) {
+            SourceType.DIR -> getWithPluginClassesDir()
+            SourceType.JAR -> getWithPluginClassesJar()
+        }
+        return getClassGraphWithClasspath(file)
     }
 
-    private fun getClassGraphWithoutPlugins(): ClassGraph {
-        return ClassGraph().overrideClasspath(getWithoutPluginClassesDir())
+    private fun getClassGraphWithoutPlugins(sourceType: SourceType): ClassGraph {
+        val file = when (sourceType) {
+            SourceType.DIR -> getWithoutPluginClassesDir()
+            SourceType.JAR -> getWithoutPluginClassesJar()
+        }
+        return getClassGraphWithClasspath(file)
+    }
+
+    private fun getClassGraphWithClasspath(vararg classpath: Any): ClassGraph {
+        return ClassGraph().overrideClasspath(*classpath)
     }
 
     private fun getWithoutPluginClassesDir(): File {
@@ -55,7 +112,20 @@ class PluginsFinderTest : BaseMockable() {
         return resourcesFinder.getResourceFile("classdirs/withplugins")
     }
 
+    private fun getWithoutPluginClassesJar(): File {
+        return resourcesFinder.getResourceFile("classdirs/normal-java-library-1.0-SNAPSHOT.jar")
+    }
+
+    private fun getWithPluginClassesJar(): File {
+        return resourcesFinder.getResourceFile("classdirs/android-buddy-library-1.0-SNAPSHOT.jar")
+    }
+
     private fun createInstance(buildClassGraphProvider: ClassGraphProvider): PluginsFinder {
         return PluginsFinder(buildClassGraphProvider)
+    }
+
+    enum class SourceType {
+        DIR,
+        JAR
     }
 }

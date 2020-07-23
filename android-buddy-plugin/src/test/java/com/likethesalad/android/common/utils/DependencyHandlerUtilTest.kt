@@ -1,5 +1,6 @@
 package com.likethesalad.android.common.utils
 
+import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.plugin.generated.BuildConfig
 import com.likethesalad.android.common.providers.ProjectDependencyToolsProvider
 import com.likethesalad.android.testutils.BaseMockable
@@ -81,7 +82,9 @@ class DependencyHandlerUtilTest : BaseMockable() {
     }
 
     private fun verifyAndroidBuddyToolsDependencyAdded() {
-        verifyDependencyAdded(BuildConfig.ANDROID_BUDDY_TOOLS_URI)
+        val dependencyUri = BuildConfig.ANDROID_BUDDY_TOOLS_URI
+        Truth.assertThat(dependencyUri).startsWith("com.likethesalad.android:android-buddy-tools:")
+        verifyDependencyAdded(dependencyUri)
     }
 
     private fun verifyDependencyAdded(dependency: Any) {
