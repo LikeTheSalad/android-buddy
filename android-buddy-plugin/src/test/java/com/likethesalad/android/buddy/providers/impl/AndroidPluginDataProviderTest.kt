@@ -4,7 +4,7 @@ import com.android.build.gradle.AppExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
-import com.likethesalad.android.buddy.utils.AndroidPluginDataProvider
+import com.likethesalad.android.buddy.utils.android.AndroidPluginDataProvider
 import com.likethesalad.android.common.utils.Logger
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
@@ -37,7 +37,11 @@ class AndroidPluginDataProviderTest : BaseMockable() {
     fun setUp() {
         every { androidExtensionProvider.getAndroidExtension() }.returns(androidAppExtension)
         androidPluginDataProvider =
-            AndroidPluginDataProvider(androidExtensionProvider, logger, variantName)
+            AndroidPluginDataProvider(
+                androidExtensionProvider,
+                logger,
+                variantName
+            )
     }
 
     @Test

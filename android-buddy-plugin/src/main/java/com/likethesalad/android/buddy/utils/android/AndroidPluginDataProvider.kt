@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddy.utils
+package com.likethesalad.android.buddy.utils.android
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension

@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddy.utils
+package com.likethesalad.android.buddy.utils.android
 
 class AndroidVariantPathResolver constructor(
     private val variantName: String,

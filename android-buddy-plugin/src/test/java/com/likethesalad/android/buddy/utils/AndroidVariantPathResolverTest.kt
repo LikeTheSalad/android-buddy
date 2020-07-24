@@ -1,6 +1,7 @@
 package com.likethesalad.android.buddy.utils
 
 import com.google.common.truth.Truth
+import com.likethesalad.android.buddy.utils.android.AndroidVariantPathResolver
 import org.junit.Test
 
 class AndroidVariantPathResolverTest {
@@ -67,6 +68,11 @@ class AndroidVariantPathResolverTest {
         buildTypeName: String,
         flavors: List<String>
     ): AndroidVariantPathResolver {
-        return AndroidVariantPathResolver(variantName, flavorName, buildTypeName, flavors)
+        return AndroidVariantPathResolver(
+            variantName,
+            flavorName,
+            buildTypeName,
+            flavors
+        )
     }
 }
