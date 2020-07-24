@@ -3,6 +3,7 @@ package com.likethesalad.android.buddy.providers.impl
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.google.common.truth.Truth
+import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
 import com.likethesalad.android.buddy.utils.AndroidPluginDataProvider
 import com.likethesalad.android.common.utils.Logger
 import com.likethesalad.android.testutils.BaseMockable
@@ -21,24 +22,29 @@ import java.io.File
 class AndroidPluginDataProviderTest : BaseMockable() {
 
     @MockK
-    lateinit var appExtension: AppExtension
+    lateinit var androidAppExtension: AppExtension
+
+    @MockK
+    lateinit var androidExtensionProvider: AndroidExtensionProvider
 
     @MockK
     lateinit var logger: Logger
 
+    private val variantName = "someVariantName"
     private lateinit var androidPluginDataProvider: AndroidPluginDataProvider
 
     @Before
     fun setUp() {
+        every { androidExtensionProvider.getAndroidExtension() }.returns(androidAppExtension)
         androidPluginDataProvider =
-            AndroidPluginDataProvider(appExtension, logger)
+            AndroidPluginDataProvider(androidExtensionProvider, logger, variantName)
     }
 
     @Test
     fun `Get android booth classpath`() {
         val bootClasspath = mutableListOf<File>(mockk())
         every {
-            appExtension.bootClasspath
+            androidAppExtension.bootClasspath
         }.returns(bootClasspath)
 
         Truth.assertThat(androidPluginDataProvider.getBootClasspath()).isEqualTo(bootClasspath.toSet())
@@ -49,16 +55,15 @@ class AndroidPluginDataProviderTest : BaseMockable() {
         val appVariants = mockk<DomainObjectSet<ApplicationVariant>>()
         val javaCompileProvider = mockk<TaskProvider<JavaCompile>>()
         val javaCompile = mockk<JavaCompile>()
-        val variantName = "someName"
         val targetCompatibility = "1.7"
         val variant = createApplicationVariantMock(variantName)
         every { javaCompileProvider.hint(JavaCompile::class).get() }.returns(javaCompile)
-        every { appExtension.applicationVariants }.returns(appVariants)
+        every { androidAppExtension.applicationVariants }.returns(appVariants)
         every { appVariants.iterator() }.returns(getVariantsIterator(variant, "otherName"))
         every { variant.javaCompileProvider }.returns(javaCompileProvider)
         every { javaCompile.targetCompatibility }.returns(targetCompatibility)
 
-        val result = androidPluginDataProvider.getJavaTargetCompatibilityVersion(variantName)
+        val result = androidPluginDataProvider.getJavaTargetCompatibilityVersion()
 
         Truth.assertThat(result).isEqualTo(7)
         verify {
@@ -69,14 +74,13 @@ class AndroidPluginDataProviderTest : BaseMockable() {
     @Test
     fun `Fallback to current JVM target compatibility version when variant not found`() {
         val appVariants = mockk<DomainObjectSet<ApplicationVariant>>()
-        val variantName = "someName"
         val currentJdkJavaVersion = JavaVersion.VERSION_1_7
         mockkStatic(JavaVersion::class)
         every { JavaVersion.current() }.returns(currentJdkJavaVersion)
-        every { appExtension.applicationVariants }.returns(appVariants)
+        every { androidAppExtension.applicationVariants }.returns(appVariants)
         every { appVariants.iterator() }.returns(getVariantsIterator(null, "otherName"))
 
-        val result = androidPluginDataProvider.getJavaTargetCompatibilityVersion(variantName)
+        val result = androidPluginDataProvider.getJavaTargetCompatibilityVersion()
 
         Truth.assertThat(result).isEqualTo(7)
         verify {

@@ -2,7 +2,6 @@ package com.likethesalad.android.buddy.bytebuddy
 
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
-import com.likethesalad.android.buddy.providers.AndroidPluginDataProvider
 import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
@@ -22,9 +21,6 @@ class PluginEngineProviderTest : BaseMockable() {
     lateinit var instantiator: ByteBuddyClassesInstantiator
 
     @MockK
-    lateinit var androidPluginDataProvider: AndroidPluginDataProvider
-
-    @MockK
     lateinit var projectLoggerProvider: ProjectLoggerProvider
 
     @MockK
@@ -35,7 +31,7 @@ class PluginEngineProviderTest : BaseMockable() {
     @Before
     fun setUp() {
         pluginEngineProvider = PluginEngineProvider(
-            instantiator, androidPluginDataProvider, transformationLogger
+            instantiator, transformationLogger
         )
     }
 
@@ -46,11 +42,7 @@ class PluginEngineProviderTest : BaseMockable() {
         val methodNameTransformer = mockk<MethodNameTransformer>()
         val projectLogger = mockk<Logger>()
         val javaTargetCompatibility = 7
-        val variantName = "someName"
         val expectedPluginEngine = mockk<Plugin.Engine>()
-        every { androidPluginDataProvider.getJavaTargetCompatibilityVersion(variantName) }.returns(
-            javaTargetCompatibility
-        )
         every { instantiator.makeDefaultEntryPoint() }.returns(entryPoint)
         every { instantiator.makeClassFileVersionOfJavaVersion(javaTargetCompatibility) }.returns(classFileVersion)
         every { instantiator.makeDefaultMethodNameTransformer() }.returns(methodNameTransformer)
@@ -60,7 +52,7 @@ class PluginEngineProviderTest : BaseMockable() {
         }.returns(expectedPluginEngine)
         every { expectedPluginEngine.with(any<Plugin.Engine.Listener>()) }.returns(expectedPluginEngine)
 
-        val engine = pluginEngineProvider.makeEngine(variantName)
+        val engine = pluginEngineProvider.makeEngine(javaTargetCompatibility)
 
         Truth.assertThat(engine).isEqualTo(expectedPluginEngine)
         verify {

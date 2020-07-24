@@ -2,6 +2,7 @@ package com.likethesalad.android.buddy.utils
 
 class AndroidVariantPathResolver constructor(
     private val variantName: String,
+    private val flavorName: String,
     private val buildTypeName: String,
     private val flavors: List<String>
 ) {
@@ -12,9 +13,8 @@ class AndroidVariantPathResolver constructor(
             result.addAll(flavors.reversed())
         }
 
-        val concatenatedFlavors = getFlavorsCamelcaseConcat(flavors)
-        if (concatenatedFlavors.isNotEmpty()) {
-            result.add(concatenatedFlavors)
+        if (flavorName.isNotEmpty() && flavorName !in result) {
+            result.add(flavorName)
         }
 
         result.add(buildTypeName)
@@ -24,15 +24,5 @@ class AndroidVariantPathResolver constructor(
         }
 
         return result
-    }
-
-    private fun getFlavorsCamelcaseConcat(flavors: List<String>): String {
-        if (flavors.size > 1) {
-            return flavors.drop(1).fold(flavors.first()) { accumulated, currentItem ->
-                "$accumulated${currentItem.capitalize()}"
-            }
-        }
-
-        return ""
     }
 }

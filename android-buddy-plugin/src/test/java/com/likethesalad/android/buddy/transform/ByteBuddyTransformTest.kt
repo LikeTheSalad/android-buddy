@@ -12,7 +12,8 @@ import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFolders
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
-import com.likethesalad.android.buddy.providers.AndroidPluginDataProvider
+import com.likethesalad.android.buddy.utils.AndroidPluginDataProvider
+import com.likethesalad.android.buddy.utils.AndroidPluginDataProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.FilesHolder
 import com.likethesalad.android.buddy.utils.TransformInvocationDataExtractor
@@ -50,7 +51,7 @@ class ByteBuddyTransformTest : BaseMockable() {
     lateinit var transformInvocationDataExtractorFactory: TransformInvocationDataExtractorFactory
 
     @MockK
-    lateinit var androidPluginDataProvider: AndroidPluginDataProvider
+    lateinit var androidPluginDataProviderFactory: AndroidPluginDataProviderFactory
 
     @MockK
     lateinit var compoundSourceFactory: CompoundSourceFactory
@@ -66,10 +67,16 @@ class ByteBuddyTransformTest : BaseMockable() {
     @Before
     fun setUp() {
         byteBuddyTransform = ByteBuddyTransform(
-            classFileLocatorMaker, pluginFactoriesProvider, pluginEngineProvider,
-            byteBuddyClassesInstantiator, sourceOriginForMultipleFoldersFactory,
-            transformInvocationDataExtractorFactory, androidPluginDataProvider,
-            compoundSourceFactory, classLoaderCreator, directoryCleaner
+            classFileLocatorMaker,
+            pluginFactoriesProvider,
+            pluginEngineProvider,
+            byteBuddyClassesInstantiator,
+            sourceOriginForMultipleFoldersFactory,
+            transformInvocationDataExtractorFactory,
+            compoundSourceFactory,
+            classLoaderCreator,
+            directoryCleaner,
+            androidPluginDataProviderFactory
         )
     }
 
@@ -121,12 +128,16 @@ class ByteBuddyTransformTest : BaseMockable() {
         val factories = listOf<Plugin.Factory>()
         val context = mockk<Context>()
         val variantName = "someName"
+        val javaTargetVersion = 8
+        val androidPluginDataProvider = mockk<AndroidPluginDataProvider>()
         every { context.variantName }.returns(variantName)
+        every { androidPluginDataProviderFactory.create(variantName) }.returns(androidPluginDataProvider)
         every {
             classLoaderCreator.create(extraClasspath + allFiles, ByteBuddy::class.java.classLoader)
         }.returns(factoriesClassLoader)
-        every { androidPluginDataProvider.getJavaClassPath(variantName) }.returns(javaClasspath)
+        every { androidPluginDataProvider.getJavaClassPath() }.returns(javaClasspath)
         every { androidPluginDataProvider.getBootClasspath() }.returns(androidBootClasspath)
+        every { androidPluginDataProvider.getJavaTargetCompatibilityVersion() }.returns(javaTargetVersion)
         every {
             transformInvocationDataExtractorFactory.create(transformInvocation)
         }.returns(transformInvocationDataExtractor)
@@ -139,7 +150,7 @@ class ByteBuddyTransformTest : BaseMockable() {
         every { filesHolder.dirFiles }.returns(folders)
         every { filesHolder.jarFiles }.returns(jarFiles)
         every { filesHolder.allFiles }.returns(allFiles)
-        every { pluginEngineProvider.makeEngine(variantName) }.returns(pluginEngine)
+        every { pluginEngineProvider.makeEngine(javaTargetVersion) }.returns(pluginEngine)
         every { classFileLocatorMaker.make(extraClasspath) }.returns(classFileLocator)
         every { sourceOriginForMultipleFoldersFactory.create(folders) }.returns(foldersOrigin)
         every { byteBuddyClassesInstantiator.makeJarFileSourceOrigin(jarFile1) }.returns(jarOrigin1)

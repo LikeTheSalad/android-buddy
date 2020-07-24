@@ -9,7 +9,7 @@ class AndroidVariantPathResolverTest {
     fun `Get top-bottom path for not flavored variant`() {
         val variantName = "debug"
         val buildTypeName = "debug"
-        val instance = createInstance(variantName, buildTypeName, emptyList())
+        val instance = createInstance(variantName, "", buildTypeName, emptyList())
 
         val result = instance.getTopBottomPath()
 
@@ -20,8 +20,9 @@ class AndroidVariantPathResolverTest {
     fun `Get top-bottom path for single flavored variant`() {
         val variantName = "demoRelease"
         val buildTypeName = "release"
+        val flavorName = "demo"
         val flavors = listOf("demo")
-        val instance = createInstance(variantName, buildTypeName, flavors)
+        val instance = createInstance(variantName, flavorName, buildTypeName, flavors)
 
         val result = instance.getTopBottomPath()
 
@@ -31,9 +32,10 @@ class AndroidVariantPathResolverTest {
     @Test
     fun `Get top-bottom path for 2 flavored variant`() {
         val variantName = "demoStableDebug"
+        val flavorName = "demoStable"
         val buildTypeName = "debug"
         val flavors = listOf("demo", "stable")
-        val instance = createInstance(variantName, buildTypeName, flavors)
+        val instance = createInstance(variantName, flavorName, buildTypeName, flavors)
 
         val result = instance.getTopBottomPath()
 
@@ -45,9 +47,10 @@ class AndroidVariantPathResolverTest {
     @Test
     fun `Get top-bottom path for 3 flavored variant`() {
         val variantName = "fullStableAnimeRelease"
+        val flavorName = "fullStableAnime"
         val buildTypeName = "release"
         val flavors = listOf("full", "stable", "anime")
-        val instance = createInstance(variantName, buildTypeName, flavors)
+        val instance = createInstance(variantName, flavorName, buildTypeName, flavors)
 
         val result = instance.getTopBottomPath()
 
@@ -60,9 +63,10 @@ class AndroidVariantPathResolverTest {
 
     private fun createInstance(
         variantName: String,
+        flavorName: String,
         buildTypeName: String,
         flavors: List<String>
     ): AndroidVariantPathResolver {
-        return AndroidVariantPathResolver(variantName, buildTypeName, flavors)
+        return AndroidVariantPathResolver(variantName, flavorName, buildTypeName, flavors)
     }
 }
