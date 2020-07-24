@@ -7,7 +7,7 @@ class DummyResourcesFinder(clazz: Class<*>) {
 
     private val packageResourcesPath: File by lazy {
         val resourceDirectory = Paths.get("src", "test", "dummy").toFile().absolutePath
-        File("$resourceDirectory/${clazz.`package`.name.replace(".", "/")}")
+        File(resourceDirectory)
     }
 
     fun getResourceFile(relativePath: String): File {
