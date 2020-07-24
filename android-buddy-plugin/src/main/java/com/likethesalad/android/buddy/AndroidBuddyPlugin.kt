@@ -1,7 +1,9 @@
 package com.likethesalad.android.buddy
 
 import com.android.build.gradle.AppExtension
+import com.android.build.gradle.BaseExtension
 import com.likethesalad.android.buddy.di.AppInjector
+import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
 import com.likethesalad.android.buddy.providers.FileTreeIteratorProvider
 import com.likethesalad.android.common.base.BuddyPlugin
 import org.gradle.api.Plugin
@@ -12,10 +14,11 @@ import org.gradle.api.logging.Logger
 import java.io.File
 
 @Suppress("UnstableApiUsage")
-open class AndroidBuddyPlugin : Plugin<Project>, BuddyPlugin, FileTreeIteratorProvider {
+open class AndroidBuddyPlugin : Plugin<Project>, BuddyPlugin, FileTreeIteratorProvider,
+    AndroidExtensionProvider {
 
     private lateinit var project: Project
-    var appExtension: AppExtension? = null
+    private lateinit var androidExtension: BaseExtension
 
     companion object {
         private const val EXTENSION_NAME = "androidBuddy"
@@ -25,8 +28,8 @@ open class AndroidBuddyPlugin : Plugin<Project>, BuddyPlugin, FileTreeIteratorPr
         AppInjector.init(this)
         this.project = project
         AppInjector.getDependencyHandlerUtil().addDependencies()
-        appExtension = project.extensions.getByType(AppExtension::class.java)
-        appExtension?.registerTransform(AppInjector.getByteBuddyTransform())
+        androidExtension = project.extensions.getByType(AppExtension::class.java)
+        androidExtension.registerTransform(AppInjector.getByteBuddyTransform())
     }
 
     override fun createFileTreeIterator(folder: File): Iterator<File> {
@@ -43,5 +46,9 @@ open class AndroidBuddyPlugin : Plugin<Project>, BuddyPlugin, FileTreeIteratorPr
 
     override fun getRepositoryHandler(): RepositoryHandler {
         return project.repositories
+    }
+
+    override fun getAndroidExtension(): BaseExtension {
+        return androidExtension
     }
 }

@@ -1,26 +1,36 @@
-package com.likethesalad.android.buddy.providers.impl
+package com.likethesalad.android.buddy.utils
 
 import com.android.build.gradle.AppExtension
-import com.android.build.gradle.api.ApplicationVariant
+import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.api.BaseVariant
 import com.google.auto.factory.AutoFactory
-import com.likethesalad.android.buddy.providers.AndroidPluginDataProvider
+import com.google.auto.factory.Provided
+import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
 import com.likethesalad.android.common.utils.Logger
 import org.gradle.api.JavaVersion
 import java.io.File
 
 @Suppress("UnstableApiUsage")
 @AutoFactory
-class AppAndroidPluginDataProvider(
-    private val appExtension: AppExtension,
-    private val logger: Logger
-) : AndroidPluginDataProvider {
+class AndroidPluginDataProvider(
+    @Provided private val androidExtensionProvider: AndroidExtensionProvider,
+    @Provided private val logger: Logger,
+    private val variantName: String
+) {
 
-    override fun getBootClasspath(): Set<File> {
-        return appExtension.bootClasspath.toSet()
+    private val androidExtension: BaseExtension by lazy {
+        androidExtensionProvider.getAndroidExtension()
+    }
+    private val variant: BaseVariant? by lazy {
+        getVariantByName(variantName)
     }
 
-    override fun getJavaTargetCompatibilityVersion(variantName: String): Int {
-        val variant = getVariantByName(variantName)
+    fun getBootClasspath(): Set<File> {
+        return androidExtension.bootClasspath.toSet()
+    }
+
+    fun getJavaTargetCompatibilityVersion(): Int {
+        val variant = this.variant
         val javaVersion = if (variant == null) {
             logger.w("Java target version for android variant {} not found, falling back to JVM's", variantName)
             getLocalJvmTargetCompatibility()
@@ -33,8 +43,8 @@ class AppAndroidPluginDataProvider(
         return javaVersion
     }
 
-    override fun getJavaClassPath(variantName: String): Set<File> {
-        val variant = getVariantByName(variantName)
+    fun getJavaClassPath(): Set<File> {
+        val variant = this.variant
         if (variant == null) {
             logger.w("Could not find variant '{}' - returning empty java classpath", variantName)
             return emptySet()
@@ -50,9 +60,14 @@ class AppAndroidPluginDataProvider(
         return javaVersion.majorVersion.toInt()
     }
 
-    private fun getVariantByName(name: String): ApplicationVariant? {
-        return appExtension.applicationVariants.find {
-            it.name == name
+    private fun getVariantByName(name: String): BaseVariant? {
+        val androidExtension = this.androidExtension
+        if (androidExtension is AppExtension) {
+            return androidExtension.applicationVariants.find {
+                it.name == name
+            }
         }
+
+        throw UnsupportedOperationException()
     }
 }

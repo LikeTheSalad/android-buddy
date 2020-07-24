@@ -3,6 +3,7 @@ package com.likethesalad.android.buddy.providers.impl
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.google.common.truth.Truth
+import com.likethesalad.android.buddy.utils.AndroidPluginDataProvider
 import com.likethesalad.android.common.utils.Logger
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
@@ -17,7 +18,7 @@ import org.junit.Before
 import org.junit.Test
 import java.io.File
 
-class AppAndroidPluginDataProviderTest : BaseMockable() {
+class AndroidPluginDataProviderTest : BaseMockable() {
 
     @MockK
     lateinit var appExtension: AppExtension
@@ -25,11 +26,12 @@ class AppAndroidPluginDataProviderTest : BaseMockable() {
     @MockK
     lateinit var logger: Logger
 
-    private lateinit var appAndroidPluginDataProvider: AppAndroidPluginDataProvider
+    private lateinit var androidPluginDataProvider: AndroidPluginDataProvider
 
     @Before
     fun setUp() {
-        appAndroidPluginDataProvider = AppAndroidPluginDataProvider(appExtension, logger)
+        androidPluginDataProvider =
+            AndroidPluginDataProvider(appExtension, logger)
     }
 
     @Test
@@ -39,7 +41,7 @@ class AppAndroidPluginDataProviderTest : BaseMockable() {
             appExtension.bootClasspath
         }.returns(bootClasspath)
 
-        Truth.assertThat(appAndroidPluginDataProvider.getBootClasspath()).isEqualTo(bootClasspath.toSet())
+        Truth.assertThat(androidPluginDataProvider.getBootClasspath()).isEqualTo(bootClasspath.toSet())
     }
 
     @Test
@@ -56,7 +58,7 @@ class AppAndroidPluginDataProviderTest : BaseMockable() {
         every { variant.javaCompileProvider }.returns(javaCompileProvider)
         every { javaCompile.targetCompatibility }.returns(targetCompatibility)
 
-        val result = appAndroidPluginDataProvider.getJavaTargetCompatibilityVersion(variantName)
+        val result = androidPluginDataProvider.getJavaTargetCompatibilityVersion(variantName)
 
         Truth.assertThat(result).isEqualTo(7)
         verify {
@@ -74,7 +76,7 @@ class AppAndroidPluginDataProviderTest : BaseMockable() {
         every { appExtension.applicationVariants }.returns(appVariants)
         every { appVariants.iterator() }.returns(getVariantsIterator(null, "otherName"))
 
-        val result = appAndroidPluginDataProvider.getJavaTargetCompatibilityVersion(variantName)
+        val result = androidPluginDataProvider.getJavaTargetCompatibilityVersion(variantName)
 
         Truth.assertThat(result).isEqualTo(7)
         verify {
