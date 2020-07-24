@@ -130,6 +130,19 @@ class AndroidPluginDataProviderTest : BaseMockable() {
         Truth.assertThat(result).isEqualTo(expectedPath)
     }
 
+    @Test
+    fun `Get variant path with null variant`() {
+        val appVariants = mockk<DomainObjectSet<ApplicationVariant>>()
+        every { appVariants.iterator() }.returns(mutableListOf<ApplicationVariant>().iterator())
+        every { androidAppExtension.applicationVariants }.returns(appVariants)
+
+        Truth.assertThat(androidPluginDataProvider.getVariantPath()).isEmpty()
+
+        verify {
+            logger.w("Could not find variant path for {}, returning empty", variantName)
+        }
+    }
+
     private fun getVariantsIterator(
         chosen: ApplicationVariant?,
         vararg variantNames: String
