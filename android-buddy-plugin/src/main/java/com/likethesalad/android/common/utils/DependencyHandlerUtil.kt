@@ -1,5 +1,6 @@
 package com.likethesalad.android.common.utils
 
+import com.likethesalad.android.buddy.plugin.generated.BuildConfig
 import com.likethesalad.android.common.providers.ProjectDependencyToolsProvider
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import javax.inject.Inject
@@ -16,11 +17,12 @@ class DependencyHandlerUtil @Inject constructor(
     companion object {
         private const val GRADLE_LOGGING_DEPENDENCY_URI = "org.gradle:gradle-logging:4.10.1"
         private const val SLF4J_API_DEPENDENCY_URI = "org.slf4j:slf4j-api:1.7.30"
+        private const val ANDROID_BUDDY_TOOLS_DEPENDENCY_URI = BuildConfig.ANDROID_BUDDY_TOOLS_URI
     }
 
     fun addDependencies() {
         addGradleReleasesRepo()
-        addCompileOnly(dependencyHandler, Constants.ANDROID_BUDDY_TOOLS_DEPENDENCY_URI)
+        addCompileOnly(dependencyHandler, ANDROID_BUDDY_TOOLS_DEPENDENCY_URI)
         addCompileOnly(dependencyHandler, SLF4J_API_DEPENDENCY_URI)
         addCompileOnly(dependencyHandler, GRADLE_LOGGING_DEPENDENCY_URI)
     }

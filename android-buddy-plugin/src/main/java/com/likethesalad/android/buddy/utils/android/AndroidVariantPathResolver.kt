@@ -1,5 +1,8 @@
 package com.likethesalad.android.buddy.utils.android
 
+import com.google.auto.factory.AutoFactory
+
+@AutoFactory
 class AndroidVariantPathResolver constructor(
     private val variantName: String,
     private val flavorName: String,

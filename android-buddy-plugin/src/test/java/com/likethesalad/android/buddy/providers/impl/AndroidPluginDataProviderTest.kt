@@ -5,6 +5,7 @@ import com.android.build.gradle.api.ApplicationVariant
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
 import com.likethesalad.android.buddy.utils.android.AndroidPluginDataProvider
+import com.likethesalad.android.buddy.utils.android.AndroidVariantPathResolverFactory
 import com.likethesalad.android.common.utils.Logger
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
@@ -15,6 +16,7 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.JavaVersion
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import java.io.File
@@ -28,6 +30,9 @@ class AndroidPluginDataProviderTest : BaseMockable() {
     lateinit var androidExtensionProvider: AndroidExtensionProvider
 
     @MockK
+    lateinit var androidVariantPathResolverFactory: AndroidVariantPathResolverFactory
+
+    @MockK
     lateinit var logger: Logger
 
     private val variantName = "someVariantName"
@@ -39,6 +44,7 @@ class AndroidPluginDataProviderTest : BaseMockable() {
         androidPluginDataProvider =
             AndroidPluginDataProvider(
                 androidExtensionProvider,
+                androidVariantPathResolverFactory,
                 logger,
                 variantName
             )
@@ -91,6 +97,11 @@ class AndroidPluginDataProviderTest : BaseMockable() {
             logger.w("Java target version for android variant {} not found, falling back to JVM's", variantName)
             logger.i("Using java target version {}", 7)
         }
+    }
+
+    @Test
+    fun `Get variant path`() {
+        fail("Not implemented")
     }
 
     private fun getVariantsIterator(

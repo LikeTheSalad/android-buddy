@@ -14,6 +14,7 @@ import java.io.File
 @AutoFactory
 class AndroidPluginDataProvider(
     @Provided private val androidExtensionProvider: AndroidExtensionProvider,
+    @Provided private val androidVariantPathResolverFactory: AndroidVariantPathResolverFactory,
     @Provided private val logger: Logger,
     private val variantName: String
 ) {
@@ -50,6 +51,19 @@ class AndroidPluginDataProvider(
             return emptySet()
         }
         return variant.javaCompileProvider.get().classpath.files
+    }
+
+    fun getVariantPath(): List<String> {
+        val variant = this.variant
+        if (variant == null) {
+            logger.w("Could not find variant path for {}, returning empty", variantName)
+            return emptyList()
+        }
+        val resolver = androidVariantPathResolverFactory.create(
+            variantName, variant.flavorName, variant.buildType.name, variant.productFlavors.map { it.name }
+        )
+
+        return resolver.getTopBottomPath()
     }
 
     private fun getLocalJvmTargetCompatibility(): Int {
