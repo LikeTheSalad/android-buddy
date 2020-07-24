@@ -10,7 +10,7 @@ import java.io.File
 
 class PluginsFinderTest : BaseMockable() {
 
-    private val resourcesFinder = DummyResourcesFinder(javaClass)
+    private val resourcesFinder = DummyResourcesFinder()
 
     @Test
     fun `Give empty list when no annotated plugin class is found`() {

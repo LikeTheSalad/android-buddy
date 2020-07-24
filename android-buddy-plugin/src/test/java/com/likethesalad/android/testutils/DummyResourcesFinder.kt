@@ -3,7 +3,7 @@ package com.likethesalad.android.testutils
 import java.io.File
 import java.nio.file.Paths
 
-class DummyResourcesFinder(clazz: Class<*>) {
+class DummyResourcesFinder {
 
     private val packageResourcesPath: File by lazy {
         val resourceDirectory = Paths.get("src", "test", "dummy").toFile().absolutePath
