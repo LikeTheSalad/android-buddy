@@ -1,7 +1,7 @@
 package com.likethesalad.android.buddy.utils
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.utils.android.AndroidVariantPathResolver
+import com.likethesalad.android.buddy.modules.customconfig.AndroidVariantPathResolver
 import org.junit.Test
 
 class AndroidVariantPathResolverTest {

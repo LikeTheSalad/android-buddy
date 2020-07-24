@@ -1,9 +1,9 @@
 package com.likethesalad.android.buddy.providers.impl
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.utils.CustomConfigurationResolver
-import com.likethesalad.android.buddy.utils.CustomConfigurationResolverFactory
-import com.likethesalad.android.buddy.utils.android.AndroidPluginDataProvider
+import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationResolver
+import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationResolverFactory
+import com.likethesalad.android.buddy.utils.AndroidPluginDataProvider
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

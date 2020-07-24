@@ -8,6 +8,7 @@ import com.android.build.api.transform.TransformInput
 import com.android.build.api.transform.TransformInvocation
 import com.android.build.api.transform.TransformOutputProvider
 import com.google.common.truth.Truth
+import com.likethesalad.android.buddy.modules.transform.TransformInvocationDataExtractor
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -25,9 +26,10 @@ class TransformInvocationDataExtractorTest : BaseMockable() {
 
     @Before
     fun setUp() {
-        transformInvocationDataExtractor = TransformInvocationDataExtractor(
-            transformInvocation
-        )
+        transformInvocationDataExtractor =
+            TransformInvocationDataExtractor(
+                transformInvocation
+            )
     }
 
     @Test

@@ -12,12 +12,13 @@ import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFolders
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
+import com.likethesalad.android.buddy.modules.transform.ByteBuddyTransform
+import com.likethesalad.android.buddy.modules.transform.TransformInvocationDataExtractor
+import com.likethesalad.android.buddy.modules.transform.TransformInvocationDataExtractorFactory
+import com.likethesalad.android.buddy.utils.AndroidPluginDataProvider
+import com.likethesalad.android.buddy.utils.AndroidPluginDataProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.FilesHolder
-import com.likethesalad.android.buddy.utils.TransformInvocationDataExtractor
-import com.likethesalad.android.buddy.utils.TransformInvocationDataExtractorFactory
-import com.likethesalad.android.buddy.utils.android.AndroidPluginDataProvider
-import com.likethesalad.android.buddy.utils.android.AndroidPluginDataProviderFactory
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every

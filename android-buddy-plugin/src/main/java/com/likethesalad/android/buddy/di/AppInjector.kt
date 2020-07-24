@@ -1,7 +1,7 @@
 package com.likethesalad.android.buddy.di
 
 import com.likethesalad.android.buddy.AndroidBuddyPlugin
-import com.likethesalad.android.buddy.transform.ByteBuddyTransform
+import com.likethesalad.android.buddy.modules.transform.ByteBuddyTransform
 import com.likethesalad.android.common.di.GeneralInjector
 import com.likethesalad.android.common.utils.DependencyHandlerUtil
 

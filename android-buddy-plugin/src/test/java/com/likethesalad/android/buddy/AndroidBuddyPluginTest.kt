@@ -3,7 +3,7 @@ package com.likethesalad.android.buddy
 import com.android.build.gradle.AppExtension
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.di.AppInjector
-import com.likethesalad.android.buddy.transform.ByteBuddyTransform
+import com.likethesalad.android.buddy.modules.transform.ByteBuddyTransform
 import com.likethesalad.android.common.utils.DependencyHandlerUtil
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every

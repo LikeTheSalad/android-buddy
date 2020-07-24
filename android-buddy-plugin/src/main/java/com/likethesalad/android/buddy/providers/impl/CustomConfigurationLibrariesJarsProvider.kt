@@ -2,9 +2,9 @@ package com.likethesalad.android.buddy.providers.impl
 
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
+import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationResolverFactory
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
-import com.likethesalad.android.buddy.utils.CustomConfigurationResolverFactory
-import com.likethesalad.android.buddy.utils.android.AndroidPluginDataProvider
+import com.likethesalad.android.buddy.utils.AndroidPluginDataProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import java.io.File

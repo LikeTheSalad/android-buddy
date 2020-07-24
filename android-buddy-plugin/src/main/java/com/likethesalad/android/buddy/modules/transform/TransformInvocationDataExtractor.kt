@@ -1,9 +1,10 @@
-package com.likethesalad.android.buddy.utils
+package com.likethesalad.android.buddy.modules.transform
 
 import com.android.build.api.transform.Format
 import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.TransformInvocation
 import com.google.auto.factory.AutoFactory
+import com.likethesalad.android.buddy.utils.FilesHolder
 import java.io.File
 
 @AutoFactory

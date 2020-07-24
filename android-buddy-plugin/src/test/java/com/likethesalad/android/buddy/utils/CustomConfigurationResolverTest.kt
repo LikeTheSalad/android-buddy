@@ -1,8 +1,8 @@
 package com.likethesalad.android.buddy.utils
 
 import com.google.common.truth.Truth
+import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationResolver
 import com.likethesalad.android.buddy.providers.GradleConfigurationsProvider
-import com.likethesalad.android.buddy.utils.android.AndroidPluginDataProvider
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -32,10 +32,11 @@ class CustomConfigurationResolverTest : BaseMockable() {
             configMock
         }
         every { gradleConfigurationsProvider.getConfigurationContainer() }.returns(configurationContainer)
-        customConfigurationResolver = CustomConfigurationResolver(
-            gradleConfigurationsProvider,
-            androidPluginDataProvider
-        )
+        customConfigurationResolver =
+            CustomConfigurationResolver(
+                gradleConfigurationsProvider,
+                androidPluginDataProvider
+            )
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddy.transform
+package com.likethesalad.android.buddy.modules.transform
 
 import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.Transform
@@ -11,11 +11,10 @@ import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.di.AppScope
+import com.likethesalad.android.buddy.utils.AndroidPluginDataProvider
+import com.likethesalad.android.buddy.utils.AndroidPluginDataProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.FilesHolder
-import com.likethesalad.android.buddy.utils.TransformInvocationDataExtractorFactory
-import com.likethesalad.android.buddy.utils.android.AndroidPluginDataProvider
-import com.likethesalad.android.buddy.utils.android.AndroidPluginDataProviderFactory
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.build.Plugin

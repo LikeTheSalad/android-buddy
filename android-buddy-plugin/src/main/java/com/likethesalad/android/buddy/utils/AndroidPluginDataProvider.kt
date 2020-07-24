@@ -1,10 +1,11 @@
-package com.likethesalad.android.buddy.utils.android
+package com.likethesalad.android.buddy.utils
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.BaseVariant
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
+import com.likethesalad.android.buddy.modules.customconfig.AndroidVariantPathResolverFactory
 import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
 import com.likethesalad.android.common.utils.Logger
 import org.gradle.api.JavaVersion
