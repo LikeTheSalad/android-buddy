@@ -59,6 +59,7 @@ lintPublish
 provided
 releaseAnnotationProcessor
 releaseApi
+androidBuddyReleaseApi
 releaseApiDependenciesMetadata
 releaseApk
 releaseCompile
