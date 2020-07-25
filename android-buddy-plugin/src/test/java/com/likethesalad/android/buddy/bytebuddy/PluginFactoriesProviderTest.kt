@@ -2,7 +2,7 @@ package com.likethesalad.android.buddy.bytebuddy
 
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
-import com.likethesalad.android.buddy.utils.FilesHolder
+import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
 import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import com.likethesalad.android.common.providers.impl.DefaultClassGraphFilesProvider
 import com.likethesalad.android.common.utils.ClassGraphProvider
@@ -72,9 +72,8 @@ class PluginFactoriesProviderTest : BaseMockable() {
 
     @Test
     fun `Get factories from local and external classpath`() {
-        val jarFiles = setOf<File>(mockk(), mockk())
+        val librariesJars = setOf<File>(mockk(), mockk())
         val dirFiles = setOf<File>(mockk())
-        val filesHolder = FilesHolder(dirFiles, jarFiles, dirFiles + jarFiles)
         val classLoader = mockk<ClassLoader>()
         val name1 = createNameAndPluginAndFactory(SomePlugin1::class.java, classLoader)
         val name2 = createNameAndPluginAndFactory(SomePlugin2::class.java, classLoader)
@@ -83,6 +82,8 @@ class PluginFactoriesProviderTest : BaseMockable() {
         val dirsClassGraphProvider = mockk<ClassGraphProvider>()
         val jarsPluginsFinder = mockk<PluginsFinder>()
         val dirsPluginsFinder = mockk<PluginsFinder>()
+        val librariesJarsProvider = mockk<LibrariesJarsProvider>()
+        every { librariesJarsProvider.getLibrariesJars() }.returns(librariesJars)
         every {
             classGraphProviderFactory.create(DefaultClassGraphFilesProvider(dirFiles))
         }.returns(dirsClassGraphProvider)
@@ -93,7 +94,7 @@ class PluginFactoriesProviderTest : BaseMockable() {
             dirsPluginsFinder.findBuiltPluginClassNames()
         }.returns(setOf(name1.name, name2.name))
         every {
-            classGraphProviderFactory.create(DefaultClassGraphFilesProvider(jarFiles))
+            classGraphProviderFactory.create(DefaultClassGraphFilesProvider(librariesJars))
         }.returns(jarsClassGraphProvider)
         every {
             pluginsFinderFactory.create(jarsClassGraphProvider)
@@ -102,7 +103,7 @@ class PluginFactoriesProviderTest : BaseMockable() {
             jarsPluginsFinder.findBuiltPluginClassNames()
         }.returns(setOf(libName1.name))
 
-        val factories = pluginFactoriesProvider.getFactories(filesHolder, classLoader)
+        val factories = pluginFactoriesProvider.getFactories(dirFiles, librariesJarsProvider, classLoader)
 
         Truth.assertThat(factories)
             .containsExactly(name1.expectedFactory, name2.expectedFactory, libName1.expectedFactory)

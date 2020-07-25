@@ -15,6 +15,8 @@ import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiat
 import com.likethesalad.android.buddy.modules.transform.ByteBuddyTransform
 import com.likethesalad.android.buddy.modules.transform.TransformInvocationDataExtractor
 import com.likethesalad.android.buddy.modules.transform.TransformInvocationDataExtractorFactory
+import com.likethesalad.android.buddy.providers.impl.CustomConfigurationLibrariesJarsProvider
+import com.likethesalad.android.buddy.providers.impl.CustomConfigurationLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.utils.AndroidPluginDataProvider
 import com.likethesalad.android.buddy.utils.AndroidPluginDataProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
@@ -63,6 +65,9 @@ class ByteBuddyTransformTest : BaseMockable() {
     @MockK
     lateinit var classLoaderCreator: ClassLoaderCreator
 
+    @MockK
+    lateinit var customConfigurationLibrariesJarsProviderFactory: CustomConfigurationLibrariesJarsProviderFactory
+
     private lateinit var byteBuddyTransform: ByteBuddyTransform
 
     @Before
@@ -77,6 +82,7 @@ class ByteBuddyTransformTest : BaseMockable() {
             compoundSourceFactory,
             classLoaderCreator,
             directoryCleaner,
+            customConfigurationLibrariesJarsProviderFactory,
             androidPluginDataProviderFactory
         )
     }
@@ -105,6 +111,7 @@ class ByteBuddyTransformTest : BaseMockable() {
         val transformInvocation = mockk<TransformInvocation>()
         val transformInvocationDataExtractor = mockk<TransformInvocationDataExtractor>()
         val factoriesClassLoader = mockk<ClassLoader>()
+        val customConfigurationLibrariesJarsProvider = mockk<CustomConfigurationLibrariesJarsProvider>()
         val folder1 = mockk<File>()
         val folders = setOf(folder1)
         val jarFile1 = mockk<File>()
@@ -132,6 +139,9 @@ class ByteBuddyTransformTest : BaseMockable() {
         val javaTargetVersion = 8
         val androidPluginDataProvider = mockk<AndroidPluginDataProvider>()
         every { context.variantName }.returns(variantName)
+        every {
+            customConfigurationLibrariesJarsProviderFactory.create(androidPluginDataProvider)
+        }.returns(customConfigurationLibrariesJarsProvider)
         every { androidPluginDataProviderFactory.create(variantName) }.returns(androidPluginDataProvider)
         every {
             classLoaderCreator.create(extraClasspath + allFiles, ByteBuddy::class.java.classLoader)
@@ -161,7 +171,13 @@ class ByteBuddyTransformTest : BaseMockable() {
         }.returns(compoundSource)
         every { byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder) }.returns(target)
         every { pluginEngine.with(any<ClassFileLocator>()) }.returns(pluginEngine)
-        every { pluginFactoriesProvider.getFactories(filesHolder, factoriesClassLoader) }.returns(factories)
+        every {
+            pluginFactoriesProvider.getFactories(
+                folders,
+                customConfigurationLibrariesJarsProvider,
+                factoriesClassLoader
+            )
+        }.returns(factories)
         every {
             pluginEngine.apply(any(), any<Plugin.Engine.Target>(), any<List<Plugin.Factory>>())
         }.returns(mockk())

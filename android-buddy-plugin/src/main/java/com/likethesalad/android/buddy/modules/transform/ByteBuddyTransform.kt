@@ -11,6 +11,8 @@ import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.di.AppScope
+import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
+import com.likethesalad.android.buddy.providers.impl.CustomConfigurationLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.utils.AndroidPluginDataProvider
 import com.likethesalad.android.buddy.utils.AndroidPluginDataProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
@@ -32,6 +34,7 @@ class ByteBuddyTransform @Inject constructor(
     private val compoundSourceFactory: CompoundSourceFactory,
     private val classLoaderCreator: ClassLoaderCreator,
     private val directoryCleaner: DirectoryCleaner,
+    private val customConfigurationLibrariesJarsProviderFactory: CustomConfigurationLibrariesJarsProviderFactory,
     private val androidPluginDataProviderFactory: AndroidPluginDataProviderFactory
 ) : Transform() {
 
@@ -67,7 +70,11 @@ class ByteBuddyTransform @Inject constructor(
             .apply(
                 getCompoundSource(scopeClasspath),
                 byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder),
-                pluginFactoriesProvider.getFactories(scopeClasspath, factoriesClassLoader)
+                pluginFactoriesProvider.getFactories(
+                    scopeClasspath.dirFiles,
+                    getLibrariesJarsProvider(androidDataProvider),
+                    factoriesClassLoader
+                )
             )
     }
 
@@ -106,5 +113,9 @@ class ByteBuddyTransform @Inject constructor(
             scopeClasspath.allFiles + extraClasspath,
             ByteBuddy::class.java.classLoader
         )
+    }
+
+    private fun getLibrariesJarsProvider(dataProvider: AndroidPluginDataProvider): LibrariesJarsProvider {
+        return customConfigurationLibrariesJarsProviderFactory.create(dataProvider)
     }
 }

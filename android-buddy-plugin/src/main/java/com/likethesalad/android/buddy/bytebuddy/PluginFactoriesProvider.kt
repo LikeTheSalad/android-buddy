@@ -2,7 +2,7 @@ package com.likethesalad.android.buddy.bytebuddy
 
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.di.AppScope
-import com.likethesalad.android.buddy.utils.FilesHolder
+import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
 import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import com.likethesalad.android.common.providers.impl.DefaultClassGraphFilesProvider
 import com.likethesalad.android.common.utils.ClassGraphProviderFactory
@@ -31,10 +31,14 @@ class PluginFactoriesProvider
         )
     }
 
-    fun getFactories(classPath: FilesHolder, classLoader: ClassLoader): List<Plugin.Factory> {
+    fun getFactories(
+        localDirs: Set<File>,
+        librariesJarsProvider: LibrariesJarsProvider,
+        classLoader: ClassLoader
+    ): List<Plugin.Factory> {
         val pluginNames = mutableSetOf<String>()
-        pluginNames.addAll(getLocalPluginNames(classPath.dirFiles))
-        pluginNames.addAll(getLibraryPluginNames(classPath.jarFiles))
+        pluginNames.addAll(getLocalPluginNames(localDirs))
+        pluginNames.addAll(getLibraryPluginNames(librariesJarsProvider.getLibrariesJars()))
 
         return pluginNames.map { nameToFactory(it, classLoader) }
     }

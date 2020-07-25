@@ -22,13 +22,9 @@ open class AndroidBuddyPlugin : Plugin<Project>, BuddyPlugin, FileTreeIteratorPr
     private lateinit var project: Project
     private lateinit var androidExtension: BaseExtension
 
-    companion object {
-        private const val EXTENSION_NAME = "androidBuddy"
-    }
-
     override fun apply(project: Project) {
-        AppInjector.init(this)
         this.project = project
+        AppInjector.init(this)
         AppInjector.getCustomConfigurationCreator().createAndroidBuddyConfigurations()
         AppInjector.getDependencyHandlerUtil().addDependencies()
         androidExtension = project.extensions.getByType(AppExtension::class.java)
