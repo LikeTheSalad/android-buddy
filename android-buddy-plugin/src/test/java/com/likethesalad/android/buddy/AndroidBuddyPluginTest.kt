@@ -3,6 +3,7 @@ package com.likethesalad.android.buddy
 import com.android.build.gradle.AppExtension
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.di.AppInjector
+import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationCreator
 import com.likethesalad.android.buddy.modules.transform.ByteBuddyTransform
 import com.likethesalad.android.common.utils.DependencyHandlerUtil
 import com.likethesalad.android.testutils.BaseMockable
@@ -11,6 +12,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
 import io.mockk.verify
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.file.ConfigurableFileTree
@@ -44,6 +46,12 @@ class AndroidBuddyPluginTest : BaseMockable() {
     @MockK
     lateinit var repositoryHandler: RepositoryHandler
 
+    @MockK
+    lateinit var configurationContainer: ConfigurationContainer
+
+    @MockK
+    lateinit var customConfigurationCreator: CustomConfigurationCreator
+
     private lateinit var androidBuddyPlugin: AndroidBuddyPlugin
 
     @Before
@@ -52,9 +60,11 @@ class AndroidBuddyPluginTest : BaseMockable() {
         every { project.extensions }.returns(extensionContainer)
         every { project.dependencies }.returns(dependencyHandler)
         every { project.repositories }.returns(repositoryHandler)
+        every { project.configurations }.returns(configurationContainer)
         every { extensionContainer.getByType(AppExtension::class.java) }.returns(androidExtension)
         every { AppInjector.getByteBuddyTransform() }.returns(byteBuddyTransform)
         every { AppInjector.getDependencyHandlerUtil() }.returns(dependencyHandlerUtil)
+        every { AppInjector.getCustomConfigurationCreator() }.returns(customConfigurationCreator)
 
         androidBuddyPlugin = AndroidBuddyPlugin()
         androidBuddyPlugin.apply(project)
@@ -117,5 +127,15 @@ class AndroidBuddyPluginTest : BaseMockable() {
     @Test
     fun `Provide RepositoryHandler`() {
         Truth.assertThat(androidBuddyPlugin.getRepositoryHandler()).isEqualTo(repositoryHandler)
+    }
+
+    @Test
+    fun `Provide android extension`() {
+        Truth.assertThat(androidBuddyPlugin.getAndroidExtension()).isEqualTo(androidExtension)
+    }
+
+    @Test
+    fun `Provide dependency configurations container`() {
+        Truth.assertThat(androidBuddyPlugin.getConfigurationContainer()).isEqualTo(configurationContainer)
     }
 }

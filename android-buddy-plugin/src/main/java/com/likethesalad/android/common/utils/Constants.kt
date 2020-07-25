@@ -6,4 +6,5 @@ object Constants {
     const val PLUGINS_PROPERTIES_CLASSES_KEY = "plugin-classes"
     const val IMPLEMENTATION_DEPENDENCY_SUFFIX = "Implementation"
     const val API_DEPENDENCY_SUFFIX = "Api"
+    const val CUSTOM_CONFIGURATIONS_PREFIX = "androidBuddy"
 }

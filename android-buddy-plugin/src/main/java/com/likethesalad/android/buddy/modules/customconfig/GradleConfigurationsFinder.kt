@@ -1,11 +1,11 @@
 package com.likethesalad.android.buddy.modules.customconfig
 
+import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.providers.GradleConfigurationsProvider
 import org.gradle.api.artifacts.Configuration
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@AppScope
 class GradleConfigurationsFinder
 @Inject constructor(private val gradleConfigurationsProvider: GradleConfigurationsProvider) {
 

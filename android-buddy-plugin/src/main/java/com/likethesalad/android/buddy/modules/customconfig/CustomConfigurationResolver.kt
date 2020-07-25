@@ -18,10 +18,6 @@ class CustomConfigurationResolver(
         gradleConfigurationsProvider.getConfigurationContainer()
     }
 
-    companion object {
-        private const val CONFIGURATIONS_PREFIX = "androidBuddy"
-    }
-
     fun getApiConfigurations(): List<Configuration> {
         val configs = mutableListOf(getConfigurationNameFor("", Type.API))
         configs.addAll(variantPath.map { getConfigurationNameFor(it, Type.API) })
@@ -49,7 +45,7 @@ class CustomConfigurationResolver(
     }
 
     private fun getConfigurationNameFor(middle: String, type: Type): String {
-        return "$CONFIGURATIONS_PREFIX${middle.capitalize()}${type.suffix}"
+        return "${Constants.CUSTOM_CONFIGURATIONS_PREFIX}${middle.capitalize()}${type.suffix}"
     }
 
     enum class Type(val suffix: String) {
