@@ -67,6 +67,10 @@ class AndroidPluginDataProvider(
         return resolver.getTopBottomPath()
     }
 
+    fun getBuildTypeNames(): List<String> {
+        return androidExtension.buildTypes.names.toList()
+    }
+
     private fun getLocalJvmTargetCompatibility(): Int {
         return javaVersionToInt(JavaVersion.current())
     }

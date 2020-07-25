@@ -1,6 +1,7 @@
 package com.likethesalad.android.buddy.providers.impl
 
 import com.google.common.truth.Truth
+import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationLibrariesJarsProvider
 import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationResolver
 import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationResolverFactory
 import com.likethesalad.android.buddy.utils.AndroidPluginDataProvider
@@ -32,7 +33,10 @@ class CustomConfigurationLibrariesJarsProviderTest : BaseMockable() {
             customConfigurationResolverFactory.create(androidPluginDataProvider)
         }.returns(customConfigurationResolver)
         customConfigurationLibrariesJarsProvider =
-            CustomConfigurationLibrariesJarsProvider(customConfigurationResolverFactory, androidPluginDataProvider)
+            CustomConfigurationLibrariesJarsProvider(
+                customConfigurationResolverFactory,
+                androidPluginDataProvider
+            )
     }
 
     @Test
