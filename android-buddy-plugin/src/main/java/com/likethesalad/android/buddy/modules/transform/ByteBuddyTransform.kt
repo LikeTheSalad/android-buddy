@@ -11,8 +11,8 @@ import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.di.AppScope
+import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
-import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
 import com.likethesalad.android.buddy.utils.AndroidVariantDataProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
@@ -35,7 +35,7 @@ class ByteBuddyTransform @Inject constructor(
     private val classLoaderCreator: ClassLoaderCreator,
     private val directoryCleaner: DirectoryCleaner,
     private val androidVariantDataProviderFactory: AndroidVariantDataProviderFactory,
-    private val defaultLibrariesJarsProviderFactory: DefaultLibrariesJarsProviderFactory
+    private val customConfigurationLibrariesJarsProviderFactory: CustomConfigurationLibrariesJarsProviderFactory
 ) : Transform() {
 
     override fun getName(): String = "androidBuddy"
@@ -72,7 +72,7 @@ class ByteBuddyTransform @Inject constructor(
                 byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder),
                 pluginFactoriesProvider.getFactories(
                     scopeClasspath.dirFiles,
-                    getLibrariesJarsProvider(extraClasspath),
+                    getLibrariesJarsProvider(androidDataProvider),
                     factoriesClassLoader
                 )
             )
@@ -115,7 +115,8 @@ class ByteBuddyTransform @Inject constructor(
         )
     }
 
-    private fun getLibrariesJarsProvider(extraClasspath: Set<File>): LibrariesJarsProvider {
-        return defaultLibrariesJarsProviderFactory.create(extraClasspath)
+    private fun getLibrariesJarsProvider(androidVariantDataProvider: AndroidVariantDataProvider)
+            : LibrariesJarsProvider {
+        return customConfigurationLibrariesJarsProviderFactory.create(androidVariantDataProvider)
     }
 }
