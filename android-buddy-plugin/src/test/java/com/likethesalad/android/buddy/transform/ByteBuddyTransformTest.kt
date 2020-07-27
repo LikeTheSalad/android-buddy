@@ -17,8 +17,8 @@ import com.likethesalad.android.buddy.modules.transform.ByteBuddyTransform
 import com.likethesalad.android.buddy.modules.transform.TransformInvocationDataExtractor
 import com.likethesalad.android.buddy.modules.transform.TransformInvocationDataExtractorFactory
 import com.likethesalad.android.buddy.providers.impl.CustomConfigurationLibrariesJarsProviderFactory
-import com.likethesalad.android.buddy.utils.AndroidPluginDataProvider
 import com.likethesalad.android.buddy.utils.AndroidPluginDataProviderFactory
+import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.FilesHolder
 import com.likethesalad.android.common.utils.DirectoryCleaner
@@ -137,7 +137,7 @@ class ByteBuddyTransformTest : BaseMockable() {
         val context = mockk<Context>()
         val variantName = "someName"
         val javaTargetVersion = 8
-        val androidPluginDataProvider = mockk<AndroidPluginDataProvider>()
+        val androidPluginDataProvider = mockk<AndroidVariantDataProvider>()
         every { context.variantName }.returns(variantName)
         every {
             customConfigurationLibrariesJarsProviderFactory.create(androidPluginDataProvider)

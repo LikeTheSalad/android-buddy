@@ -1,26 +1,35 @@
 package com.likethesalad.android.buddy.modules.customconfig
 
+import com.android.build.api.attributes.BuildTypeAttr
+import com.android.build.api.attributes.VariantAttr
+import com.android.build.gradle.internal.dependency.AndroidTypeAttr
+import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.modules.customconfig.data.ConfigurationGroup
 import com.likethesalad.android.buddy.modules.customconfig.data.ConfigurationType
 import com.likethesalad.android.buddy.modules.customconfig.data.ConfigurationsHolder
-import com.likethesalad.android.buddy.modules.customconfig.utils.ConfigurationBuildTypeNamesGeneratorFactory
+import com.likethesalad.android.buddy.modules.customconfig.utils.ConfigurationNamesGeneratorFactory
+import com.likethesalad.android.buddy.providers.AndroidBuildTypeNamesProvider
 import com.likethesalad.android.buddy.providers.GradleConfigurationsProvider
-import com.likethesalad.android.buddy.utils.AndroidPluginDataProvider
-import com.likethesalad.android.common.utils.Constants
+import com.likethesalad.android.buddy.providers.ObjectFactoryProvider
 import org.gradle.api.Action
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.Usage
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import javax.inject.Inject
 
+@Suppress("UnstableApiUsage")
 @AppScope
 class CustomConfigurationCreator
 @Inject constructor(
-    private val androidPluginDataProvider: AndroidPluginDataProvider,
     private val gradleConfigurationsProvider: GradleConfigurationsProvider,
-    private val configurationBuildTypeNamesGeneratorFactory: ConfigurationBuildTypeNamesGeneratorFactory
+    private val configurationNamesGeneratorFactory: ConfigurationNamesGeneratorFactory,
+    private val androidBuildTypeNamesProvider: AndroidBuildTypeNamesProvider,
+    objectFactoryProvider: ObjectFactoryProvider
 ) {
 
     private val configurationContainer by lazy { gradleConfigurationsProvider.getConfigurationContainer() }
+    private val objectFactory by lazy { objectFactoryProvider.getObjectFactory() }
 
     companion object {
         private val AS_CONSUMABLE = Action<Configuration> {
@@ -38,10 +47,17 @@ class CustomConfigurationCreator
     }
 
     fun createAndroidBuddyConfigurations() {
-        val mainApiBucket = createBucket(getCustomConfigurationName(ConfigurationType.API.capitalizedName))
-        val mainImplementationBucket =
-            createBucket(getCustomConfigurationName(ConfigurationType.IMPLEMENTATION.capitalizedName))
-        val buildTypeNames = androidPluginDataProvider.getBuildTypeNames()
+        val mainApiNamesGenerator = configurationNamesGeneratorFactory.create(
+            ConfigurationGroup.API_GROUP,
+            ""
+        )
+        val mainImplementationNamesGenerator = configurationNamesGeneratorFactory.create(
+            ConfigurationGroup.RUNTIME_GROUP,
+            ""
+        )
+        val mainApiBucket = createBucket(mainApiNamesGenerator.getBucketName())
+        val mainImplementationBucket = createBucket(mainImplementationNamesGenerator.getBucketName())
+        val buildTypeNames = androidBuildTypeNamesProvider.getBuildTypeNames()
 
         buildTypeNames.forEach { name ->
             createConfigurationsForBuildType(name, ConfigurationGroup.API_GROUP, mainApiBucket)
@@ -73,15 +89,28 @@ class CustomConfigurationCreator
         buildTypeName: String,
         configurationGroup: ConfigurationGroup
     ): ConfigurationsHolder {
-        val generator = configurationBuildTypeNamesGeneratorFactory.create(configurationGroup, buildTypeName)
-        val bucket = createBucket(getCustomConfigurationName(generator.getCapitalizedBucketName()))
-        val consumable = createConsumable(getCustomConfigurationName(generator.getCapitalizedConsumableName()))
-        val resolvable = createResolvable(getCustomConfigurationName(generator.getCapitalizedResolvableName()))
+        val generator = configurationNamesGeneratorFactory.create(configurationGroup, buildTypeName)
+        val bucket = createBucket(generator.getBucketName())
+        val consumable = createConsumable(generator.getConsumableName())
+        val resolvable = createResolvable(generator.getResolvableName())
+
+        val usage = getJavaUsage(configurationGroup)
+        applyCommonAttributes(consumable, buildTypeName, usage)
+        applyCommonAttributes(resolvable, buildTypeName, usage)
 
         consumable.extendsFrom(bucket)
         resolvable.extendsFrom(consumable)
 
         return ConfigurationsHolder(configurationGroup, bucket, consumable, resolvable)
+    }
+
+    private fun getJavaUsage(configurationGroup: ConfigurationGroup): Usage {
+        val usageValue = when (configurationGroup) {
+            ConfigurationGroup.RUNTIME_GROUP -> Usage.JAVA_RUNTIME
+            ConfigurationGroup.API_GROUP -> Usage.JAVA_API
+        }
+
+        return objectFactory.named(Usage::class.java, usageValue)
     }
 
     private fun createBucket(name: String): Configuration {
@@ -96,7 +125,30 @@ class CustomConfigurationCreator
         return configurationContainer.create(name, AS_RESOLVABLE)
     }
 
-    private fun getCustomConfigurationName(capitalizedSuffix: String): String {
-        return "${Constants.CUSTOM_CONFIGURATIONS_PREFIX}$capitalizedSuffix"
+    private fun applyCommonAttributes(
+        configuration: Configuration, buildTypeName: String, usage: Usage
+    ) {
+        val attributes = configuration.attributes
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, usage)
+        attributes.attribute(
+            BuildTypeAttr.ATTRIBUTE,
+            objectFactory.named(BuildTypeAttr::class.java, buildTypeName)
+        )
+        attributes.attribute(
+            VariantAttr.ATTRIBUTE,
+            objectFactory.named(VariantAttr::class.java, buildTypeName)
+        )
+        attributes.attribute(
+            AndroidTypeAttr.ATTRIBUTE,
+            objectFactory.named(AndroidTypeAttr::class.java, AndroidTypeAttr.AAR)
+        )
+        attributes.attribute(
+            AndroidArtifacts.ARTIFACT_TYPE,
+            AndroidArtifacts.ArtifactType.CLASSES.type
+        )
+        attributes.attribute(
+            KotlinPlatformType.attribute,
+            KotlinPlatformType.androidJvm
+        )
     }
 }

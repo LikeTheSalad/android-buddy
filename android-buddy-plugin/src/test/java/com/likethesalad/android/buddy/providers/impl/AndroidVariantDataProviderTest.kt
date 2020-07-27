@@ -8,7 +8,7 @@ import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.modules.customconfig.AndroidVariantPathResolver
 import com.likethesalad.android.buddy.modules.customconfig.AndroidVariantPathResolverFactory
 import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
-import com.likethesalad.android.buddy.utils.AndroidPluginDataProvider
+import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
 import com.likethesalad.android.common.utils.Logger
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
@@ -23,7 +23,7 @@ import org.junit.Before
 import org.junit.Test
 import java.io.File
 
-class AndroidPluginDataProviderTest : BaseMockable() {
+class AndroidVariantDataProviderTest : BaseMockable() {
 
     @MockK
     lateinit var androidAppExtension: AppExtension
@@ -38,13 +38,13 @@ class AndroidPluginDataProviderTest : BaseMockable() {
     lateinit var logger: Logger
 
     private val variantName = "someVariantName"
-    private lateinit var androidPluginDataProvider: AndroidPluginDataProvider
+    private lateinit var androidVariantDataProvider: AndroidVariantDataProvider
 
     @Before
     fun setUp() {
         every { androidExtensionProvider.getAndroidExtension() }.returns(androidAppExtension)
-        androidPluginDataProvider =
-            AndroidPluginDataProvider(
+        androidVariantDataProvider =
+            AndroidVariantDataProvider(
                 androidExtensionProvider,
                 androidVariantPathResolverFactory,
                 logger,
@@ -59,7 +59,7 @@ class AndroidPluginDataProviderTest : BaseMockable() {
             androidAppExtension.bootClasspath
         }.returns(bootClasspath)
 
-        Truth.assertThat(androidPluginDataProvider.getBootClasspath()).isEqualTo(bootClasspath.toSet())
+        Truth.assertThat(androidVariantDataProvider.getBootClasspath()).isEqualTo(bootClasspath.toSet())
     }
 
     @Test
@@ -72,7 +72,7 @@ class AndroidPluginDataProviderTest : BaseMockable() {
         every { javaCompile.targetCompatibility }.returns(targetCompatibility)
         every { variant.javaCompileProvider }.returns(javaCompileProvider)
 
-        val result = androidPluginDataProvider.getJavaTargetCompatibilityVersion()
+        val result = androidVariantDataProvider.getJavaTargetCompatibilityVersion()
 
         Truth.assertThat(result).isEqualTo(7)
         verify {
@@ -89,7 +89,7 @@ class AndroidPluginDataProviderTest : BaseMockable() {
         every { androidAppExtension.applicationVariants }.returns(appVariants)
         every { appVariants.iterator() }.returns(getVariantsIterator(null, "otherName"))
 
-        val result = androidPluginDataProvider.getJavaTargetCompatibilityVersion()
+        val result = androidVariantDataProvider.getJavaTargetCompatibilityVersion()
 
         Truth.assertThat(result).isEqualTo(7)
         verify {
@@ -125,7 +125,7 @@ class AndroidPluginDataProviderTest : BaseMockable() {
         }.returns(androidVariantPathResolver)
         every { androidVariantPathResolver.getTopBottomPath() }.returns(expectedPath)
 
-        val result = androidPluginDataProvider.getVariantPath()
+        val result = androidVariantDataProvider.getVariantPath()
 
         Truth.assertThat(result).isEqualTo(expectedPath)
     }
@@ -136,7 +136,7 @@ class AndroidPluginDataProviderTest : BaseMockable() {
         every { appVariants.iterator() }.returns(mutableListOf<ApplicationVariant>().iterator())
         every { androidAppExtension.applicationVariants }.returns(appVariants)
 
-        Truth.assertThat(androidPluginDataProvider.getVariantPath()).isEmpty()
+        Truth.assertThat(androidVariantDataProvider.getVariantPath()).isEmpty()
 
         verify {
             logger.w("Could not find variant path for {}, returning empty", variantName)

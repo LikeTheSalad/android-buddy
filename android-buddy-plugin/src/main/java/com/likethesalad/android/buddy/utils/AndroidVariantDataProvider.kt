@@ -13,7 +13,7 @@ import java.io.File
 
 @Suppress("UnstableApiUsage")
 @AutoFactory
-class AndroidPluginDataProvider(
+class AndroidVariantDataProvider(
     @Provided private val androidExtensionProvider: AndroidExtensionProvider,
     @Provided private val androidVariantPathResolverFactory: AndroidVariantPathResolverFactory,
     @Provided private val logger: Logger,
@@ -67,8 +67,13 @@ class AndroidPluginDataProvider(
         return resolver.getTopBottomPath()
     }
 
-    fun getBuildTypeNames(): List<String> {
-        return androidExtension.buildTypes.names.toList()
+    fun getVariantBuildTypeName(): String {
+        val variant = this.variant
+        if (variant == null) {
+            logger.w("Could not find build type name for variant {}, returning empty", variantName)
+            return ""
+        }
+        return variant.buildType.name
     }
 
     private fun getLocalJvmTargetCompatibility(): Int {

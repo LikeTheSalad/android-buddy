@@ -20,7 +20,7 @@ class CustomConfigurationResolverTest : BaseMockable() {
     lateinit var configurationContainer: ConfigurationContainer
 
     @MockK
-    lateinit var androidPluginDataProvider: AndroidPluginDataProvider
+    lateinit var androidVariantDataProvider: AndroidVariantDataProvider
 
     private lateinit var customConfigurationResolver: CustomConfigurationResolver
 
@@ -35,7 +35,7 @@ class CustomConfigurationResolverTest : BaseMockable() {
         customConfigurationResolver =
             CustomConfigurationResolver(
                 gradleConfigurationsProvider,
-                androidPluginDataProvider
+                androidVariantDataProvider
             )
     }
 
@@ -48,9 +48,9 @@ class CustomConfigurationResolverTest : BaseMockable() {
             "androidBuddyDebugImplementation",
             "androidBuddyDemoDebugImplementation"
         )
-        every { androidPluginDataProvider.getVariantPath() }.returns(variantPath)
+        every { androidVariantDataProvider.getVariantPath() }.returns(variantPath)
 
-        val result = customConfigurationResolver.getImplementationConfigurations()
+        val result = customConfigurationResolver.getImplementationConfiguration()
 
         Truth.assertThat(result.map { it.name }).containsExactlyElementsIn(expectedConfigNames)
     }
@@ -64,9 +64,9 @@ class CustomConfigurationResolverTest : BaseMockable() {
             "androidBuddyReleaseApi",
             "androidBuddyFullReleaseApi"
         )
-        every { androidPluginDataProvider.getVariantPath() }.returns(variantPath)
+        every { androidVariantDataProvider.getVariantPath() }.returns(variantPath)
 
-        val result = customConfigurationResolver.getApiConfigurations()
+        val result = customConfigurationResolver.getApiConfiguration()
 
         Truth.assertThat(result.map { it.name }).containsExactlyElementsIn(expectedConfigNames)
     }
@@ -80,9 +80,9 @@ class CustomConfigurationResolverTest : BaseMockable() {
             "androidBuddyDemoDebugImplementation"
         )
         every { configurationContainer.findByName("androidBuddyDemoImplementation") }.returns(null)
-        every { androidPluginDataProvider.getVariantPath() }.returns(variantPath)
+        every { androidVariantDataProvider.getVariantPath() }.returns(variantPath)
 
-        val result = customConfigurationResolver.getImplementationConfigurations()
+        val result = customConfigurationResolver.getImplementationConfiguration()
 
         Truth.assertThat(result.map { it.name }).containsExactlyElementsIn(expectedConfigNames)
     }
@@ -96,9 +96,9 @@ class CustomConfigurationResolverTest : BaseMockable() {
             "androidBuddyFullReleaseApi"
         )
         every { configurationContainer.findByName("androidBuddyReleaseApi") }.returns(null)
-        every { androidPluginDataProvider.getVariantPath() }.returns(variantPath)
+        every { androidVariantDataProvider.getVariantPath() }.returns(variantPath)
 
-        val result = customConfigurationResolver.getApiConfigurations()
+        val result = customConfigurationResolver.getApiConfiguration()
 
         Truth.assertThat(result.map { it.name }).containsExactlyElementsIn(expectedConfigNames)
     }
