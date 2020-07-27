@@ -9,6 +9,7 @@ import com.likethesalad.android.buddy.modules.customconfig.AndroidVariantPathRes
 import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
 import com.likethesalad.android.common.utils.Logger
 import org.gradle.api.JavaVersion
+import org.gradle.api.artifacts.Configuration
 import java.io.File
 
 @Suppress("UnstableApiUsage")
@@ -23,7 +24,7 @@ class AndroidVariantDataProvider(
     private val androidExtension: BaseExtension by lazy {
         androidExtensionProvider.getAndroidExtension()
     }
-    private val variant: BaseVariant? by lazy {
+    private val variant: BaseVariant by lazy {
         getVariantByName(variantName)
     }
 
@@ -32,34 +33,18 @@ class AndroidVariantDataProvider(
     }
 
     fun getJavaTargetCompatibilityVersion(): Int {
-        val variant = this.variant
-        val javaVersion = if (variant == null) {
-            logger.w("Java target version for android variant {} not found, falling back to JVM's", variantName)
-            getLocalJvmTargetCompatibility()
-        } else {
-            val targetCompatibilityStr = variant.javaCompileProvider.get().targetCompatibility
-            javaVersionToInt(JavaVersion.toVersion(targetCompatibilityStr))
-        }
+        val targetCompatibilityStr = variant.javaCompileProvider.get().targetCompatibility
+        val javaVersion = javaVersionToInt(JavaVersion.toVersion(targetCompatibilityStr))
 
         logger.i("Using java target version {}", javaVersion)
         return javaVersion
     }
 
     fun getJavaClassPath(): Set<File> {
-        val variant = this.variant
-        if (variant == null) {
-            logger.w("Could not find variant '{}' - returning empty java classpath", variantName)
-            return emptySet()
-        }
         return variant.javaCompileProvider.get().classpath.files
     }
 
     fun getVariantPath(): List<String> {
-        val variant = this.variant
-        if (variant == null) {
-            logger.w("Could not find variant path for {}, returning empty", variantName)
-            return emptyList()
-        }
         val resolver = androidVariantPathResolverFactory.create(
             variantName, variant.flavorName, variant.buildType.name, variant.productFlavors.map { it.name }
         )
@@ -68,28 +53,27 @@ class AndroidVariantDataProvider(
     }
 
     fun getVariantBuildTypeName(): String {
-        val variant = this.variant
-        if (variant == null) {
-            logger.w("Could not find build type name for variant {}, returning empty", variantName)
-            return ""
-        }
         return variant.buildType.name
     }
 
-    private fun getLocalJvmTargetCompatibility(): Int {
-        return javaVersionToInt(JavaVersion.current())
+    fun getVariantCompileConfiguration(): Configuration {
+        return variant.compileConfiguration
+    }
+
+    fun getVariantRuntimeConfiguration(): Configuration {
+        return variant.runtimeConfiguration
     }
 
     private fun javaVersionToInt(javaVersion: JavaVersion): Int {
         return javaVersion.majorVersion.toInt()
     }
 
-    private fun getVariantByName(name: String): BaseVariant? {
+    private fun getVariantByName(name: String): BaseVariant {
         val androidExtension = this.androidExtension
         if (androidExtension is AppExtension) {
             return androidExtension.applicationVariants.find {
                 it.name == name
-            }
+            }!!
         }
 
         throw UnsupportedOperationException()

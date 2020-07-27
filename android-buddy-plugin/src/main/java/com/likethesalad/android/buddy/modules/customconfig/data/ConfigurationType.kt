@@ -6,8 +6,6 @@ enum class ConfigurationType(
 ) {
     IMPLEMENTATION("implementation"),
     API("api"),
-    RUNTIME_ELEMENTS("runtimeElements"),
     RUNTIME_CLASSPATH("runtimeClasspath"),
-    API_ELEMENTS("apiElements"),
-    API_CLASSPATH("apiClasspath")
+    COMPILE_CLASSPATH("compileClasspath")
 }

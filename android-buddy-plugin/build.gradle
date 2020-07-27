@@ -11,7 +11,6 @@ ext {
 dependencies {
     implementation project(":$tools_dependency_name")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlin_version"
     implementation "com.google.dagger:dagger:$dagger_version"
     implementation "com.google.auto.factory:auto-factory:$autoFactory_version"
     implementation "io.github.classgraph:classgraph:4.8.87"

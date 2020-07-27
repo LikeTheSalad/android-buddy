@@ -8,20 +8,24 @@ import com.likethesalad.android.common.utils.Constants
 @AutoFactory
 class ConfigurationNamesGenerator(
     private val configurationGroup: ConfigurationGroup,
-    buildTypeName: String
+    private val buildTypeName: String
 ) {
     private val capitalizedBuildTypeName = buildTypeName.capitalize()
 
-    fun getBucketName(): String {
+    fun getAndroidBuddyBucketName(): String {
         return getCustomConfigurationName(configurationGroup.bucketType)
     }
 
-    fun getConsumableName(): String {
-        return getCustomConfigurationName(configurationGroup.consumableType)
+    fun getAndroidBuddyResolvableName(): String {
+        return getCustomConfigurationName(configurationGroup.resolvableType)
     }
 
-    fun getResolvableName(): String {
-        return getCustomConfigurationName(configurationGroup.resolvableType)
+    fun getAndroidBucketName(): String {
+        return if (buildTypeName.isEmpty()) {
+            configurationGroup.bucketType.configurationName
+        } else {
+            "$buildTypeName${configurationGroup.bucketType.capitalizedName}"
+        }
     }
 
     private fun getCustomConfigurationName(configurationType: ConfigurationType): String {

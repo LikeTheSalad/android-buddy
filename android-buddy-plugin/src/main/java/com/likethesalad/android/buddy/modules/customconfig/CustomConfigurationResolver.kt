@@ -8,12 +8,14 @@ import com.likethesalad.android.buddy.providers.GradleConfigurationsProvider
 import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.AttributeContainer
 
 @AutoFactory
 class CustomConfigurationResolver(
     @Provided private val configurationNamesGeneratorFactory: ConfigurationNamesGeneratorFactory,
     @Provided gradleConfigurationsProvider: GradleConfigurationsProvider,
-    androidVariantDataProvider: AndroidVariantDataProvider
+    private val androidVariantDataProvider: AndroidVariantDataProvider
 ) {
     private val buildTypeName by lazy { androidVariantDataProvider.getVariantBuildTypeName() }
     private val configurationContainer: ConfigurationContainer by lazy {
@@ -21,14 +23,33 @@ class CustomConfigurationResolver(
     }
 
     fun getApiConfiguration(): Configuration {
-        val configNames = configurationNamesGeneratorFactory.create(ConfigurationGroup.API_GROUP, buildTypeName)
-
-        return configurationContainer.getByName(configNames.getResolvableName())
+        return getConfigurationFor(
+            androidVariantDataProvider.getVariantCompileConfiguration(),
+            ConfigurationGroup.COMPILE_GROUP
+        )
     }
 
     fun getImplementationConfiguration(): Configuration {
-        val configNames = configurationNamesGeneratorFactory.create(ConfigurationGroup.RUNTIME_GROUP, buildTypeName)
+        return getConfigurationFor(
+            androidVariantDataProvider.getVariantRuntimeConfiguration(),
+            ConfigurationGroup.RUNTIME_GROUP
+        )
+    }
 
-        return configurationContainer.getByName(configNames.getResolvableName())
+    private fun getConfigurationFor(
+        androidConfiguration: Configuration,
+        configurationGroup: ConfigurationGroup
+    ): Configuration {
+        val configNames = configurationNamesGeneratorFactory.create(configurationGroup, buildTypeName)
+        val customConfiguration = configurationContainer.getByName(configNames.getAndroidBuddyResolvableName())
+        copyAttributes(androidConfiguration.attributes, customConfiguration.attributes)
+        return customConfiguration
+    }
+
+    @Suppress("UNCHECKED_CAST", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    private fun copyAttributes(from: AttributeContainer, to: AttributeContainer) {
+        from.keySet().forEach { key ->
+            to.attribute(key as Attribute<Any>, from.getAttribute(key))
+        }
     }
 }
