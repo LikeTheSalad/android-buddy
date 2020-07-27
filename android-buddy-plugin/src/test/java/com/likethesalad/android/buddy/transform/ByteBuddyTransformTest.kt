@@ -12,13 +12,13 @@ import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFolders
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
-import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationLibrariesJarsProvider
 import com.likethesalad.android.buddy.modules.transform.ByteBuddyTransform
 import com.likethesalad.android.buddy.modules.transform.TransformInvocationDataExtractor
 import com.likethesalad.android.buddy.modules.transform.TransformInvocationDataExtractorFactory
-import com.likethesalad.android.buddy.providers.impl.CustomConfigurationLibrariesJarsProviderFactory
-import com.likethesalad.android.buddy.utils.AndroidPluginDataProviderFactory
+import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProvider
+import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
+import com.likethesalad.android.buddy.utils.AndroidVariantDataProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.FilesHolder
 import com.likethesalad.android.common.utils.DirectoryCleaner
@@ -54,7 +54,7 @@ class ByteBuddyTransformTest : BaseMockable() {
     lateinit var transformInvocationDataExtractorFactory: TransformInvocationDataExtractorFactory
 
     @MockK
-    lateinit var androidPluginDataProviderFactory: AndroidPluginDataProviderFactory
+    lateinit var androidVariantDataProviderFactory: AndroidVariantDataProviderFactory
 
     @MockK
     lateinit var compoundSourceFactory: CompoundSourceFactory
@@ -66,7 +66,7 @@ class ByteBuddyTransformTest : BaseMockable() {
     lateinit var classLoaderCreator: ClassLoaderCreator
 
     @MockK
-    lateinit var customConfigurationLibrariesJarsProviderFactory: CustomConfigurationLibrariesJarsProviderFactory
+    lateinit var defaultLibrariesJarsProviderFactory: DefaultLibrariesJarsProviderFactory
 
     private lateinit var byteBuddyTransform: ByteBuddyTransform
 
@@ -82,8 +82,8 @@ class ByteBuddyTransformTest : BaseMockable() {
             compoundSourceFactory,
             classLoaderCreator,
             directoryCleaner,
-            customConfigurationLibrariesJarsProviderFactory,
-            androidPluginDataProviderFactory
+            androidVariantDataProviderFactory,
+            defaultLibrariesJarsProviderFactory
         )
     }
 
@@ -111,7 +111,7 @@ class ByteBuddyTransformTest : BaseMockable() {
         val transformInvocation = mockk<TransformInvocation>()
         val transformInvocationDataExtractor = mockk<TransformInvocationDataExtractor>()
         val factoriesClassLoader = mockk<ClassLoader>()
-        val customConfigurationLibrariesJarsProvider = mockk<CustomConfigurationLibrariesJarsProvider>()
+        val librariesJarsProvider = mockk<DefaultLibrariesJarsProvider>()
         val folder1 = mockk<File>()
         val folders = setOf(folder1)
         val jarFile1 = mockk<File>()
@@ -140,9 +140,9 @@ class ByteBuddyTransformTest : BaseMockable() {
         val androidPluginDataProvider = mockk<AndroidVariantDataProvider>()
         every { context.variantName }.returns(variantName)
         every {
-            customConfigurationLibrariesJarsProviderFactory.create(androidPluginDataProvider)
-        }.returns(customConfigurationLibrariesJarsProvider)
-        every { androidPluginDataProviderFactory.create(variantName) }.returns(androidPluginDataProvider)
+            defaultLibrariesJarsProviderFactory.create(extraClasspath)
+        }.returns(librariesJarsProvider)
+        every { androidVariantDataProviderFactory.create(variantName) }.returns(androidPluginDataProvider)
         every {
             classLoaderCreator.create(extraClasspath + allFiles, ByteBuddy::class.java.classLoader)
         }.returns(factoriesClassLoader)
@@ -174,7 +174,7 @@ class ByteBuddyTransformTest : BaseMockable() {
         every {
             pluginFactoriesProvider.getFactories(
                 folders,
-                customConfigurationLibrariesJarsProvider,
+                librariesJarsProvider,
                 factoriesClassLoader
             )
         }.returns(factories)
