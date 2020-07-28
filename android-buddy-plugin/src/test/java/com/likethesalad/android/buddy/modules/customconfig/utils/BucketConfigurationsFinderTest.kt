@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddy.modules.customconfig
+package com.likethesalad.android.buddy.modules.customconfig.utils
 
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.providers.GradleConfigurationsProvider
@@ -15,7 +15,7 @@ import org.gradle.api.artifacts.ConfigurationContainer
 import org.junit.Before
 import org.junit.Test
 
-class GradleConfigurationsFinderTest : BaseMockable() {
+class BucketConfigurationsFinderTest : BaseMockable() {
 
     @MockK
     lateinit var gradleConfigurationsProvider: GradleConfigurationsProvider
@@ -24,12 +24,12 @@ class GradleConfigurationsFinderTest : BaseMockable() {
     lateinit var configurationContainer: ConfigurationContainer
 
     private val dummyResourcesFinder = DummyResourcesFinder()
-    private lateinit var gradleConfigurationsFinder: GradleConfigurationsFinder
+    private lateinit var bucketConfigurationsFinder: BucketConfigurationsFinder
 
     @Before
     fun setUp() {
         every { gradleConfigurationsProvider.getConfigurationContainer() }.returns(configurationContainer)
-        gradleConfigurationsFinder = GradleConfigurationsFinder(gradleConfigurationsProvider)
+        bucketConfigurationsFinder = BucketConfigurationsFinder(gradleConfigurationsProvider)
     }
 
     @Test
@@ -81,7 +81,7 @@ class GradleConfigurationsFinderTest : BaseMockable() {
         val capturedNames = mutableListOf<String>()
         every { configurationContainer.all(capture(actionCaptor)) } just Runs
 
-        gradleConfigurationsFinder.searchForAllowedConfigurations {
+        bucketConfigurationsFinder.searchForAllowedConfigurations {
             capturedNames.add(it.name)
         }
         val action = actionCaptor.captured

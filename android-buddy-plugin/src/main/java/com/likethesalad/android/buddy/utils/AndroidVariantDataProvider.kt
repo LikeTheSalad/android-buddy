@@ -3,7 +3,7 @@ package com.likethesalad.android.buddy.utils
 import com.android.build.gradle.api.BaseVariant
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
-import com.likethesalad.android.buddy.modules.customconfig.AndroidVariantPathResolverFactory
+import com.likethesalad.android.buddy.modules.customconfig.utils.AndroidVariantPathResolverFactory
 import com.likethesalad.android.common.utils.Logger
 import org.gradle.api.JavaVersion
 import org.gradle.api.artifacts.Configuration
@@ -15,7 +15,7 @@ class AndroidVariantDataProvider(
     @Provided private val androidExtension: AndroidExtensionDataProvider,
     @Provided private val androidVariantPathResolverFactory: AndroidVariantPathResolverFactory,
     @Provided private val logger: Logger,
-    private val variantName: String
+    val variantName: String
 ) {
 
     private val variant: BaseVariant by lazy {

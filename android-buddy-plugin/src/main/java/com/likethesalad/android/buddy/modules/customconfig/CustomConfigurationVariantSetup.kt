@@ -44,7 +44,7 @@ class CustomConfigurationVariantSetup
     ) {
         val namesGenerator = getNamesGeneratorFor(group)
         val customBuckets = namesGenerator.getSortedBucketConfigNames(variantPath).map { getConfigurationByName(it) }
-        val customResolvable = getConfigurationByName(namesGenerator.getResolvableConfigurationName(variantName))
+        val customResolvable = createConfiguration(namesGenerator.getResolvableConfigurationName(variantName))
 
         applyBucketsHierarchyOrder(customBuckets)
         customResolvable.extendsFrom(customBuckets.last())
@@ -69,6 +69,10 @@ class CustomConfigurationVariantSetup
         val resolver = androidVariantPathResolverFactory.create(variant.name,
             variant.flavorName, variant.buildType.name, variant.productFlavors.map { it.name })
         return resolver.getTopBottomPath()
+    }
+
+    private fun createConfiguration(name: String): Configuration {
+        return configurations.create(name)
     }
 
     private fun getConfigurationByName(name: String): Configuration {
