@@ -5,8 +5,8 @@ import com.android.build.gradle.api.ApplicationVariant
 import com.android.builder.model.BuildType
 import com.android.builder.model.ProductFlavor
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.modules.customconfig.AndroidVariantPathResolver
 import com.likethesalad.android.buddy.modules.customconfig.AndroidVariantPathResolverFactory
+import com.likethesalad.android.buddy.modules.customconfig.utils.AndroidVariantPathResolver
 import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
 import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
 import com.likethesalad.android.common.utils.Logger

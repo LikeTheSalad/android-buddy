@@ -13,6 +13,7 @@ import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiat
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
+import com.likethesalad.android.buddy.utils.AndroidExtensionDataProvider
 import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
 import com.likethesalad.android.buddy.utils.AndroidVariantDataProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
@@ -35,6 +36,7 @@ class ByteBuddyTransform @Inject constructor(
     private val classLoaderCreator: ClassLoaderCreator,
     private val directoryCleaner: DirectoryCleaner,
     private val androidVariantDataProviderFactory: AndroidVariantDataProviderFactory,
+    private val androidExtensionDataProvider: AndroidExtensionDataProvider,
     private val customConfigurationLibrariesJarsProviderFactory: CustomConfigurationLibrariesJarsProviderFactory
 ) : Transform() {
 
@@ -91,10 +93,10 @@ class ByteBuddyTransform @Inject constructor(
     private fun getExtraClasspathExcludingScope(
         androidVariantDataProvider: AndroidVariantDataProvider,
         scopeFiles: Set<File>
-    ): Set<File> {
-        val extraFiles = mutableSetOf<File>()
+    ): List<File> {
+        val extraFiles = mutableListOf<File>()
         val javaClasspath = androidVariantDataProvider.getJavaClassPath()
-        extraFiles.addAll(androidVariantDataProvider.getBootClasspath())
+        extraFiles.addAll(androidExtensionDataProvider.getBootClasspath())
 
         for (extra in javaClasspath) {
             if (extra !in scopeFiles) {
@@ -107,7 +109,7 @@ class ByteBuddyTransform @Inject constructor(
 
     private fun createFactoriesClassLoader(
         scopeClasspath: FilesHolder,
-        extraClasspath: Set<File>
+        extraClasspath: List<File>
     ): ClassLoader {
         return classLoaderCreator.create(
             scopeClasspath.allFiles + extraClasspath,

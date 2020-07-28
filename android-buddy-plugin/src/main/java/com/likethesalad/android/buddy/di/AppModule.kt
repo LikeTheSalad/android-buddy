@@ -1,7 +1,6 @@
 package com.likethesalad.android.buddy.di
 
 import com.likethesalad.android.buddy.AndroidBuddyPlugin
-import com.likethesalad.android.buddy.providers.AndroidBuildTypeNamesProvider
 import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
 import com.likethesalad.android.buddy.providers.FileTreeIteratorProvider
 import com.likethesalad.android.buddy.providers.GradleConfigurationsProvider
@@ -26,12 +25,6 @@ class AppModule(private val androidBuddyPlugin: AndroidBuddyPlugin) {
     @Provides
     @AppScope
     fun provideGradleConfigurationsProvider(): GradleConfigurationsProvider {
-        return androidBuddyPlugin
-    }
-
-    @Provides
-    @AppScope
-    fun provideAndroidBuildTypeNamesProvider(): AndroidBuildTypeNamesProvider {
         return androidBuddyPlugin
     }
 }

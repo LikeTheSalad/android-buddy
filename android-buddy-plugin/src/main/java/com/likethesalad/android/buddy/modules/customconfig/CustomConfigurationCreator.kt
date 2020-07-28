@@ -3,10 +3,10 @@ package com.likethesalad.android.buddy.modules.customconfig
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.modules.customconfig.data.ConfigurationGroup
 import com.likethesalad.android.buddy.modules.customconfig.data.ConfigurationsHolder
-import com.likethesalad.android.buddy.modules.customconfig.utils.ConfigurationNamesGenerator
 import com.likethesalad.android.buddy.modules.customconfig.utils.ConfigurationNamesGeneratorFactory
-import com.likethesalad.android.buddy.providers.AndroidBuildTypeNamesProvider
+import com.likethesalad.android.buddy.modules.customconfig.utils.CustomConfigurationNamesGenerator
 import com.likethesalad.android.buddy.providers.GradleConfigurationsProvider
+import com.likethesalad.android.buddy.utils.AndroidExtensionDataProvider
 import org.gradle.api.Action
 import org.gradle.api.artifacts.Configuration
 import javax.inject.Inject
@@ -17,7 +17,7 @@ class CustomConfigurationCreator
 @Inject constructor(
     private val gradleConfigurationsProvider: GradleConfigurationsProvider,
     private val configurationNamesGeneratorFactory: ConfigurationNamesGeneratorFactory,
-    private val androidBuildTypeNamesProvider: AndroidBuildTypeNamesProvider
+    private val androidExtensionDataProvider: AndroidExtensionDataProvider
 ) {
 
     private val configurationContainer by lazy { gradleConfigurationsProvider.getConfigurationContainer() }
@@ -36,7 +36,7 @@ class CustomConfigurationCreator
     fun createAndroidBuddyConfigurations() {
         val mainApiBucket = createConfigurationsFor(ConfigurationGroup.COMPILE_GROUP).bucket
         val mainImplementationBucket = createConfigurationsFor(ConfigurationGroup.RUNTIME_GROUP).bucket
-        val buildTypeNames = androidBuildTypeNamesProvider.getBuildTypeNames()
+        val buildTypeNames = androidExtensionDataProvider.getBuildTypeNames()
 
         buildTypeNames.forEach { name ->
             createConfigurationsFor(ConfigurationGroup.COMPILE_GROUP, name, mainApiBucket)
@@ -68,9 +68,9 @@ class CustomConfigurationCreator
 
     private fun attachToAndroidConfigurations(
         customBucket: Configuration,
-        namesGenerator: ConfigurationNamesGenerator
+        namesGeneratorCustom: CustomConfigurationNamesGenerator
     ) {
-        configurationContainer.named(namesGenerator.getAndroidBucketName()) {
+        configurationContainer.named(namesGeneratorCustom.getAndroidBucketName()) {
             it.extendsFrom(customBucket)
         }
     }

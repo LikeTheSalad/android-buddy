@@ -3,7 +3,6 @@ package com.likethesalad.android.buddy
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import com.likethesalad.android.buddy.di.AppInjector
-import com.likethesalad.android.buddy.providers.AndroidBuildTypeNamesProvider
 import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
 import com.likethesalad.android.buddy.providers.FileTreeIteratorProvider
 import com.likethesalad.android.buddy.providers.GradleConfigurationsProvider
@@ -18,7 +17,7 @@ import java.io.File
 
 @Suppress("UnstableApiUsage")
 open class AndroidBuddyPlugin : Plugin<Project>, BuddyPlugin, FileTreeIteratorProvider,
-    AndroidExtensionProvider, GradleConfigurationsProvider, AndroidBuildTypeNamesProvider {
+    AndroidExtensionProvider, GradleConfigurationsProvider {
 
     private lateinit var project: Project
     private lateinit var androidExtension: BaseExtension
@@ -30,6 +29,7 @@ open class AndroidBuddyPlugin : Plugin<Project>, BuddyPlugin, FileTreeIteratorPr
         AppInjector.getCustomConfigurationCreator().createAndroidBuddyConfigurations()
         AppInjector.getDependencyHandlerUtil().addDependencies()
         androidExtension.registerTransform(AppInjector.getByteBuddyTransform())
+        AppInjector.getCustomConfigurationVariantSetup().arrangeConfigurationsPerVariant()
     }
 
     override fun createFileTreeIterator(folder: File): Iterator<File> {
@@ -54,9 +54,5 @@ open class AndroidBuddyPlugin : Plugin<Project>, BuddyPlugin, FileTreeIteratorPr
 
     override fun getConfigurationContainer(): ConfigurationContainer {
         return project.configurations
-    }
-
-    override fun getBuildTypeNames(): List<String> {
-        return androidExtension.buildTypes.names.toList()
     }
 }

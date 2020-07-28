@@ -32,7 +32,7 @@ class ClassFileLocatorMakerTest : BaseMockable() {
         val file2 = createFileAndLocatorMock()
         val dirs = listOf(dir1.fileOrDir, dir2.fileOrDir, dir3.fileOrDir)
         val files = listOf(file1.fileOrDir, file2.fileOrDir)
-        val all = (dirs + files).toSet()
+        val all = dirs + files
         val expectedResult = mockk<ClassFileLocator>()
         every { byteBuddyClassesInstantiator.makeCompoundClassFileLocator(any()) }.returns(expectedResult)
 

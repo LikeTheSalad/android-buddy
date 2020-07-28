@@ -14,7 +14,7 @@ import java.io.File
 @AutoFactory
 class CustomConfigurationLibrariesJarsProvider(
     @Provided customConfigurationResolverFactory: CustomConfigurationResolverFactory,
-    androidVariantDataProvider: AndroidVariantDataProvider
+    private val androidVariantDataProvider: AndroidVariantDataProvider
 ) : LibrariesJarsProvider {
 
     companion object {
@@ -26,17 +26,20 @@ class CustomConfigurationLibrariesJarsProvider(
     }
 
     override fun getLibrariesJars(): Set<File> {
-        val implementations = customConfigurationResolver.getImplementationConfiguration()
-        val apis = customConfigurationResolver.getApiConfiguration()
+        val customRuntimeConfiguration = customConfigurationResolver.getAndroidBuddyRuntimeConfiguration()
+        val customCompileConfiguration = customConfigurationResolver.getAndroidBuddyCompileConfiguration()
 
-        val apiFiles = extractArtifactFiles(apis)
-        val implementationFiles = extractArtifactFiles(implementations)
+        val compileFiles = extractArtifactFiles(customCompileConfiguration)
+        val runtimeFiles = extractArtifactFiles(customRuntimeConfiguration)
 
-        return apiFiles.plus(implementationFiles).files
+        val mergedFiles = compileFiles.plus(runtimeFiles).files
+        println("merged files: $mergedFiles")
+
+        return mergedFiles
     }
 
-    private fun extractArtifactFiles(configuration: Configuration): FileCollection {
-        return configuration.incoming.artifactView {
+    private fun extractArtifactFiles(custom: Configuration): FileCollection {
+        return custom.incoming.artifactView {
             it.lenient(false)
             it.attributes.attribute(ANDROID_ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES.type)
         }.artifacts.artifactFiles

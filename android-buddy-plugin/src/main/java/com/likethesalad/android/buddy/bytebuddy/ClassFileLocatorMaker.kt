@@ -10,7 +10,7 @@ import javax.inject.Inject
 class ClassFileLocatorMaker
 @Inject constructor(private val byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator) {
 
-    fun make(filesAndDirs: Set<File>): ClassFileLocator {
+    fun make(filesAndDirs: List<File>): ClassFileLocator {
         val classFileLocators: MutableList<ClassFileLocator> = mutableListOf()
 
         for (artifact in filesAndDirs) {
