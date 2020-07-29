@@ -76,7 +76,7 @@ class AndroidVariantDataProviderTest : BaseMockable() {
 
         Truth.assertThat(result).isEqualTo(7)
         verify {
-            logger.i("Using java target version {}", 7)
+            logger.info("Using java target version {}", 7)
         }
     }
 
@@ -93,8 +93,8 @@ class AndroidVariantDataProviderTest : BaseMockable() {
 
         Truth.assertThat(result).isEqualTo(7)
         verify {
-            logger.w("Java target version for android variant {} not found, falling back to JVM's", variantName)
-            logger.i("Using java target version {}", 7)
+            logger.warning("Java target version for android variant {} not found, falling back to JVM's", variantName)
+            logger.info("Using java target version {}", 7)
         }
     }
 
@@ -139,7 +139,7 @@ class AndroidVariantDataProviderTest : BaseMockable() {
         Truth.assertThat(androidVariantDataProvider.getVariantPath()).isEmpty()
 
         verify {
-            logger.w("Could not find variant path for {}, returning empty", variantName)
+            logger.warning("Could not find variant path for {}, returning empty", variantName)
         }
     }
 

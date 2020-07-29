@@ -1,5 +1,6 @@
 package com.likethesalad.android.buddy.bytebuddy
 
+import com.likethesalad.android.buddy.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
@@ -20,6 +21,7 @@ class PluginFactoriesProvider
     private val byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator,
     private val pluginsFinderFactory: PluginsFinderFactory,
     private val classGraphProviderFactory: ClassGraphProviderFactory,
+    private val pluginConfiguration: AndroidBuddyPluginConfiguration,
     private val logger: Logger,
     projectLoggerProvider: ProjectLoggerProvider
 ) {
@@ -38,20 +40,30 @@ class PluginFactoriesProvider
     ): List<Plugin.Factory> {
         val pluginNames = mutableSetOf<String>()
         pluginNames.addAll(getLocalPluginNames(localDirs))
-        pluginNames.addAll(getLibraryPluginNames(librariesJarsProvider.getLibrariesJars()))
+
+        if (pluginConfiguration.useDependenciesTransformations()) {
+            pluginNames.addAll(getLibraryPluginNames(librariesJarsProvider.getLibrariesJars()))
+        }
 
         return pluginNames.map { nameToFactory(it, classLoader) }
     }
 
     private fun getLocalPluginNames(dirFiles: Set<File>): Set<String> {
         val pluginNames = getPluginNamesFrom(dirFiles)
-        logger.d("Local plugins found: {}", pluginNames)
+        logger.debug("Local plugins found: {}", pluginNames)
         return pluginNames
     }
 
     private fun getLibraryPluginNames(jarFiles: Set<File>): Set<String> {
         val pluginNames = getPluginNamesFrom(jarFiles)
-        logger.d("Dependencies plugins found: {}", pluginNames)
+        if (pluginNames.isNotEmpty()) {
+            val text = "Dependencies plugins found: {}"
+            if (pluginConfiguration.alwaysLogDependenciesTransformationNames()) {
+                logger.lifecycle(text, pluginNames)
+            } else {
+                logger.debug(text, pluginNames)
+            }
+        }
         return pluginNames
     }
 

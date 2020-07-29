@@ -3,6 +3,8 @@ package com.likethesalad.android.buddy
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import com.likethesalad.android.buddy.di.AppInjector
+import com.likethesalad.android.buddy.entension.AndroidBuddyExtension
+import com.likethesalad.android.buddy.providers.AndroidBuddyExtensionProvider
 import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
 import com.likethesalad.android.buddy.providers.FileTreeIteratorProvider
 import com.likethesalad.android.buddy.providers.GradleConfigurationsProvider
@@ -17,19 +19,26 @@ import java.io.File
 
 @Suppress("UnstableApiUsage")
 open class AndroidBuddyPlugin : Plugin<Project>, BuddyPlugin, FileTreeIteratorProvider,
-    AndroidExtensionProvider, GradleConfigurationsProvider {
+    AndroidExtensionProvider, GradleConfigurationsProvider, AndroidBuddyExtensionProvider {
 
     private lateinit var project: Project
     private lateinit var androidExtension: BaseExtension
+    private lateinit var androidBuddyExtension: AndroidBuddyExtension
+
+    companion object {
+        private const val EXTENSION_NAME = "androidBuddy"
+    }
 
     override fun apply(project: Project) {
         this.project = project
+        androidBuddyExtension = project.extensions.create(EXTENSION_NAME, AndroidBuddyExtension::class.java)
         androidExtension = project.extensions.getByType(AppExtension::class.java)
         AppInjector.init(this)
         AppInjector.getCustomConfigurationCreator().createAndroidBuddyConfigurations()
         AppInjector.getDependencyHandlerUtil().addDependencies()
-        androidExtension.registerTransform(AppInjector.getByteBuddyTransform())
         AppInjector.getCustomConfigurationVariantSetup().arrangeConfigurationsPerVariant()
+
+        androidExtension.registerTransform(AppInjector.getByteBuddyTransform())
     }
 
     override fun createFileTreeIterator(folder: File): Iterator<File> {
@@ -54,5 +63,9 @@ open class AndroidBuddyPlugin : Plugin<Project>, BuddyPlugin, FileTreeIteratorPr
 
     override fun getConfigurationContainer(): ConfigurationContainer {
         return project.configurations
+    }
+
+    override fun getAndroidBuddyExtension(): AndroidBuddyExtension {
+        return androidBuddyExtension
     }
 }

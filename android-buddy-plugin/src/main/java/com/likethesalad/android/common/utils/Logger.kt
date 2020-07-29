@@ -13,19 +13,23 @@ class Logger @Inject constructor(projectLoggerProvider: ProjectLoggerProvider) {
         private const val PREFIX = "[AndroidBuddy]"
     }
 
-    fun d(text: String, vararg extra: Any) {
+    fun debug(text: String, vararg extra: Any) {
         projectLogger.debug("$PREFIX $text", *extra)
     }
 
-    fun i(text: String, vararg extra: Any) {
+    fun info(text: String, vararg extra: Any) {
         projectLogger.info("$PREFIX $text", *extra)
     }
 
-    fun w(text: String, vararg extra: Any) {
+    fun warning(text: String, vararg extra: Any) {
         projectLogger.warn("$PREFIX $text", *extra)
     }
 
-    fun e(text: String, vararg extra: Any) {
+    fun error(text: String, vararg extra: Any) {
         projectLogger.error("$PREFIX $text", *extra)
+    }
+
+    fun lifecycle(text: String, vararg extra: Any) {
+        projectLogger.lifecycle(text, *extra)
     }
 }

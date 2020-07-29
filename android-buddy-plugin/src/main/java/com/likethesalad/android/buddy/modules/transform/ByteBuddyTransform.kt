@@ -3,6 +3,7 @@ package com.likethesalad.android.buddy.modules.transform
 import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.Transform
 import com.android.build.api.transform.TransformInvocation
+import com.likethesalad.android.buddy.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.bytebuddy.ClassFileLocatorMaker
 import com.likethesalad.android.buddy.bytebuddy.CompoundSource
 import com.likethesalad.android.buddy.bytebuddy.CompoundSourceFactory
@@ -13,6 +14,7 @@ import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiat
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
+import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.utils.AndroidExtensionDataProvider
 import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
 import com.likethesalad.android.buddy.utils.AndroidVariantDataProviderFactory
@@ -37,7 +39,9 @@ class ByteBuddyTransform @Inject constructor(
     private val directoryCleaner: DirectoryCleaner,
     private val androidVariantDataProviderFactory: AndroidVariantDataProviderFactory,
     private val androidExtensionDataProvider: AndroidExtensionDataProvider,
-    private val customConfigurationLibrariesJarsProviderFactory: CustomConfigurationLibrariesJarsProviderFactory
+    private val defaultLibrariesJarsProviderFactory: DefaultLibrariesJarsProviderFactory,
+    private val customConfigurationLibrariesJarsProviderFactory: CustomConfigurationLibrariesJarsProviderFactory,
+    private val pluginConfiguration: AndroidBuddyPluginConfiguration
 ) : Transform() {
 
     override fun getName(): String = "androidBuddy"
@@ -74,7 +78,7 @@ class ByteBuddyTransform @Inject constructor(
                 byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder),
                 pluginFactoriesProvider.getFactories(
                     scopeClasspath.dirFiles,
-                    getLibrariesJarsProvider(androidDataProvider),
+                    getLibrariesJarsProvider(androidDataProvider, extraClasspath),
                     factoriesClassLoader
                 )
             )
@@ -93,8 +97,8 @@ class ByteBuddyTransform @Inject constructor(
     private fun getExtraClasspathExcludingScope(
         androidVariantDataProvider: AndroidVariantDataProvider,
         scopeFiles: Set<File>
-    ): List<File> {
-        val extraFiles = mutableListOf<File>()
+    ): Set<File> {
+        val extraFiles = mutableSetOf<File>()
         val javaClasspath = androidVariantDataProvider.getJavaClassPath()
         extraFiles.addAll(androidExtensionDataProvider.getBootClasspath())
 
@@ -109,7 +113,7 @@ class ByteBuddyTransform @Inject constructor(
 
     private fun createFactoriesClassLoader(
         scopeClasspath: FilesHolder,
-        extraClasspath: List<File>
+        extraClasspath: Set<File>
     ): ClassLoader {
         return classLoaderCreator.create(
             scopeClasspath.allFiles + extraClasspath,
@@ -117,8 +121,14 @@ class ByteBuddyTransform @Inject constructor(
         )
     }
 
-    private fun getLibrariesJarsProvider(androidVariantDataProvider: AndroidVariantDataProvider)
-            : LibrariesJarsProvider {
-        return customConfigurationLibrariesJarsProviderFactory.create(androidVariantDataProvider)
+    private fun getLibrariesJarsProvider(
+        androidVariantDataProvider: AndroidVariantDataProvider,
+        extraClasspath: Set<File>
+    ): LibrariesJarsProvider {
+        return if (pluginConfiguration.useOnlyAndroidBuddyImplementations()) {
+            customConfigurationLibrariesJarsProviderFactory.create(androidVariantDataProvider)
+        } else {
+            defaultLibrariesJarsProviderFactory.create(extraClasspath)
+        }
     }
 }

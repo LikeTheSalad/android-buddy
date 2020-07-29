@@ -26,7 +26,7 @@ class AndroidVariantDataProvider(
         val targetCompatibilityStr = variant.javaCompileProvider.get().targetCompatibility
         val javaVersion = javaVersionToInt(JavaVersion.toVersion(targetCompatibilityStr))
 
-        logger.i("Using java target version {}", javaVersion)
+        logger.info("Using java target version {}", javaVersion)
         return javaVersion
     }
 
