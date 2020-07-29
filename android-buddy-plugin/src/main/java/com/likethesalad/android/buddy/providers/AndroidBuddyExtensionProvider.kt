@@ -1,6 +1,6 @@
 package com.likethesalad.android.buddy.providers
 
-import com.likethesalad.android.buddy.entension.AndroidBuddyExtension
+import com.likethesalad.android.buddy.extension.AndroidBuddyExtension
 
 interface AndroidBuddyExtensionProvider {
 

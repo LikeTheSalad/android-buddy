@@ -3,7 +3,7 @@ package com.likethesalad.android.buddy
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import com.likethesalad.android.buddy.di.AppInjector
-import com.likethesalad.android.buddy.entension.AndroidBuddyExtension
+import com.likethesalad.android.buddy.extension.AndroidBuddyExtension
 import com.likethesalad.android.buddy.providers.AndroidBuddyExtensionProvider
 import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
 import com.likethesalad.android.buddy.providers.FileTreeIteratorProvider

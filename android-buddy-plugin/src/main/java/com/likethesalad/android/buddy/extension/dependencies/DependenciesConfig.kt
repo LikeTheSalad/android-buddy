@@ -1,9 +1,9 @@
-package com.likethesalad.android.buddy.entension.dependencies
+package com.likethesalad.android.buddy.extension.dependencies
 
 import org.gradle.api.model.ObjectFactory
 
 @Suppress("UnstableApiUsage")
-class DependenciesConfig(objectFactory: ObjectFactory) {
+open class DependenciesConfig(objectFactory: ObjectFactory) {
 
     val strictModeEnabled = objectFactory.property(Boolean::class.java)
     val disableAllTransformations = objectFactory.property(Boolean::class.java)
