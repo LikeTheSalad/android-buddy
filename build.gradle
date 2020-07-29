@@ -21,7 +21,7 @@ ext {
 }
 
 group 'com.likethesalad.android'
-version '0.6.5-SNAPSHOT'
+version '0.6.9-SNAPSHOT'
 
 subprojects {
     repositories {

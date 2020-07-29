@@ -20,7 +20,7 @@ class CustomConfigurationCreatorTest : BaseMockable() {
     lateinit var configurationContainer: ConfigurationContainer
 
     private lateinit var onConfigurationFoundCaptor: CapturingSlot<(Configuration) -> Unit>
-    private lateinit var customConfigurationCreator: CustomConfigurationCreator
+    private lateinit var customBucketConfigurationCreator: CustomBucketConfigurationCreator
 
 //    @Before
 //    fun setUp() {

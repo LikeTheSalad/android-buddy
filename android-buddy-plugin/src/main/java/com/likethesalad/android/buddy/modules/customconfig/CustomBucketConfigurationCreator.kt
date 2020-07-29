@@ -9,7 +9,7 @@ import org.gradle.api.artifacts.Configuration
 import javax.inject.Inject
 
 @AppScope
-class CustomConfigurationCreator
+class CustomBucketConfigurationCreator
 @Inject constructor(
     private val bucketConfigurationsFinder: BucketConfigurationsFinder,
     private val gradleConfigurationsProvider: GradleConfigurationsProvider

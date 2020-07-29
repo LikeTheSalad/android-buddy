@@ -43,8 +43,9 @@ class CustomConfigurationVariantSetup
         androidResolvable: Configuration
     ) {
         val namesGenerator = getNamesGeneratorFor(group)
-        val customBuckets = namesGenerator.getSortedBucketConfigNames(variantPath).map { getConfigurationByName(it) }
-        val customResolvable = createConfiguration(namesGenerator.getResolvableConfigurationName(variantName))
+        val customBuckets = namesToConfigurations(namesGenerator.getSortedBucketConfigNames(variantPath))
+        val customResolvableName = namesGenerator.getResolvableConfigurationName(variantName)
+        val customResolvable = createResolvableConfiguration(customResolvableName)
 
         applyBucketsHierarchyOrder(customBuckets)
         customResolvable.extendsFrom(customBuckets.last())
@@ -71,12 +72,22 @@ class CustomConfigurationVariantSetup
         return resolver.getTopBottomPath()
     }
 
-    private fun createConfiguration(name: String): Configuration {
-        return configurations.create(name)
+    private fun createResolvableConfiguration(name: String): Configuration {
+        return configurations.create(name) {
+            it.isCanBeResolved = true
+            it.isCanBeConsumed = false
+            it.isTransitive = false
+        }
     }
 
-    private fun getConfigurationByName(name: String): Configuration {
-        return configurations.getByName(name)
+    private fun namesToConfigurations(names: List<String>): List<Configuration> {
+        val foundConfigurations = mutableListOf<Configuration>()
+        names.forEach {
+            configurations.findByName(it)?.let { config ->
+                foundConfigurations.add(config)
+            }
+        }
+        return foundConfigurations
     }
 
     @Suppress("UNCHECKED_CAST", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")

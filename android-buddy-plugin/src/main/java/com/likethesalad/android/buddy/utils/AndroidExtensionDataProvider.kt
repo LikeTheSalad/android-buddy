@@ -29,14 +29,19 @@ class AndroidExtensionDataProvider
     }
 
     fun allVariants(onVariantFound: (BaseVariant) -> Unit) {
-        val extension = androidExtension
-        if (extension is AppExtension) {
-            extension.applicationVariants.all {
-                onVariantFound.invoke(it)
-            }
+        when (val extension = androidExtension) {
+            is AppExtension -> allApplicationVariants(extension, onVariantFound)
+            else -> throw UnsupportedOperationException()
         }
+    }
 
-        throw UnsupportedOperationException()
+    private fun allApplicationVariants(
+        appExtension: AppExtension,
+        onVariantFound: (BaseVariant) -> Unit
+    ) {
+        appExtension.applicationVariants.all {
+            onVariantFound.invoke(it)
+        }
     }
 
     fun getBuildTypeNames(): List<String> {

@@ -3,7 +3,7 @@ package com.likethesalad.android.buddy
 import com.android.build.gradle.AppExtension
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.di.AppInjector
-import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationCreator
+import com.likethesalad.android.buddy.modules.customconfig.CustomBucketConfigurationCreator
 import com.likethesalad.android.buddy.modules.transform.ByteBuddyTransform
 import com.likethesalad.android.common.utils.DependencyHandlerUtil
 import com.likethesalad.android.testutils.BaseMockable
@@ -50,7 +50,7 @@ class AndroidBuddyPluginTest : BaseMockable() {
     lateinit var configurationContainer: ConfigurationContainer
 
     @MockK
-    lateinit var customConfigurationCreator: CustomConfigurationCreator
+    lateinit var customBucketConfigurationCreator: CustomBucketConfigurationCreator
 
     private lateinit var androidBuddyPlugin: AndroidBuddyPlugin
 
@@ -64,7 +64,7 @@ class AndroidBuddyPluginTest : BaseMockable() {
         every { extensionContainer.getByType(AppExtension::class.java) }.returns(androidExtension)
         every { AppInjector.getByteBuddyTransform() }.returns(byteBuddyTransform)
         every { AppInjector.getDependencyHandlerUtil() }.returns(dependencyHandlerUtil)
-        every { AppInjector.getCustomConfigurationCreator() }.returns(customConfigurationCreator)
+        every { AppInjector.getCustomConfigurationCreator() }.returns(customBucketConfigurationCreator)
 
         androidBuddyPlugin = AndroidBuddyPlugin()
         androidBuddyPlugin.apply(project)
