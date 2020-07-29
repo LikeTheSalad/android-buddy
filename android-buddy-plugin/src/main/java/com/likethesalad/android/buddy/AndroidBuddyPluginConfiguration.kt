@@ -12,14 +12,14 @@ class AndroidBuddyPluginConfiguration
     private val extension by lazy { androidBuddyExtensionProvider.getAndroidBuddyExtension() }
 
     fun alwaysLogDependenciesTransformationNames(): Boolean {
-        return extension.dependencies.get().alwaysLogTransformationNames.get()
+        return extension.dependenciesConfig.alwaysLogTransformationNames.get()
     }
 
     fun useOnlyAndroidBuddyImplementations(): Boolean {
-        return extension.dependencies.get().strictModeEnabled.get()
+        return extension.dependenciesConfig.strictModeEnabled.get()
     }
 
     fun useDependenciesTransformations(): Boolean {
-        return !extension.dependencies.get().disableAllTransformations.get()
+        return !extension.dependenciesConfig.disableAllTransformations.get()
     }
 }
