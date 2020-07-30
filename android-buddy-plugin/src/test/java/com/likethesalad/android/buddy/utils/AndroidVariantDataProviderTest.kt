@@ -1,27 +1,22 @@
-package com.likethesalad.android.buddy.providers.impl
+package com.likethesalad.android.buddy.utils
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.builder.model.BuildType
 import com.android.builder.model.ProductFlavor
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.modules.customconfig.AndroidVariantPathResolverFactory
 import com.likethesalad.android.buddy.modules.customconfig.utils.AndroidVariantPathResolver
-import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
-import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
+import com.likethesalad.android.buddy.modules.customconfig.utils.AndroidVariantPathResolverFactory
 import com.likethesalad.android.common.utils.Logger
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.mockkStatic
 import io.mockk.verify
 import org.gradle.api.DomainObjectSet
-import org.gradle.api.JavaVersion
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.junit.Before
 import org.junit.Test
-import java.io.File
 
 class AndroidVariantDataProviderTest : BaseMockable() {
 
@@ -29,7 +24,7 @@ class AndroidVariantDataProviderTest : BaseMockable() {
     lateinit var androidAppExtension: AppExtension
 
     @MockK
-    lateinit var androidExtensionProvider: AndroidExtensionProvider
+    lateinit var androidExtensionDataProvider: AndroidExtensionDataProvider
 
     @MockK
     lateinit var androidVariantPathResolverFactory: AndroidVariantPathResolverFactory
@@ -42,10 +37,9 @@ class AndroidVariantDataProviderTest : BaseMockable() {
 
     @Before
     fun setUp() {
-        every { androidExtensionProvider.getAndroidExtension() }.returns(androidAppExtension)
         androidVariantDataProvider =
             AndroidVariantDataProvider(
-                androidExtensionProvider,
+                androidExtensionDataProvider,
                 androidVariantPathResolverFactory,
                 logger,
                 variantName
@@ -53,17 +47,8 @@ class AndroidVariantDataProviderTest : BaseMockable() {
     }
 
     @Test
-    fun `Get android booth classpath`() {
-        val bootClasspath = mutableListOf<File>(mockk())
-        every {
-            androidAppExtension.bootClasspath
-        }.returns(bootClasspath)
-
-        Truth.assertThat(androidVariantDataProvider.getBootClasspath()).isEqualTo(bootClasspath.toSet())
-    }
-
-    @Test
     fun `Get variant java target compatibility version`() {
+        createAndSetMainVariantMock()
         val javaCompileProvider = mockk<TaskProvider<JavaCompile>>()
         val javaCompile = mockk<JavaCompile>()
         val targetCompatibility = "1.7"
@@ -76,24 +61,6 @@ class AndroidVariantDataProviderTest : BaseMockable() {
 
         Truth.assertThat(result).isEqualTo(7)
         verify {
-            logger.info("Using java target version {}", 7)
-        }
-    }
-
-    @Test
-    fun `Fallback to current JVM target compatibility version when variant not found`() {
-        val appVariants = mockk<DomainObjectSet<ApplicationVariant>>()
-        val currentJdkJavaVersion = JavaVersion.VERSION_1_7
-        mockkStatic(JavaVersion::class)
-        every { JavaVersion.current() }.returns(currentJdkJavaVersion)
-        every { androidAppExtension.applicationVariants }.returns(appVariants)
-        every { appVariants.iterator() }.returns(getVariantsIterator(null, "otherName"))
-
-        val result = androidVariantDataProvider.getJavaTargetCompatibilityVersion()
-
-        Truth.assertThat(result).isEqualTo(7)
-        verify {
-            logger.warning("Java target version for android variant {} not found, falling back to JVM's", variantName)
             logger.info("Using java target version {}", 7)
         }
     }
@@ -130,19 +97,6 @@ class AndroidVariantDataProviderTest : BaseMockable() {
         Truth.assertThat(result).isEqualTo(expectedPath)
     }
 
-    @Test
-    fun `Get variant path with null variant`() {
-        val appVariants = mockk<DomainObjectSet<ApplicationVariant>>()
-        every { appVariants.iterator() }.returns(mutableListOf<ApplicationVariant>().iterator())
-        every { androidAppExtension.applicationVariants }.returns(appVariants)
-
-        Truth.assertThat(androidVariantDataProvider.getVariantPath()).isEmpty()
-
-        verify {
-            logger.warning("Could not find variant path for {}, returning empty", variantName)
-        }
-    }
-
     private fun getVariantsIterator(
         chosen: ApplicationVariant?,
         vararg variantNames: String
@@ -167,6 +121,7 @@ class AndroidVariantDataProviderTest : BaseMockable() {
     private fun createAndSetMainVariantMock(vararg otherVariantNames: String): ApplicationVariant {
         val appVariants = mockk<DomainObjectSet<ApplicationVariant>>()
         val variant = createApplicationVariantMock(variantName)
+        every { androidExtensionDataProvider.getVariantByName(variantName) }.returns(variant)
         every { androidAppExtension.applicationVariants }.returns(appVariants)
         every { appVariants.iterator() }.returns(getVariantsIterator(variant, *otherVariantNames))
         return variant

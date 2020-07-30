@@ -82,7 +82,7 @@ class BucketConfigurationsFinderTest : BaseMockable() {
         every { configurationContainer.all(capture(actionCaptor)) } just Runs
 
         bucketConfigurationsFinder.searchForAllowedConfigurations {
-            capturedNames.add(it.name)
+            capturedNames.add(it.configuration.name)
         }
         val action = actionCaptor.captured
         dummyConfigs.forEach {

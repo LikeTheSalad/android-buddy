@@ -4,6 +4,7 @@ import com.android.build.api.transform.Context
 import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.TransformInvocation
 import com.google.common.truth.Truth
+import com.likethesalad.android.buddy.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.bytebuddy.ClassFileLocatorMaker
 import com.likethesalad.android.buddy.bytebuddy.CompoundSource
 import com.likethesalad.android.buddy.bytebuddy.CompoundSourceFactory
@@ -12,11 +13,15 @@ import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFolders
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
+import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationLibrariesJarsProvider
+import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.modules.transform.ByteBuddyTransform
 import com.likethesalad.android.buddy.modules.transform.TransformInvocationDataExtractor
 import com.likethesalad.android.buddy.modules.transform.TransformInvocationDataExtractorFactory
+import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProvider
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
+import com.likethesalad.android.buddy.utils.AndroidExtensionDataProvider
 import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
 import com.likethesalad.android.buddy.utils.AndroidVariantDataProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
@@ -66,12 +71,48 @@ class ByteBuddyTransformTest : BaseMockable() {
     lateinit var classLoaderCreator: ClassLoaderCreator
 
     @MockK
+    lateinit var androidExtensionDataProvider: AndroidExtensionDataProvider
+
+    @MockK
     lateinit var defaultLibrariesJarsProviderFactory: DefaultLibrariesJarsProviderFactory
 
+    @MockK
+    lateinit var customConfigurationLibrariesJarsProviderFactory: CustomConfigurationLibrariesJarsProviderFactory
+
+    @MockK
+    lateinit var pluginConfiguration: AndroidBuddyPluginConfiguration
+
+    @MockK
+    lateinit var transformInvocation: TransformInvocation
+
+    @MockK
+    lateinit var context: Context
+
+    @MockK
+    lateinit var transformInvocationDataExtractor: TransformInvocationDataExtractor
+
+    @MockK
+    lateinit var androidVariantDataProvider: AndroidVariantDataProvider
+
+    @MockK
+    lateinit var pluginEngine: Plugin.Engine
+
+    private val variantName = "someName"
+    private val javaTargetVersion = 8
+    private lateinit var androidBoothClasspath: List<File>
     private lateinit var byteBuddyTransform: ByteBuddyTransform
 
     @Before
     fun setUp() {
+        androidBoothClasspath = listOf(mockk(), mockk())
+        every {
+            transformInvocationDataExtractorFactory.create(transformInvocation)
+        }.returns(transformInvocationDataExtractor)
+        every { context.variantName }.returns(variantName)
+        every { androidVariantDataProviderFactory.create(variantName) }.returns(androidVariantDataProvider)
+        every { androidExtensionDataProvider.getBootClasspath() }.returns(androidBoothClasspath)
+        every { androidVariantDataProvider.getJavaTargetCompatibilityVersion() }.returns(javaTargetVersion)
+        every { pluginEngineProvider.makeEngine(javaTargetVersion) }.returns(pluginEngine)
         byteBuddyTransform = ByteBuddyTransform(
             classFileLocatorMaker,
             pluginFactoriesProvider,
@@ -83,7 +124,10 @@ class ByteBuddyTransformTest : BaseMockable() {
             classLoaderCreator,
             directoryCleaner,
             androidVariantDataProviderFactory,
-            defaultLibrariesJarsProviderFactory
+            androidExtensionDataProvider,
+            defaultLibrariesJarsProviderFactory,
+            customConfigurationLibrariesJarsProviderFactory,
+            pluginConfiguration
         )
     }
 
@@ -107,11 +151,21 @@ class ByteBuddyTransformTest : BaseMockable() {
     }
 
     @Test
-    fun `Do transform`() {
-        val transformInvocation = mockk<TransformInvocation>()
-        val transformInvocationDataExtractor = mockk<TransformInvocationDataExtractor>()
+    fun `Do transform with default libraries jar provider`() {
+        every { pluginConfiguration.useOnlyAndroidBuddyImplementations() }.returns(false)
+
+        verifyTransform(true)
+    }
+
+    @Test
+    fun `Do transform with custom config libraries jar provider`() {
+        every { pluginConfiguration.useOnlyAndroidBuddyImplementations() }.returns(true)
+
+        verifyTransform(false)
+    }
+
+    private fun verifyTransform(withAllLibrariesJarsProvider: Boolean) {
         val factoriesClassLoader = mockk<ClassLoader>()
-        val librariesJarsProvider = mockk<DefaultLibrariesJarsProvider>()
         val folder1 = mockk<File>()
         val folders = setOf(folder1)
         val jarFile1 = mockk<File>()
@@ -120,7 +174,6 @@ class ByteBuddyTransformTest : BaseMockable() {
         val allFiles = folders + jarFiles
         val outputFolder = mockk<File>()
         val filesHolder = mockk<FilesHolder>()
-        val pluginEngine = mockk<Plugin.Engine>()
         val transformScopes = mutableSetOf(QualifiedContent.Scope.PROJECT)
         val classFileLocator = mockk<ClassFileLocator>()
         val compoundSource = mockk<CompoundSource>()
@@ -130,28 +183,27 @@ class ByteBuddyTransformTest : BaseMockable() {
         val javaClasspathFile1 = mockk<File>()
         val javaClasspathFile2 = mockk<File>()
         val javaClasspath = setOf(javaClasspathFile1, javaClasspathFile2, folder1)
-        val extraClasspath = setOf(javaClasspathFile1, javaClasspathFile2)
-        val androidBootClasspath = setOf<File>()
+        val extraClasspath = mutableSetOf(javaClasspathFile1, javaClasspathFile2)
+        extraClasspath.addAll(androidBoothClasspath)
         val target = mockk<Plugin.Engine.Target>()
         val factories = listOf<Plugin.Factory>()
-        val context = mockk<Context>()
-        val variantName = "someName"
-        val javaTargetVersion = 8
-        val androidPluginDataProvider = mockk<AndroidVariantDataProvider>()
-        every { context.variantName }.returns(variantName)
+        val librariesJarsProvider: LibrariesJarsProvider = if (withAllLibrariesJarsProvider) {
+            val response = mockk<DefaultLibrariesJarsProvider>()
+            every {
+                defaultLibrariesJarsProviderFactory.create(extraClasspath)
+            }.returns(response)
+            response
+        } else {
+            val response = mockk<CustomConfigurationLibrariesJarsProvider>()
+            every {
+                customConfigurationLibrariesJarsProviderFactory.create(androidVariantDataProvider)
+            }.returns(response)
+            response
+        }
         every {
-            defaultLibrariesJarsProviderFactory.create(extraClasspath)
-        }.returns(librariesJarsProvider)
-        every { androidVariantDataProviderFactory.create(variantName) }.returns(androidPluginDataProvider)
-        every {
-            classLoaderCreator.create(extraClasspath + allFiles, ByteBuddy::class.java.classLoader)
+            classLoaderCreator.create(allFiles + extraClasspath, ByteBuddy::class.java.classLoader)
         }.returns(factoriesClassLoader)
-        every { androidPluginDataProvider.getJavaClassPath() }.returns(javaClasspath)
-        every { androidPluginDataProvider.getBootClasspath() }.returns(androidBootClasspath)
-        every { androidPluginDataProvider.getJavaTargetCompatibilityVersion() }.returns(javaTargetVersion)
-        every {
-            transformInvocationDataExtractorFactory.create(transformInvocation)
-        }.returns(transformInvocationDataExtractor)
+        every { androidVariantDataProvider.getJavaClassPath() }.returns(javaClasspath)
         every {
             transformInvocationDataExtractor.getScopeClasspath()
         }.returns(filesHolder)
@@ -161,7 +213,6 @@ class ByteBuddyTransformTest : BaseMockable() {
         every { filesHolder.dirFiles }.returns(folders)
         every { filesHolder.jarFiles }.returns(jarFiles)
         every { filesHolder.allFiles }.returns(allFiles)
-        every { pluginEngineProvider.makeEngine(javaTargetVersion) }.returns(pluginEngine)
         every { classFileLocatorMaker.make(extraClasspath) }.returns(classFileLocator)
         every { sourceOriginForMultipleFoldersFactory.create(folders) }.returns(foldersOrigin)
         every { byteBuddyClassesInstantiator.makeJarFileSourceOrigin(jarFile1) }.returns(jarOrigin1)
