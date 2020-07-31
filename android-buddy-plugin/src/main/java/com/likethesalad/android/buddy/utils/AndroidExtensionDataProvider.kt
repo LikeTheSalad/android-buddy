@@ -1,6 +1,7 @@
 package com.likethesalad.android.buddy.utils
 
 import com.android.build.gradle.AppExtension
+import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.BaseVariant
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
@@ -18,14 +19,10 @@ class AndroidExtensionDataProvider
     }
 
     fun getVariantByName(name: String): BaseVariant {
-        val androidExtension = this.androidExtension
-        if (androidExtension is AppExtension) {
-            return androidExtension.applicationVariants.find {
-                it.name == name
-            }!!
+        return when (val androidExtension = this.androidExtension) {
+            is AppExtension -> getAppVariantByName(name, androidExtension)
+            else -> throw UnsupportedOperationException()
         }
-
-        throw UnsupportedOperationException()
     }
 
     fun allVariants(onVariantFound: (BaseVariant) -> Unit) {
@@ -35,6 +32,12 @@ class AndroidExtensionDataProvider
         }
     }
 
+    private fun getAppVariantByName(name: String, appExtension: AppExtension): ApplicationVariant {
+        return appExtension.applicationVariants.find {
+            it.name == name
+        }!!
+    }
+
     private fun allApplicationVariants(
         appExtension: AppExtension,
         onVariantFound: (BaseVariant) -> Unit
@@ -42,10 +45,6 @@ class AndroidExtensionDataProvider
         appExtension.applicationVariants.all {
             onVariantFound.invoke(it)
         }
-    }
-
-    fun getBuildTypeNames(): List<String> {
-        return androidExtension.buildTypes.names.toList()
     }
 }
 

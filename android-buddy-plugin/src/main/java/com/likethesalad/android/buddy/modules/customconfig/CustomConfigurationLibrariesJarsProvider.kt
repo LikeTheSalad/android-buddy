@@ -40,7 +40,7 @@ class CustomConfigurationLibrariesJarsProvider(
 
     private fun extractArtifactFiles(custom: Configuration): FileCollection {
         return custom.incoming.artifactView {
-            it.lenient(false)
+            it.lenient(true)
             it.attributes.attribute(ANDROID_ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES.type)
         }.artifacts.artifactFiles
     }

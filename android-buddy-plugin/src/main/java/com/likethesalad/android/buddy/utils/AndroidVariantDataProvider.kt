@@ -6,7 +6,6 @@ import com.google.auto.factory.Provided
 import com.likethesalad.android.buddy.modules.customconfig.utils.AndroidVariantPathResolverFactory
 import com.likethesalad.android.common.utils.Logger
 import org.gradle.api.JavaVersion
-import org.gradle.api.artifacts.Configuration
 import java.io.File
 
 @Suppress("UnstableApiUsage")
@@ -40,18 +39,6 @@ class AndroidVariantDataProvider(
         )
 
         return resolver.getTopBottomPath()
-    }
-
-    fun getVariantBuildTypeName(): String {
-        return variant.buildType.name
-    }
-
-    fun getVariantCompileConfiguration(): Configuration {
-        return variant.compileConfiguration
-    }
-
-    fun getVariantRuntimeConfiguration(): Configuration {
-        return variant.runtimeConfiguration
     }
 
     private fun javaVersionToInt(javaVersion: JavaVersion): Int {
