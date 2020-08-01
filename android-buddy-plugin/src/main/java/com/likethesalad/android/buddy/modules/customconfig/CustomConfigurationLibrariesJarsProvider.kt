@@ -5,6 +5,7 @@ import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
 import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
+import com.likethesalad.android.common.utils.Logger
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
@@ -14,7 +15,8 @@ import java.io.File
 @AutoFactory
 class CustomConfigurationLibrariesJarsProvider(
     @Provided customConfigurationResolverFactory: CustomConfigurationResolverFactory,
-    private val androidVariantDataProvider: AndroidVariantDataProvider
+    private val androidVariantDataProvider: AndroidVariantDataProvider,
+    private val logger: Logger
 ) : LibrariesJarsProvider {
 
     companion object {
@@ -33,7 +35,8 @@ class CustomConfigurationLibrariesJarsProvider(
         val runtimeFiles = extractArtifactFiles(customRuntimeConfiguration)
 
         val mergedFiles = compileFiles.plus(runtimeFiles).files
-        println("merged files: $mergedFiles")
+
+        logger.debug("Library files from custom config: {}", mergedFiles)
 
         return mergedFiles
     }

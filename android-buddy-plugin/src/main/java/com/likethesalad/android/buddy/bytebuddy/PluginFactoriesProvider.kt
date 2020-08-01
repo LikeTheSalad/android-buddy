@@ -74,6 +74,9 @@ class PluginFactoriesProvider
     }
 
     private fun getPluginNamesFrom(files: Set<File>): Set<String> {
+        if (files.isEmpty()) {
+            return emptySet()
+        }
         val classGraphProvider = classGraphProviderFactory.create(DefaultClassGraphFilesProvider(files))
         val pluginsFinder = pluginsFinderFactory.create(classGraphProvider)
         return pluginsFinder.findBuiltPluginClassNames()
