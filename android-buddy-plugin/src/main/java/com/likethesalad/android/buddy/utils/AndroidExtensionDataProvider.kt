@@ -19,8 +19,8 @@ class AndroidExtensionDataProvider
     }
 
     fun getVariantByName(name: String): BaseVariant {
-        return when (val androidExtension = this.androidExtension) {
-            is AppExtension -> getAppVariantByName(name, androidExtension)
+        return when (val extension = this.androidExtension) {
+            is AppExtension -> getAppVariantByName(name, extension)
             else -> throw UnsupportedOperationException()
         }
     }
