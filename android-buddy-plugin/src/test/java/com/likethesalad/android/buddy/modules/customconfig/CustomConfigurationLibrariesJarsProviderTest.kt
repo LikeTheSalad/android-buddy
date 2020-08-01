@@ -2,6 +2,7 @@ package com.likethesalad.android.buddy.modules.customconfig
 
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
+import com.likethesalad.android.common.utils.Logger
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.CapturingSlot
 import io.mockk.every
@@ -31,6 +32,9 @@ class CustomConfigurationLibrariesJarsProviderTest : BaseMockable() {
     @MockK
     lateinit var androidVariantDataProvider: AndroidVariantDataProvider
 
+    @MockK
+    lateinit var logger: Logger
+
     private lateinit var customConfigurationLibrariesJarsProvider: CustomConfigurationLibrariesJarsProvider
 
     @Before
@@ -41,6 +45,7 @@ class CustomConfigurationLibrariesJarsProviderTest : BaseMockable() {
         customConfigurationLibrariesJarsProvider =
             CustomConfigurationLibrariesJarsProvider(
                 customConfigurationResolverFactory,
+                logger,
                 androidVariantDataProvider
             )
     }
@@ -73,6 +78,7 @@ class CustomConfigurationLibrariesJarsProviderTest : BaseMockable() {
         verifyArtifactViewConfiguration(runtimeResolvable)
         verify {
             compileFileCollection.plus(runtimeFileCollection)
+            logger.debug("Library files from custom config: {}", allFiles)
         }
     }
 

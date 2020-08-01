@@ -15,8 +15,8 @@ import java.io.File
 @AutoFactory
 class CustomConfigurationLibrariesJarsProvider(
     @Provided customConfigurationResolverFactory: CustomConfigurationResolverFactory,
-    private val androidVariantDataProvider: AndroidVariantDataProvider,
-    private val logger: Logger
+    @Provided private val logger: Logger,
+    private val androidVariantDataProvider: AndroidVariantDataProvider
 ) : LibrariesJarsProvider {
 
     companion object {

@@ -6,6 +6,7 @@ import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.spyk
 import io.mockk.verify
 import net.bytebuddy.ClassFileVersion
 import net.bytebuddy.build.EntryPoint
@@ -26,13 +27,20 @@ class PluginEngineProviderTest : BaseMockable() {
     @MockK
     lateinit var transformationLogger: TransformationLogger
 
+    @MockK
+    lateinit var logger: com.likethesalad.android.common.utils.Logger
+
+    private val processorsAvailable = 3
     private lateinit var pluginEngineProvider: PluginEngineProvider
 
     @Before
     fun setUp() {
-        pluginEngineProvider = PluginEngineProvider(
-            instantiator, transformationLogger
+        pluginEngineProvider = spyk(
+            PluginEngineProvider(
+                instantiator, transformationLogger, logger
+            )
         )
+        every { pluginEngineProvider.getJvmAvailableProcessors() }.returns(processorsAvailable)
     }
 
     @Test
@@ -51,6 +59,7 @@ class PluginEngineProviderTest : BaseMockable() {
             instantiator.makePluginEngineOf(entryPoint, classFileVersion, methodNameTransformer)
         }.returns(expectedPluginEngine)
         every { expectedPluginEngine.with(any<Plugin.Engine.Listener>()) }.returns(expectedPluginEngine)
+        every { expectedPluginEngine.withParallelTransformation(any()) }.returns(expectedPluginEngine)
 
         val engine = pluginEngineProvider.makeEngine(javaTargetCompatibility)
 
@@ -58,6 +67,8 @@ class PluginEngineProviderTest : BaseMockable() {
         verify {
             instantiator.makePluginEngineOf(entryPoint, classFileVersion, methodNameTransformer)
             expectedPluginEngine.with(transformationLogger)
+            expectedPluginEngine.withParallelTransformation(4)
+            logger.debug("Using {} threads for transformation", 4)
         }
     }
 }
