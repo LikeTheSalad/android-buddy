@@ -152,4 +152,9 @@ class AndroidBuddyPluginTest : BaseMockable() {
     fun `Provide dependency configurations container`() {
         Truth.assertThat(androidBuddyPlugin.getConfigurationContainer()).isEqualTo(configurationContainer)
     }
+
+    @Test
+    fun `Get android buddy extension`() {
+        Truth.assertThat(androidBuddyPlugin.getAndroidBuddyExtension()).isEqualTo(androidBuddyExtension)
+    }
 }
