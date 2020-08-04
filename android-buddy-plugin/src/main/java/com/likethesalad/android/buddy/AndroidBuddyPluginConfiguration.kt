@@ -16,10 +16,14 @@ class AndroidBuddyPluginConfiguration
     }
 
     fun useOnlyAndroidBuddyImplementations(): Boolean {
-        return extension.dependenciesConfig.strictModeEnabled.get()
+        return extension.dependenciesConfig.strictMode.enabled.get()
     }
 
     fun useDependenciesTransformations(): Boolean {
         return !extension.dependenciesConfig.disableAllTransformations.get()
+    }
+
+    fun useDependenciesTransitiveTransformations(): Boolean {
+        return extension.dependenciesConfig.strictMode.useTransitiveTransformations.get()
     }
 }
