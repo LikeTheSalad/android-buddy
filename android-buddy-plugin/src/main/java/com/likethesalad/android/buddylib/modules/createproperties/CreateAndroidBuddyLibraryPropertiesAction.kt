@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddylib.actions
+package com.likethesalad.android.buddylib.modules.createproperties
 
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
@@ -11,7 +11,7 @@ import java.io.File
 import java.util.Properties
 
 @AutoFactory
-class CreateJarDescriptionPropertiesAction(
+class CreateAndroidBuddyLibraryPropertiesAction(
     @Provided private val directoryCleaner: DirectoryCleaner,
     @Provided private val logger: Logger,
     private val pluginNames: Set<String>,
