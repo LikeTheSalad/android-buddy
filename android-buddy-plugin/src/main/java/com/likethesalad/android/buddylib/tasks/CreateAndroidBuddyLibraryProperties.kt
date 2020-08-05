@@ -1,6 +1,6 @@
 package com.likethesalad.android.buddylib.tasks
 
-import com.likethesalad.android.buddylib.models.CreateJarDescriptionPropertiesArgs
+import com.likethesalad.android.buddylib.modules.createproperties.data.CreateJarDescriptionPropertiesArgs
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
@@ -11,10 +11,10 @@ import org.gradle.api.tasks.TaskAction
 import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
-open class CreateJarDescriptionProperties
+open class CreateAndroidBuddyLibraryProperties
 @Inject constructor(args: CreateJarDescriptionPropertiesArgs) : DefaultTask() {
 
-    private val createJarDescriptionPropertiesActionFactory = args.createJarDescriptionPropertiesActionFactory
+    private val createJarDescriptionPropertiesActionFactory = args.createAndroidBuddyLibraryPropertiesActionFactory
 
     @get:OutputDirectory
     val outputDir: DirectoryProperty by lazy {

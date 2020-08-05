@@ -1,7 +1,7 @@
 package com.likethesalad.android.buddylib.di
 
 import com.likethesalad.android.buddylib.AndroidBuddyLibraryPlugin
-import com.likethesalad.android.buddylib.models.CreateJarDescriptionPropertiesArgs
+import com.likethesalad.android.buddylib.modules.createproperties.data.CreateJarDescriptionPropertiesArgs
 import com.likethesalad.android.common.di.GeneralInjector
 import com.likethesalad.android.common.utils.DependencyHandlerUtil
 

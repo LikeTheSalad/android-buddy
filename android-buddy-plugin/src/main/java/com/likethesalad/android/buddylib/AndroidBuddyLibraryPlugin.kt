@@ -4,7 +4,7 @@ import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.api.LibraryVariant
 import com.likethesalad.android.buddylib.di.LibraryInjector
 import com.likethesalad.android.buddylib.extension.AndroidBuddyLibExtension
-import com.likethesalad.android.buddylib.tasks.CreateJarDescriptionProperties
+import com.likethesalad.android.buddylib.tasks.CreateAndroidBuddyLibraryProperties
 import com.likethesalad.android.common.base.BuddyPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -42,7 +42,7 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin {
     ) {
         val createJarDescriptionProperties = project.tasks.register(
             "${CREATE_JAR_DESCRIPTION_PROPERTIES_TASK_NAME}For${variant.name.capitalize()}",
-            CreateJarDescriptionProperties::class.java,
+            CreateAndroidBuddyLibraryProperties::class.java,
             LibraryInjector.getCreateJarDescriptionPropertiesArgs()
         )
         createJarDescriptionProperties.configure {
