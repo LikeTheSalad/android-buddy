@@ -1,7 +1,6 @@
-package com.likethesalad.android.buddylib.actions
+package com.likethesalad.android.buddylib.modules.createproperties
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddylib.modules.createproperties.CreateAndroidBuddyLibraryMetadataAction
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import com.likethesalad.android.common.utils.Logger
 import com.likethesalad.android.testutils.BaseMockable
@@ -86,6 +85,8 @@ class CreateAndroidBuddyLibraryMetadataActionTest : BaseMockable() {
     @Test
     fun `Empty output dir before writing new file`() {
         val randomFile = File(outputDir, "someFile.txt")
+        val expectedMetaInfDir = File(outputDir, "META-INF")
+        val expectedAndroidBuddyDir = File(expectedMetaInfDir, "android-buddy-plugins")
         randomFile.createNewFile()
         Truth.assertThat(outputDir.listFiles()).asList().containsExactly(randomFile)
 
@@ -93,7 +94,10 @@ class CreateAndroidBuddyLibraryMetadataActionTest : BaseMockable() {
         val action = createInstance(pluginNames)
         action.execute()
 
-        Truth.assertThat(outputDir.listFiles()).asList().containsExactly(getGeneratedPropertiesFile())
+
+        Truth.assertThat(outputDir.listFiles()).asList().containsExactly(expectedMetaInfDir)
+        Truth.assertThat(expectedMetaInfDir.listFiles()).asList().containsExactly(expectedAndroidBuddyDir)
+        Truth.assertThat(expectedAndroidBuddyDir.listFiles()).asList().containsExactly(getGeneratedPropertiesFile())
         verifyCommonSuccessActions(pluginNames)
     }
 
@@ -104,7 +108,8 @@ class CreateAndroidBuddyLibraryMetadataActionTest : BaseMockable() {
     }
 
     private fun getGeneratedPropertiesFile(): File {
-        return File(outputDir, "plugins.properties")
+        val propertiesDir = File(outputDir, "META-INF/android-buddy-plugins")
+        return File(propertiesDir, "plugins.properties")
     }
 
     private fun createInstance(pluginNames: Set<String>)
