@@ -1,6 +1,6 @@
 package com.likethesalad.android.buddylib.tasks
 
-import com.likethesalad.android.buddylib.modules.createproperties.data.CreateJarDescriptionPropertiesArgs
+import com.likethesalad.android.buddylib.modules.createproperties.data.CreateMetadataTaskArgs
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
@@ -11,10 +11,10 @@ import org.gradle.api.tasks.TaskAction
 import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
-open class CreateAndroidBuddyLibraryProperties
-@Inject constructor(args: CreateJarDescriptionPropertiesArgs) : DefaultTask() {
+open class CreateAndroidBuddyLibraryMetadata
+@Inject constructor(args: CreateMetadataTaskArgs) : DefaultTask() {
 
-    private val createJarDescriptionPropertiesActionFactory = args.createAndroidBuddyLibraryPropertiesActionFactory
+    private val createAndroidBuddyLibraryMetadataActionFactory = args.createAndroidBuddyLibraryMetadataActionFactory
 
     @get:OutputDirectory
     val outputDir: DirectoryProperty by lazy {
@@ -32,7 +32,7 @@ open class CreateAndroidBuddyLibraryProperties
     @TaskAction
     fun doAction() {
         val pluginNames = inputClassNames.get()
-        createJarDescriptionPropertiesActionFactory.create(
+        createAndroidBuddyLibraryMetadataActionFactory.create(
             pluginNames,
             outputDir.asFile.get()
         ).execute()

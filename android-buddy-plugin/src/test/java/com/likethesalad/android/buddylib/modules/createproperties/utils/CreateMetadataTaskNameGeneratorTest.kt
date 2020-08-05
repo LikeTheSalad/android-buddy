@@ -4,20 +4,20 @@ import com.google.common.truth.Truth
 import org.junit.Before
 import org.junit.Test
 
-class CreatePropertiesTaskNameGeneratorTest {
+class CreateMetadataTaskNameGeneratorTest {
 
-    private lateinit var createPropertiesTaskNameGenerator: CreatePropertiesTaskNameGenerator
+    private lateinit var createMetadataTaskNameGenerator: CreateMetadataTaskNameGenerator
 
     @Before
     fun setUp() {
-        createPropertiesTaskNameGenerator = CreatePropertiesTaskNameGenerator()
+        createMetadataTaskNameGenerator = CreateMetadataTaskNameGenerator()
     }
 
     @Test
     fun `Generate task name from variant name`() {
         val variantName = "someName"
 
-        Truth.assertThat(createPropertiesTaskNameGenerator.generateTaskName(variantName))
+        Truth.assertThat(createMetadataTaskNameGenerator.generateTaskName(variantName))
             .isEqualTo("createSomeNameAndroidBuddyLibraryProperties")
     }
 }

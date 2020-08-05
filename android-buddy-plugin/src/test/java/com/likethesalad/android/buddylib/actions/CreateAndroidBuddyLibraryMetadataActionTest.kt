@@ -1,7 +1,7 @@
 package com.likethesalad.android.buddylib.actions
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddylib.modules.createproperties.CreateAndroidBuddyLibraryPropertiesAction
+import com.likethesalad.android.buddylib.modules.createproperties.CreateAndroidBuddyLibraryMetadataAction
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import com.likethesalad.android.common.utils.Logger
 import com.likethesalad.android.testutils.BaseMockable
@@ -14,7 +14,7 @@ import org.junit.rules.TemporaryFolder
 import java.io.File
 import java.util.Properties
 
-class CreateAndroidBuddyLibraryPropertiesActionTest : BaseMockable() {
+class CreateAndroidBuddyLibraryMetadataActionTest : BaseMockable() {
 
     @get:Rule
     val temporaryFolderRule = TemporaryFolder()
@@ -108,8 +108,8 @@ class CreateAndroidBuddyLibraryPropertiesActionTest : BaseMockable() {
     }
 
     private fun createInstance(pluginNames: Set<String>)
-            : CreateAndroidBuddyLibraryPropertiesAction {
-        return CreateAndroidBuddyLibraryPropertiesAction(
+            : CreateAndroidBuddyLibraryMetadataAction {
+        return CreateAndroidBuddyLibraryMetadataAction(
             DirectoryCleaner(), logger, pluginNames, outputDir
         )
     }

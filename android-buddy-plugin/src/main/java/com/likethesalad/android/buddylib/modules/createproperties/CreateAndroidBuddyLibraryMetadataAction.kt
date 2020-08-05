@@ -11,7 +11,7 @@ import java.io.File
 import java.util.Properties
 
 @AutoFactory
-class CreateAndroidBuddyLibraryPropertiesAction(
+class CreateAndroidBuddyLibraryMetadataAction(
     @Provided private val directoryCleaner: DirectoryCleaner,
     @Provided private val logger: Logger,
     private val pluginNames: Set<String>,

@@ -3,8 +3,8 @@ package com.likethesalad.android.buddylib
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddylib.di.LibraryInjector
 import com.likethesalad.android.buddylib.extension.AndroidBuddyLibExtension
-import com.likethesalad.android.buddylib.modules.createproperties.data.CreateJarDescriptionPropertiesArgs
-import com.likethesalad.android.buddylib.tasks.CreateAndroidBuddyLibraryProperties
+import com.likethesalad.android.buddylib.modules.createproperties.data.CreateMetadataTaskArgs
+import com.likethesalad.android.buddylib.tasks.CreateAndroidBuddyLibraryMetadata
 import com.likethesalad.android.common.utils.DependencyHandlerUtil
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
@@ -48,13 +48,13 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
     lateinit var tasks: TaskContainer
 
     @MockK
-    lateinit var createAndroidBuddyLibraryProperties: CreateAndroidBuddyLibraryProperties
+    lateinit var createAndroidBuddyLibraryMetadata: CreateAndroidBuddyLibraryMetadata
 
     @MockK
-    lateinit var createAndroidBuddyLibraryPropertiesProvider: TaskProvider<CreateAndroidBuddyLibraryProperties>
+    lateinit var createAndroidBuddyLibraryMetadataProvider: TaskProvider<CreateAndroidBuddyLibraryMetadata>
 
     @MockK
-    lateinit var createJarDescriptionPropertiesArgs: CreateJarDescriptionPropertiesArgs
+    lateinit var createMetadataTaskArgs: CreateMetadataTaskArgs
 
     @MockK
     lateinit var dependencyHandlerUtil: DependencyHandlerUtil
@@ -71,7 +71,7 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
         mockkObject(LibraryInjector)
         every {
             LibraryInjector.getCreateJarDescriptionPropertiesArgs()
-        }.returns(createJarDescriptionPropertiesArgs)
+        }.returns(createMetadataTaskArgs)
         every {
             LibraryInjector.getDependencyHandlerUtil()
         }.returns(dependencyHandlerUtil)
@@ -85,13 +85,13 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
         every {
             tasks.register(
                 createJarDescriptionPropertiesName,
-                CreateAndroidBuddyLibraryProperties::class.java,
-                createJarDescriptionPropertiesArgs
+                CreateAndroidBuddyLibraryMetadata::class.java,
+                createMetadataTaskArgs
             )
-        }.returns(createAndroidBuddyLibraryPropertiesProvider)
+        }.returns(createAndroidBuddyLibraryMetadataProvider)
         every {
-            createAndroidBuddyLibraryPropertiesProvider.hint(CreateAndroidBuddyLibraryProperties::class).get()
-        }.returns(createAndroidBuddyLibraryProperties)
+            createAndroidBuddyLibraryMetadataProvider.hint(CreateAndroidBuddyLibraryMetadata::class).get()
+        }.returns(createAndroidBuddyLibraryMetadata)
         androidBuddyLibraryPlugin = AndroidBuddyLibraryPlugin()
         androidBuddyLibraryPlugin.apply(project)
     }
@@ -119,7 +119,7 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
 
     @Test
     fun `Create jar description properties generator task`() {
-        val configureActionCaptor = slot<Action<CreateAndroidBuddyLibraryProperties>>()
+        val configureActionCaptor = slot<Action<CreateAndroidBuddyLibraryMetadata>>()
         val pluginNames = mockk<SetProperty<String>>()
         val outputDir = mockk<DirectoryProperty>()
         val projectBuildDir = mockk<File>()
@@ -128,22 +128,22 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
         val expectedOutputDir = mockk<File>()
         every { project.buildDir }.returns(projectBuildDir)
         every { project.file(expectedOutputDirPath) }.returns(expectedOutputDir)
-        every { createAndroidBuddyLibraryProperties.name }.returns(createJarDescriptionPropertiesName)
+        every { createAndroidBuddyLibraryMetadata.name }.returns(createJarDescriptionPropertiesName)
         every { projectBuildDir.toString() }.returns(projectBuildDirPath)
-        every { createAndroidBuddyLibraryProperties.outputDir }.returns(outputDir)
+        every { createAndroidBuddyLibraryMetadata.outputDir }.returns(outputDir)
         every { androidBuddyExtension.pluginNames }.returns(pluginNames)
         verify {
             tasks.register(
                 createJarDescriptionPropertiesName,
-                CreateAndroidBuddyLibraryProperties::class.java,
-                createJarDescriptionPropertiesArgs
+                CreateAndroidBuddyLibraryMetadata::class.java,
+                createMetadataTaskArgs
             )
-            createAndroidBuddyLibraryPropertiesProvider.configure(capture(configureActionCaptor))
+            createAndroidBuddyLibraryMetadataProvider.configure(capture(configureActionCaptor))
         }
 
-        configureActionCaptor.captured.execute(createAndroidBuddyLibraryProperties)
+        configureActionCaptor.captured.execute(createAndroidBuddyLibraryMetadata)
         verify {
-            createAndroidBuddyLibraryProperties.inputClassNames = pluginNames
+            createAndroidBuddyLibraryMetadata.inputClassNames = pluginNames
             outputDir.set(expectedOutputDir)
         }
     }
