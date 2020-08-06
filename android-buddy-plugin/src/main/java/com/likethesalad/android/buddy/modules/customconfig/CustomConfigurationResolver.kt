@@ -5,7 +5,7 @@ import com.google.auto.factory.Provided
 import com.likethesalad.android.buddy.modules.customconfig.data.ConfigurationGroup
 import com.likethesalad.android.buddy.modules.customconfig.utils.CustomConfigurationNamesGeneratorFactory
 import com.likethesalad.android.buddy.providers.GradleConfigurationsProvider
-import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
+import com.likethesalad.android.common.utils.android.AndroidVariantDataProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 

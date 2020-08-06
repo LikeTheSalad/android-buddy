@@ -5,12 +5,12 @@ import com.android.builder.model.BuildType
 import com.android.builder.model.ProductFlavor
 import com.likethesalad.android.buddy.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.modules.customconfig.data.ConfigurationGroup
-import com.likethesalad.android.buddy.modules.customconfig.utils.AndroidVariantPathResolver
 import com.likethesalad.android.buddy.modules.customconfig.utils.AndroidVariantPathResolverFactory
 import com.likethesalad.android.buddy.modules.customconfig.utils.CustomConfigurationNamesGenerator
 import com.likethesalad.android.buddy.modules.customconfig.utils.CustomConfigurationNamesGeneratorFactory
 import com.likethesalad.android.buddy.providers.GradleConfigurationsProvider
-import com.likethesalad.android.buddy.utils.AndroidExtensionDataProvider
+import com.likethesalad.android.common.utils.android.AndroidExtensionDataProvider
+import com.likethesalad.android.common.utils.android.AndroidVariantPathResolver
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.CapturingSlot
 import io.mockk.Runs

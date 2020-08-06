@@ -15,12 +15,12 @@ import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
-import com.likethesalad.android.buddy.utils.AndroidExtensionDataProvider
-import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
 import com.likethesalad.android.buddy.utils.AndroidVariantDataProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.FilesHolder
 import com.likethesalad.android.common.utils.DirectoryCleaner
+import com.likethesalad.android.common.utils.android.AndroidExtensionDataProvider
+import com.likethesalad.android.common.utils.android.AndroidVariantDataProvider
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.build.Plugin
 import java.io.File

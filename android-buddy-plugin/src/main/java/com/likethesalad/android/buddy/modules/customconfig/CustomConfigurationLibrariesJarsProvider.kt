@@ -4,8 +4,8 @@ import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
-import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
 import com.likethesalad.android.common.utils.Logger
+import com.likethesalad.android.common.utils.android.AndroidVariantDataProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection

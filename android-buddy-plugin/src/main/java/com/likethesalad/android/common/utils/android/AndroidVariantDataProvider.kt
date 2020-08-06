@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddy.utils
+package com.likethesalad.android.common.utils.android
 
 import com.android.build.gradle.api.BaseVariant
 import com.google.auto.factory.AutoFactory

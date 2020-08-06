@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddy.modules.customconfig.utils
+package com.likethesalad.android.common.utils.android
 
 import com.google.auto.factory.AutoFactory
 

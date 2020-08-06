@@ -8,7 +8,7 @@ import com.likethesalad.android.buddy.modules.customconfig.utils.AndroidVariantP
 import com.likethesalad.android.buddy.modules.customconfig.utils.CustomConfigurationNamesGenerator
 import com.likethesalad.android.buddy.modules.customconfig.utils.CustomConfigurationNamesGeneratorFactory
 import com.likethesalad.android.buddy.providers.GradleConfigurationsProvider
-import com.likethesalad.android.buddy.utils.AndroidExtensionDataProvider
+import com.likethesalad.android.common.utils.android.AndroidExtensionDataProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer

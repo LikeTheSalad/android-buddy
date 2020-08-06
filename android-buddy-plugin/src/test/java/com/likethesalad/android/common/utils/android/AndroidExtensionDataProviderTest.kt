@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddy.utils
+package com.likethesalad.android.common.utils.android
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.api.ApplicationVariant
@@ -30,7 +30,10 @@ class AndroidExtensionDataProviderTest : BaseMockable() {
     @Before
     fun setUp() {
         every { androidApplicationExtensionProvider.getAndroidExtension() }.returns(applicationExtension)
-        applicationExtensionDataProvider = AndroidExtensionDataProvider(androidApplicationExtensionProvider)
+        applicationExtensionDataProvider =
+            AndroidExtensionDataProvider(
+                androidApplicationExtensionProvider
+            )
     }
 
     @Test

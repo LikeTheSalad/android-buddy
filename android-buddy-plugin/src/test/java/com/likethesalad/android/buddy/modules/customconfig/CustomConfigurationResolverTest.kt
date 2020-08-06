@@ -5,7 +5,7 @@ import com.likethesalad.android.buddy.modules.customconfig.data.ConfigurationGro
 import com.likethesalad.android.buddy.modules.customconfig.utils.CustomConfigurationNamesGenerator
 import com.likethesalad.android.buddy.modules.customconfig.utils.CustomConfigurationNamesGeneratorFactory
 import com.likethesalad.android.buddy.providers.GradleConfigurationsProvider
-import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
+import com.likethesalad.android.common.utils.android.AndroidVariantDataProvider
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

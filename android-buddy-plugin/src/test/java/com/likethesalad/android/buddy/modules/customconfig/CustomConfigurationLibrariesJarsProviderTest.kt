@@ -1,8 +1,8 @@
 package com.likethesalad.android.buddy.modules.customconfig
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.utils.AndroidVariantDataProvider
 import com.likethesalad.android.common.utils.Logger
+import com.likethesalad.android.common.utils.android.AndroidVariantDataProvider
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.CapturingSlot
 import io.mockk.every
