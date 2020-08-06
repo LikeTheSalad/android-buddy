@@ -4,7 +4,7 @@ import com.android.build.gradle.AppExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.BaseVariant
 import com.likethesalad.android.buddy.di.AppScope
-import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
+import com.likethesalad.android.common.providers.AndroidExtensionProvider
 import java.io.File
 import javax.inject.Inject
 

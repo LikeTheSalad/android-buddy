@@ -4,7 +4,7 @@ import com.android.build.gradle.AppExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.BaseVariant
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.providers.AndroidExtensionProvider
+import com.likethesalad.android.common.providers.AndroidExtensionProvider
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.Runs
 import io.mockk.every

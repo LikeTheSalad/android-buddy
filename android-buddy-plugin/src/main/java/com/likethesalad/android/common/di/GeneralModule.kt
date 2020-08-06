@@ -1,6 +1,7 @@
 package com.likethesalad.android.common.di
 
 import com.likethesalad.android.common.base.BuddyPlugin
+import com.likethesalad.android.common.providers.AndroidExtensionProvider
 import com.likethesalad.android.common.providers.ProjectDependencyToolsProvider
 import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import dagger.Module
@@ -19,6 +20,12 @@ class GeneralModule(private val buddyPlugin: BuddyPlugin) {
     @Provides
     @Singleton
     fun provideProjectDependencyToolsProvider(): ProjectDependencyToolsProvider {
+        return buddyPlugin
+    }
+
+    @Provides
+    @Singleton
+    fun provideAndroidExtensionProvider(): AndroidExtensionProvider {
         return buddyPlugin
     }
 }
