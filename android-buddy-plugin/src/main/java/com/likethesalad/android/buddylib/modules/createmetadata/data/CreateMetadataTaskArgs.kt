@@ -1,7 +1,7 @@
-package com.likethesalad.android.buddylib.modules.createproperties.data
+package com.likethesalad.android.buddylib.modules.createmetadata.data
 
 import com.likethesalad.android.buddylib.di.LibraryScope
-import com.likethesalad.android.buddylib.modules.createproperties.action.CreateAndroidBuddyLibraryMetadataActionFactory
+import com.likethesalad.android.buddylib.modules.createmetadata.action.CreateAndroidBuddyLibraryMetadataActionFactory
 import javax.inject.Inject
 
 @LibraryScope

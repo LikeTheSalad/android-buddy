@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddylib.modules.createproperties.action
+package com.likethesalad.android.buddylib.modules.createmetadata.action
 
 import com.google.common.truth.Truth
 import com.likethesalad.android.common.utils.DirectoryCleaner

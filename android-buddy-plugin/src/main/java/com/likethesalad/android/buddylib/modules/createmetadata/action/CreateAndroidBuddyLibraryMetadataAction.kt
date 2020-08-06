@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddylib.modules.createproperties.action
+package com.likethesalad.android.buddylib.modules.createmetadata.action
 
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided

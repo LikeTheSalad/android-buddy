@@ -1,6 +1,6 @@
-package com.likethesalad.android.buddylib.modules.createproperties
+package com.likethesalad.android.buddylib.modules.createmetadata
 
-import com.likethesalad.android.buddylib.modules.createproperties.data.CreateMetadataTaskArgs
+import com.likethesalad.android.buddylib.modules.createmetadata.data.CreateMetadataTaskArgs
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory

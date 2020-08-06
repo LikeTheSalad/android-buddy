@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddylib.modules.createproperties.utils
+package com.likethesalad.android.buddylib.modules.createmetadata.utils
 
 import com.google.common.truth.Truth
 import org.junit.Before

@@ -5,7 +5,7 @@ import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.api.LibraryVariant
 import com.likethesalad.android.buddylib.di.LibraryInjector
 import com.likethesalad.android.buddylib.extension.AndroidBuddyLibExtension
-import com.likethesalad.android.buddylib.modules.createproperties.CreateAndroidBuddyLibraryMetadata
+import com.likethesalad.android.buddylib.modules.createmetadata.CreateAndroidBuddyLibraryMetadata
 import com.likethesalad.android.common.base.BuddyPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project

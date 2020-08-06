@@ -1,6 +1,6 @@
 package com.likethesalad.android.buddylib.di
 
-import com.likethesalad.android.buddylib.modules.createproperties.data.CreateMetadataTaskArgs
+import com.likethesalad.android.buddylib.modules.createmetadata.data.CreateMetadataTaskArgs
 import com.likethesalad.android.common.di.GeneralComponent
 import com.likethesalad.android.common.utils.DependencyHandlerUtil
 import dagger.Component
