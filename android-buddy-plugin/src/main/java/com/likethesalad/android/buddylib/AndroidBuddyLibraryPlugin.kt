@@ -1,5 +1,6 @@
 package com.likethesalad.android.buddylib
 
+import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.api.LibraryVariant
 import com.likethesalad.android.buddylib.di.LibraryInjector
@@ -65,5 +66,9 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin {
 
     override fun getRepositoryHandler(): RepositoryHandler {
         return project.repositories
+    }
+
+    override fun getAndroidExtension(): BaseExtension {
+        return androidExtension
     }
 }

@@ -1,5 +1,6 @@
 package com.likethesalad.android.buddylib
 
+import com.android.build.gradle.LibraryExtension
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddylib.di.LibraryInjector
 import com.likethesalad.android.buddylib.extension.AndroidBuddyLibExtension
@@ -61,6 +62,9 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
 
     @MockK
     lateinit var repositoryHandler: RepositoryHandler
+
+    @MockK
+    lateinit var androidExtension: LibraryExtension
 
     private val createJarDescriptionPropertiesName = "createJarDescriptionProperties"
 
@@ -164,5 +168,10 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
     @Test
     fun `Provide RepositoryHandler`() {
         Truth.assertThat(androidBuddyLibraryPlugin.getRepositoryHandler()).isEqualTo(repositoryHandler)
+    }
+
+    @Test
+    fun `Get android extension`() {
+        Truth.assertThat(androidBuddyLibraryPlugin.getAndroidExtension()).isEqualTo(androidExtension)
     }
 }
