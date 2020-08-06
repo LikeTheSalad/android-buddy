@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddylib.modules.createproperties
+package com.likethesalad.android.buddylib.modules.createproperties.action
 
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
@@ -24,7 +24,9 @@ class CreateAndroidBuddyLibraryMetadataAction(
 
     override fun execute() {
         cleanUpDir()
-        val propertiesFile = File(getPropertiesDir(), PLUGINS_PROPERTIES_FILE_NAME)
+        val propertiesFile = File(getPropertiesDir(),
+            PLUGINS_PROPERTIES_FILE_NAME
+        )
         val properties = Properties()
         properties.setProperty(
             PLUGINS_PROPERTIES_CLASSES_KEY,
@@ -41,7 +43,9 @@ class CreateAndroidBuddyLibraryMetadataAction(
     }
 
     private fun getPropertiesDir(): File {
-        val dir = File(outputDir, LIBRARY_PROPERTIES_DIR)
+        val dir = File(outputDir,
+            LIBRARY_PROPERTIES_DIR
+        )
         dir.mkdirs()
         return dir
     }

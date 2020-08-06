@@ -4,8 +4,8 @@ import com.android.build.gradle.LibraryExtension
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddylib.di.LibraryInjector
 import com.likethesalad.android.buddylib.extension.AndroidBuddyLibExtension
+import com.likethesalad.android.buddylib.modules.createproperties.CreateAndroidBuddyLibraryMetadata
 import com.likethesalad.android.buddylib.modules.createproperties.data.CreateMetadataTaskArgs
-import com.likethesalad.android.buddylib.tasks.CreateAndroidBuddyLibraryMetadata
 import com.likethesalad.android.common.utils.DependencyHandlerUtil
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every

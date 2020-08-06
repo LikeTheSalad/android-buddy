@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddylib.tasks
+package com.likethesalad.android.buddylib.modules.createproperties
 
 import com.likethesalad.android.buddylib.modules.createproperties.data.CreateMetadataTaskArgs
 import org.gradle.api.DefaultTask
