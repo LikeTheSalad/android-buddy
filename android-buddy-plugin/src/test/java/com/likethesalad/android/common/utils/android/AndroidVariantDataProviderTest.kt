@@ -5,7 +5,6 @@ import com.android.build.gradle.api.ApplicationVariant
 import com.android.builder.model.BuildType
 import com.android.builder.model.ProductFlavor
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.modules.customconfig.utils.AndroidVariantPathResolverFactory
 import com.likethesalad.android.common.utils.Logger
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every

@@ -6,6 +6,7 @@ import com.likethesalad.android.common.utils.DependencyHandlerUtil
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import com.likethesalad.android.common.utils.InstantiatorWrapper
 import com.likethesalad.android.common.utils.Logger
+import com.likethesalad.android.common.utils.android.AndroidExtensionDataProvider
 import dagger.Component
 import javax.inject.Singleton
 
@@ -14,14 +15,10 @@ import javax.inject.Singleton
 interface GeneralComponent {
 
     fun instantiatorWrapper(): InstantiatorWrapper
-
     fun directoryCleaner(): DirectoryCleaner
-
     fun projectLoggerProvider(): ProjectLoggerProvider
-
     fun projectDependencyToolsProvider(): ProjectDependencyToolsProvider
-
     fun logger(): Logger
-
     fun dependencyHandlerUtil(): DependencyHandlerUtil
+    fun androidExtensionDataProvider(): AndroidExtensionDataProvider
 }

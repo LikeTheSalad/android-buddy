@@ -3,7 +3,6 @@ package com.likethesalad.android.common.utils.android
 import com.android.build.gradle.api.BaseVariant
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
-import com.likethesalad.android.buddy.modules.customconfig.utils.AndroidVariantPathResolverFactory
 import com.likethesalad.android.common.utils.Logger
 import org.gradle.api.JavaVersion
 import java.io.File

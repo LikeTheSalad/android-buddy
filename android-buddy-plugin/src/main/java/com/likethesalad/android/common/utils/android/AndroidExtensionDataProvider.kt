@@ -1,6 +1,7 @@
 package com.likethesalad.android.common.utils.android
 
 import com.android.build.gradle.AppExtension
+import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.BaseVariant
 import com.likethesalad.android.common.providers.AndroidExtensionProvider
@@ -28,6 +29,7 @@ class AndroidExtensionDataProvider
     fun allVariants(onVariantFound: (BaseVariant) -> Unit) {
         when (val extension = androidExtension) {
             is AppExtension -> allApplicationVariants(extension, onVariantFound)
+            is LibraryExtension -> allLibraryVariants(extension, onVariantFound)
             else -> throw UnsupportedOperationException()
         }
     }
@@ -43,6 +45,15 @@ class AndroidExtensionDataProvider
         onVariantFound: (BaseVariant) -> Unit
     ) {
         appExtension.applicationVariants.all {
+            onVariantFound.invoke(it)
+        }
+    }
+
+    private fun allLibraryVariants(
+        libExtension: LibraryExtension,
+        onVariantFound: (BaseVariant) -> Unit
+    ) {
+        libExtension.libraryVariants.all {
             onVariantFound.invoke(it)
         }
     }
