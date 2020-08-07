@@ -3,7 +3,6 @@ package com.likethesalad.android.buddy.modules.customconfig
 import com.android.build.gradle.api.BaseVariant
 import com.android.builder.model.BuildType
 import com.android.builder.model.ProductFlavor
-import com.likethesalad.android.buddy.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.modules.customconfig.data.ConfigurationGroup
 import com.likethesalad.android.buddy.modules.customconfig.utils.CustomConfigurationNamesGenerator
 import com.likethesalad.android.buddy.modules.customconfig.utils.CustomConfigurationNamesGeneratorFactory
@@ -65,9 +64,6 @@ class CustomConfigurationVariantSetupTest : BaseMockable() {
     @MockK
     lateinit var customRuntimeResolvableAttributeContainer: AttributeContainer
 
-    @MockK
-    lateinit var pluginConfiguration: AndroidBuddyPluginConfiguration
-
     lateinit var variantProcessActionCaptor: CapturingSlot<(BaseVariant) -> Unit>
 
     private val variantName = "someVariantName"
@@ -127,8 +123,7 @@ class CustomConfigurationVariantSetupTest : BaseMockable() {
             androidExtensionDataProvider,
             androidVariantPathResolverFactory,
             customConfigurationNamesGeneratorFactory,
-            configurationsProvider,
-            pluginConfiguration
+            configurationsProvider
         )
 
         customConfigurationVariantSetup.arrangeConfigurationsPerVariant()
@@ -177,7 +172,6 @@ class CustomConfigurationVariantSetupTest : BaseMockable() {
         verify {
             configuration.isCanBeResolved = true
             configuration.isCanBeConsumed = false
-            configuration.isTransitive = false
         }
     }
 

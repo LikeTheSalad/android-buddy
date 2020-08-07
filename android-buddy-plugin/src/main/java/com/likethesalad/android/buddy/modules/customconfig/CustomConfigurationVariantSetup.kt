@@ -1,7 +1,6 @@
 package com.likethesalad.android.buddy.modules.customconfig
 
 import com.android.build.gradle.api.BaseVariant
-import com.likethesalad.android.buddy.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.modules.customconfig.data.ConfigurationGroup
 import com.likethesalad.android.buddy.modules.customconfig.utils.CustomConfigurationNamesGenerator
@@ -20,8 +19,7 @@ class CustomConfigurationVariantSetup
     private val androidExtensionDataProvider: AndroidExtensionDataProvider,
     private val androidVariantPathResolverFactory: AndroidVariantPathResolverFactory,
     private val customConfigurationNamesGeneratorFactory: CustomConfigurationNamesGeneratorFactory,
-    private val configurationsProvider: GradleConfigurationsProvider,
-    private val pluginConfiguration: AndroidBuddyPluginConfiguration
+    private val configurationsProvider: GradleConfigurationsProvider
 ) {
 
     private val configurations by lazy {
@@ -78,7 +76,6 @@ class CustomConfigurationVariantSetup
         return configurations.create(name) {
             it.isCanBeResolved = true
             it.isCanBeConsumed = false
-            it.isTransitive = pluginConfiguration.useDependenciesTransitiveTransformations()
         }
     }
 

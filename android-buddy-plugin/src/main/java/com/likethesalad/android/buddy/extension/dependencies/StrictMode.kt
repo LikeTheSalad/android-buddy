@@ -7,10 +7,8 @@ import javax.inject.Inject
 open class StrictMode @Inject constructor(objectFactory: ObjectFactory) {
 
     val enabled = objectFactory.property(Boolean::class.java)
-    val useTransitiveTransformations = objectFactory.property(Boolean::class.java)
 
     init {
         enabled.convention(false)
-        useTransitiveTransformations.convention(false)
     }
 }

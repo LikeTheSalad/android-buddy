@@ -22,8 +22,4 @@ class AndroidBuddyPluginConfiguration
     fun useDependenciesTransformations(): Boolean {
         return !extension.dependenciesConfig.disableAllTransformations.get()
     }
-
-    fun useDependenciesTransitiveTransformations(): Boolean {
-        return extension.dependenciesConfig.strictMode.useTransitiveTransformations.get()
-    }
 }

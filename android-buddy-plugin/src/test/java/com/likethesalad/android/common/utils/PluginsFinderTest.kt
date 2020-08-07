@@ -63,14 +63,6 @@ class PluginsFinderTest : BaseMockable() {
         return resourcesFinder.getResourceFile("classdirs/withplugins")
     }
 
-    private fun getWithoutPluginClassesJar(): File {
-        return resourcesFinder.getResourceFile("classdirs/normal-java-library-1.0-SNAPSHOT.jar")
-    }
-
-    private fun getWithPluginClassesJar(): File {
-        return resourcesFinder.getResourceFile("classdirs/android-buddy-library-1.0-SNAPSHOT.jar")
-    }
-
     private fun createInstance(buildClassGraphProvider: ClassGraphProvider): PluginsFinder {
         return PluginsFinder(buildClassGraphProvider)
     }

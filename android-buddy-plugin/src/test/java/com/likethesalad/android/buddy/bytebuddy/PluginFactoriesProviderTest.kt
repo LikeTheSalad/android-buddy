@@ -110,7 +110,7 @@ class PluginFactoriesProviderTest : BaseMockable() {
             pluginsFinderFactory.create(jarsClassGraphProvider)
         }.returns(jarsPluginsFinder)
         every {
-            jarsPluginsFinder.findBuiltPluginClassNames()
+            androidBuddyLibraryPluginsExtractor.extractPluginNames(librariesJars)
         }.returns(setOf(libName1.name))
         every {
             pluginConfiguration.useDependenciesTransformations()
