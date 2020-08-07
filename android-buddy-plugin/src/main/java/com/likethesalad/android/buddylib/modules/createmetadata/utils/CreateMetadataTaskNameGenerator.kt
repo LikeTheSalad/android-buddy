@@ -1,9 +1,10 @@
 package com.likethesalad.android.buddylib.modules.createmetadata.utils
 
-import javax.inject.Singleton
+import com.likethesalad.android.buddylib.di.LibraryScope
+import javax.inject.Inject
 
-@Singleton
-class CreateMetadataTaskNameGenerator {
+@LibraryScope
+class CreateMetadataTaskNameGenerator @Inject constructor() {
 
     fun generateTaskName(variantName: String): String {
         return "create${variantName.capitalize()}AndroidBuddyLibraryProperties"

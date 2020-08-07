@@ -6,18 +6,23 @@ import com.android.build.gradle.api.LibraryVariant
 import com.likethesalad.android.buddylib.di.LibraryInjector
 import com.likethesalad.android.buddylib.extension.AndroidBuddyLibExtension
 import com.likethesalad.android.buddylib.modules.createmetadata.CreateAndroidBuddyLibraryMetadata
+import com.likethesalad.android.buddylib.providers.AndroidBuddyLibExtensionProvider
+import com.likethesalad.android.buddylib.providers.TaskContainerProvider
 import com.likethesalad.android.common.base.BuddyPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.logging.Logger
+import org.gradle.api.tasks.TaskContainer
 
 
 @Suppress("UnstableApiUsage")
-open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin {
+open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin, TaskContainerProvider,
+    AndroidBuddyLibExtensionProvider {
 
     private lateinit var project: Project
+    private lateinit var libExtension: AndroidBuddyLibExtension
     private lateinit var androidExtension: LibraryExtension
 
     companion object {
@@ -29,11 +34,11 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin {
         LibraryInjector.init(this)
         this.project = project
         androidExtension = project.extensions.getByType(LibraryExtension::class.java)
+        libExtension = project.extensions.create(EXTENSION_NAME, AndroidBuddyLibExtension::class.java)
         LibraryInjector.getDependencyHandlerUtil().addDependencies()
-        val extension = project.extensions.create(EXTENSION_NAME, AndroidBuddyLibExtension::class.java)
 
         androidExtension.libraryVariants.all {
-            createTasksFor(extension, it)
+            createTasksFor(libExtension, it)
         }
     }
 
@@ -48,7 +53,7 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin {
         )
         createJarDescriptionProperties.configure {
             it.inputClassNames = extension.pluginNames
-            it.outputDir.set(project.file("${project.buildDir}/${it.name}"))
+            it.outputDir.set(project.file("${project.buildDir}/intermediates/incremental/${it.name}"))
         }
 
         variant.processJavaResourcesProvider.configure {
@@ -70,5 +75,13 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin {
 
     override fun getAndroidExtension(): BaseExtension {
         return androidExtension
+    }
+
+    override fun getTaskContainer(): TaskContainer {
+        return project.tasks
+    }
+
+    override fun getExtension(): AndroidBuddyLibExtension {
+        return libExtension
     }
 }

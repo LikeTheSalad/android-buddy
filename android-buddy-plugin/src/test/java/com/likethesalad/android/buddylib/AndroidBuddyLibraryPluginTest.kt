@@ -24,6 +24,7 @@ import org.gradle.api.plugins.PluginManager
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import java.io.File
@@ -173,5 +174,15 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
     @Test
     fun `Get android extension`() {
         Truth.assertThat(androidBuddyLibraryPlugin.getAndroidExtension()).isEqualTo(androidExtension)
+    }
+
+    @Test
+    fun `Get TaskContainer`() {
+        Truth.assertThat(androidBuddyLibraryPlugin.getTaskContainer()).isEqualTo(tasks)
+    }
+
+    @Test
+    fun `Get library extension`() {
+        fail()
     }
 }
