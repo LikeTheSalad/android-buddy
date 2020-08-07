@@ -4,6 +4,7 @@ import com.android.build.gradle.LibraryExtension
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddylib.di.LibraryInjector
 import com.likethesalad.android.buddylib.extension.AndroidBuddyLibExtension
+import com.likethesalad.android.buddylib.modules.createmetadata.CreateMetadataTaskGenerator
 import com.likethesalad.android.common.utils.DependencyHandlerUtil
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
@@ -17,9 +18,9 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.plugins.PluginManager
 import org.gradle.api.tasks.TaskContainer
-import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 
 class AndroidBuddyLibraryPluginTest : BaseMockable() {
 
@@ -50,14 +51,16 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
     @MockK
     lateinit var androidExtension: LibraryExtension
 
+    @MockK
+    lateinit var createMetadataTaskGenerator: CreateMetadataTaskGenerator
+
     private lateinit var androidBuddyLibraryPlugin: AndroidBuddyLibraryPlugin
 
     @Before
     fun setUp() {
         mockkObject(LibraryInjector)
-        every {
-            LibraryInjector.getDependencyHandlerUtil()
-        }.returns(dependencyHandlerUtil)
+        every { LibraryInjector.getDependencyHandlerUtil() }.returns(dependencyHandlerUtil)
+        every { LibraryInjector.getCreateMetadataTaskGenerator() }.returns(createMetadataTaskGenerator)
         every { project.pluginManager }.returns(pluginManager)
         every { project.dependencies }.returns(dependencies)
         every { project.extensions }.returns(extensions)
@@ -65,6 +68,7 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
         every { project.repositories }.returns(repositoryHandler)
         every { dependencies.add(any(), any()) }.returns(mockk())
         every { extensions.create(any(), AndroidBuddyLibExtension::class.java) }.returns(androidBuddyExtension)
+        every { extensions.getByType(LibraryExtension::class.java) }.returns(androidExtension)
         androidBuddyLibraryPlugin = AndroidBuddyLibraryPlugin()
         androidBuddyLibraryPlugin.apply(project)
     }
@@ -80,6 +84,13 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
     fun `Apply dependencies`() {
         verify {
             dependencyHandlerUtil.addDependencies()
+        }
+    }
+
+    @Test
+    fun `Verify launched task per variant creation`() {
+        verify {
+            createMetadataTaskGenerator.createTaskPerVariant()
         }
     }
 
@@ -119,7 +130,25 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
     }
 
     @Test
-    fun `Get library extension`() {
-        fail()
+    fun `Get android buddy library extension`() {
+        Truth.assertThat(androidBuddyLibraryPlugin.getExtension()).isEqualTo(androidBuddyExtension)
+    }
+
+    @Test
+    fun `Create incremental dir`() {
+        val dirName = "someName"
+        val buildDirPath = "some/path"
+        val expectedDir = mockk<File>()
+        val buildDir = mockk<File>()
+        every { buildDir.toString() }.returns(buildDirPath)
+        every { project.file(any<String>()) }.returns(expectedDir)
+        every { project.buildDir }.returns(buildDir)
+
+        val result = androidBuddyLibraryPlugin.createIncrementalDir(dirName)
+
+        Truth.assertThat(result).isEqualTo(expectedDir)
+        verify {
+            project.file("some/path/intermediates/incremental/someName")
+        }
     }
 }
