@@ -2,11 +2,10 @@ package com.likethesalad.android.buddylib
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.api.LibraryVariant
 import com.likethesalad.android.buddylib.di.LibraryInjector
 import com.likethesalad.android.buddylib.extension.AndroidBuddyLibExtension
-import com.likethesalad.android.buddylib.modules.createmetadata.CreateAndroidBuddyLibraryMetadata
 import com.likethesalad.android.buddylib.providers.AndroidBuddyLibExtensionProvider
+import com.likethesalad.android.buddylib.providers.IncrementalDirProvider
 import com.likethesalad.android.buddylib.providers.TaskContainerProvider
 import com.likethesalad.android.common.base.BuddyPlugin
 import org.gradle.api.Plugin
@@ -15,18 +14,18 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.TaskContainer
+import java.io.File
 
 
 @Suppress("UnstableApiUsage")
 open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin, TaskContainerProvider,
-    AndroidBuddyLibExtensionProvider {
+    AndroidBuddyLibExtensionProvider, IncrementalDirProvider {
 
     private lateinit var project: Project
     private lateinit var libExtension: AndroidBuddyLibExtension
     private lateinit var androidExtension: LibraryExtension
 
     companion object {
-        private const val CREATE_JAR_DESCRIPTION_PROPERTIES_TASK_NAME = "createJarDescriptionProperties"
         private const val EXTENSION_NAME = "androidBuddyLibrary"
     }
 
@@ -36,29 +35,7 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin, TaskContain
         androidExtension = project.extensions.getByType(LibraryExtension::class.java)
         libExtension = project.extensions.create(EXTENSION_NAME, AndroidBuddyLibExtension::class.java)
         LibraryInjector.getDependencyHandlerUtil().addDependencies()
-
-        androidExtension.libraryVariants.all {
-            createTasksFor(libExtension, it)
-        }
-    }
-
-    private fun createTasksFor(
-        extension: AndroidBuddyLibExtension,
-        variant: LibraryVariant
-    ) {
-        val createJarDescriptionProperties = project.tasks.register(
-            "${CREATE_JAR_DESCRIPTION_PROPERTIES_TASK_NAME}For${variant.name.capitalize()}",
-            CreateAndroidBuddyLibraryMetadata::class.java,
-            LibraryInjector.getCreateJarDescriptionPropertiesArgs()
-        )
-        createJarDescriptionProperties.configure {
-            it.inputClassNames = extension.pluginNames
-            it.outputDir.set(project.file("${project.buildDir}/intermediates/incremental/${it.name}"))
-        }
-
-        variant.processJavaResourcesProvider.configure {
-            it.from(createJarDescriptionProperties)
-        }
+        LibraryInjector.getCreateMetadataTaskGenerator().createTaskPerVariant()
     }
 
     override fun getLogger(): Logger {
@@ -83,5 +60,9 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin, TaskContain
 
     override fun getExtension(): AndroidBuddyLibExtension {
         return libExtension
+    }
+
+    override fun createIncrementalDir(dirName: String): File {
+        return project.file("${project.buildDir}/intermediates/incremental/$dirName")
     }
 }
