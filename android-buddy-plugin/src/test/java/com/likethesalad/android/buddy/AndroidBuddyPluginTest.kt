@@ -7,7 +7,7 @@ import com.likethesalad.android.buddy.extension.AndroidBuddyExtension
 import com.likethesalad.android.buddy.modules.customconfig.CustomBucketConfigurationCreator
 import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationVariantSetup
 import com.likethesalad.android.buddy.modules.transform.ByteBuddyTransform
-import com.likethesalad.android.common.utils.DependencyHandlerUtil
+import com.likethesalad.android.buddy.utils.AppDependencyHandlerUtil
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -40,7 +40,7 @@ class AndroidBuddyPluginTest : BaseMockable() {
     lateinit var byteBuddyTransform: ByteBuddyTransform
 
     @MockK
-    lateinit var dependencyHandlerUtil: DependencyHandlerUtil
+    lateinit var dependencyHandlerUtil: AppDependencyHandlerUtil
 
     @MockK
     lateinit var dependencyHandler: DependencyHandler

@@ -1,13 +1,11 @@
 package com.likethesalad.android.common.utils
 
-import com.likethesalad.android.buddy.plugin.generated.BuildConfig
 import com.likethesalad.android.common.providers.ProjectDependencyToolsProvider
-import org.gradle.api.artifacts.dsl.DependencyHandler
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DependencyHandlerUtil @Inject constructor(
+open class DependencyHandlerUtil @Inject constructor(
     projectDependencyToolsProvider: ProjectDependencyToolsProvider
 ) {
 
@@ -17,17 +15,15 @@ class DependencyHandlerUtil @Inject constructor(
     companion object {
         private const val GRADLE_LOGGING_DEPENDENCY_URI = "org.gradle:gradle-logging:4.10.1"
         private const val SLF4J_API_DEPENDENCY_URI = "org.slf4j:slf4j-api:1.7.30"
-        private const val ANDROID_BUDDY_TOOLS_DEPENDENCY_URI = BuildConfig.ANDROID_BUDDY_TOOLS_URI
     }
 
-    fun addDependencies() {
+    open fun addDependencies() {
         addGradleReleasesRepo()
-        addCompileOnly(dependencyHandler, ANDROID_BUDDY_TOOLS_DEPENDENCY_URI)
-        addCompileOnly(dependencyHandler, SLF4J_API_DEPENDENCY_URI)
-        addCompileOnly(dependencyHandler, GRADLE_LOGGING_DEPENDENCY_URI)
+        addCompileOnly(SLF4J_API_DEPENDENCY_URI)
+        addCompileOnly(GRADLE_LOGGING_DEPENDENCY_URI)
     }
 
-    private fun addCompileOnly(dependencyHandler: DependencyHandler, dependencyUri: String) {
+    protected fun addCompileOnly(dependencyUri: String) {
         dependencyHandler.add(
             "compileOnly", dependencyUri
         )

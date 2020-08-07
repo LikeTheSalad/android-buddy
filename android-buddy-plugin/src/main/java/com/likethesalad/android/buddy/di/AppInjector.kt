@@ -4,8 +4,8 @@ import com.likethesalad.android.buddy.AndroidBuddyPlugin
 import com.likethesalad.android.buddy.modules.customconfig.CustomBucketConfigurationCreator
 import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationVariantSetup
 import com.likethesalad.android.buddy.modules.transform.ByteBuddyTransform
+import com.likethesalad.android.buddy.utils.AppDependencyHandlerUtil
 import com.likethesalad.android.common.di.GeneralInjector
-import com.likethesalad.android.common.utils.DependencyHandlerUtil
 
 object AppInjector {
 
@@ -23,7 +23,7 @@ object AppInjector {
         return component.transform()
     }
 
-    fun getDependencyHandlerUtil(): DependencyHandlerUtil {
+    fun getDependencyHandlerUtil(): AppDependencyHandlerUtil {
         return component.dependencyHandlerUtil()
     }
 

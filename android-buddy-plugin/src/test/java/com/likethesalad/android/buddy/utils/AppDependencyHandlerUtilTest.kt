@@ -1,5 +1,7 @@
-package com.likethesalad.android.common.utils
+package com.likethesalad.android.buddy.utils
 
+import com.google.common.truth.Truth
+import com.likethesalad.android.buddy.plugin.generated.BuildConfig
 import com.likethesalad.android.common.providers.ProjectDependencyToolsProvider
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
@@ -14,7 +16,7 @@ import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.junit.Before
 import org.junit.Test
 
-class DependencyHandlerUtilTest : BaseMockable() {
+class AppDependencyHandlerUtilTest : BaseMockable() {
 
     @MockK
     lateinit var dependencyHandler: DependencyHandler
@@ -31,7 +33,7 @@ class DependencyHandlerUtilTest : BaseMockable() {
     @MockK
     lateinit var mavenArtifactRepository: MavenArtifactRepository
 
-    private lateinit var dependencyHandlerUtil: DependencyHandlerUtil
+    private lateinit var dependencyHandlerUtil: AppDependencyHandlerUtil
 
     @Before
     fun setUp() {
@@ -40,7 +42,14 @@ class DependencyHandlerUtilTest : BaseMockable() {
         every { repositoryHandler.maven(any<Action<MavenArtifactRepository>>()) }.returns(mavenArtifactRepository)
         every { projectDependencyToolsProvider.getDependencyHandler() }.returns(dependencyHandler)
         every { projectDependencyToolsProvider.getRepositoryHandler() }.returns(repositoryHandler)
-        dependencyHandlerUtil = DependencyHandlerUtil(projectDependencyToolsProvider)
+        dependencyHandlerUtil = AppDependencyHandlerUtil(projectDependencyToolsProvider)
+    }
+
+    @Test
+    fun `Add android buddy tools dependency with plugin version`() {
+        dependencyHandlerUtil.addDependencies()
+
+        verifyAndroidBuddyToolsDependencyAdded()
     }
 
     @Test
@@ -70,6 +79,12 @@ class DependencyHandlerUtilTest : BaseMockable() {
         verify {
             mavenArtifactRepository.setUrl("https://repo.gradle.org/gradle/libs-releases-local/")
         }
+    }
+
+    private fun verifyAndroidBuddyToolsDependencyAdded() {
+        val dependencyUri = BuildConfig.ANDROID_BUDDY_TOOLS_URI
+        Truth.assertThat(dependencyUri).startsWith("com.likethesalad.android:android-buddy-tools:")
+        verifyDependencyAdded(dependencyUri)
     }
 
     private fun verifyDependencyAdded(dependency: Any) {
