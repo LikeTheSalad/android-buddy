@@ -4,6 +4,7 @@ import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
+import com.likethesalad.android.buddy.utils.AndroidBuddyLibraryPluginsExtractor
 import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import com.likethesalad.android.common.providers.impl.DefaultClassGraphFilesProvider
 import com.likethesalad.android.common.utils.ClassGraphProvider
@@ -48,6 +49,9 @@ class PluginFactoriesProviderTest : BaseMockable() {
     lateinit var projectLogger: org.gradle.api.logging.Logger
 
     @MockK
+    lateinit var androidBuddyLibraryPluginsExtractor: AndroidBuddyLibraryPluginsExtractor
+
+    @MockK
     lateinit var loggerArgumentResolver: Plugin.Factory.UsingReflection.ArgumentResolver
 
     @MockK
@@ -67,6 +71,7 @@ class PluginFactoriesProviderTest : BaseMockable() {
         pluginFactoriesProvider = PluginFactoriesProvider(
             instantiatorWrapper,
             byteBuddyClassesInstantiator,
+            androidBuddyLibraryPluginsExtractor,
             pluginsFinderFactory,
             classGraphProviderFactory,
             pluginConfiguration,
