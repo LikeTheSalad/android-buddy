@@ -2,14 +2,14 @@ package com.likethesalad.android.buddylib.di
 
 import com.likethesalad.android.buddylib.AndroidBuddyLibraryPlugin
 import com.likethesalad.android.buddylib.modules.createmetadata.CreateMetadataTaskGenerator
+import com.likethesalad.android.buddylib.utils.LibDependencyHandlerUtil
 import com.likethesalad.android.common.di.GeneralInjector
-import com.likethesalad.android.common.utils.DependencyHandlerUtil
 
 object LibraryInjector {
 
     private lateinit var component: LibraryComponent
 
-    fun getDependencyHandlerUtil(): DependencyHandlerUtil {
+    fun getDependencyHandlerUtil(): LibDependencyHandlerUtil {
         return component.dependencyHandlerUtil()
     }
 

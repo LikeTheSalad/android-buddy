@@ -49,14 +49,14 @@ open class DependencyHandlerUtilTest : BaseMockable() {
 
     @Test
     fun `Add gradle logging dependency`() {
-        dependencyHandlerUtil.addDependencies()
+        executeAddDependencies()
 
         verifyDependencyAdded("org.gradle:gradle-logging:4.10.1")
     }
 
     @Test
     fun `Add slf4j api dependency`() {
-        dependencyHandlerUtil.addDependencies()
+        executeAddDependencies()
 
         verifyDependencyAdded("org.slf4j:slf4j-api:1.7.30")
     }
@@ -65,7 +65,7 @@ open class DependencyHandlerUtilTest : BaseMockable() {
     fun `Add gradle releases maven repo`() {
         val mavenAction = slot<Action<MavenArtifactRepository>>()
 
-        dependencyHandlerUtil.addDependencies()
+        executeAddDependencies()
 
         verify {
             repositoryHandler.maven(capture(mavenAction))
@@ -80,5 +80,9 @@ open class DependencyHandlerUtilTest : BaseMockable() {
         verify {
             dependencyHandler.add("compileOnly", dependency)
         }
+    }
+
+    protected fun executeAddDependencies() {
+        dependencyHandlerUtil.addDependencies()
     }
 }

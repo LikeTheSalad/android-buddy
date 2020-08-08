@@ -5,7 +5,7 @@ import com.google.common.truth.Truth
 import com.likethesalad.android.buddylib.di.LibraryInjector
 import com.likethesalad.android.buddylib.extension.AndroidBuddyLibExtension
 import com.likethesalad.android.buddylib.modules.createmetadata.CreateMetadataTaskGenerator
-import com.likethesalad.android.common.utils.DependencyHandlerUtil
+import com.likethesalad.android.buddylib.utils.LibDependencyHandlerUtil
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -43,7 +43,7 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
     lateinit var tasks: TaskContainer
 
     @MockK
-    lateinit var dependencyHandlerUtil: DependencyHandlerUtil
+    lateinit var dependencyHandlerUtil: LibDependencyHandlerUtil
 
     @MockK
     lateinit var repositoryHandler: RepositoryHandler

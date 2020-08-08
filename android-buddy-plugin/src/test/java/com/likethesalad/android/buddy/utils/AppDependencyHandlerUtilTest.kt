@@ -8,16 +8,13 @@ import org.junit.Test
 
 class AppDependencyHandlerUtilTest : DependencyHandlerUtilTest() {
 
-    private lateinit var dependencyHandlerUtil: AppDependencyHandlerUtil
-
     override fun initBaseDependencyHandlerUtil(): DependencyHandlerUtil {
-        dependencyHandlerUtil = AppDependencyHandlerUtil(projectDependencyToolsProvider)
-        return dependencyHandlerUtil
+        return AppDependencyHandlerUtil(projectDependencyToolsProvider)
     }
 
     @Test
     fun `Add android buddy tools dependency with plugin version`() {
-        dependencyHandlerUtil.addDependencies()
+        executeAddDependencies()
 
         verifyAndroidBuddyToolsDependencyAdded()
     }
