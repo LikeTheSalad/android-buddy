@@ -14,7 +14,7 @@ import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.junit.Before
 import org.junit.Test
 
-class DependencyHandlerUtilTest : BaseMockable() {
+open class DependencyHandlerUtilTest : BaseMockable() {
 
     @MockK
     lateinit var dependencyHandler: DependencyHandler
@@ -34,13 +34,17 @@ class DependencyHandlerUtilTest : BaseMockable() {
     private lateinit var dependencyHandlerUtil: DependencyHandlerUtil
 
     @Before
-    fun setUp() {
+    open fun setUp() {
         every { dependencyHandler.add(any(), any()) }.returns(mockk())
         every { dependencyHandler.gradleApi() }.returns(gradleApiDependency)
         every { repositoryHandler.maven(any<Action<MavenArtifactRepository>>()) }.returns(mavenArtifactRepository)
         every { projectDependencyToolsProvider.getDependencyHandler() }.returns(dependencyHandler)
         every { projectDependencyToolsProvider.getRepositoryHandler() }.returns(repositoryHandler)
-        dependencyHandlerUtil = DependencyHandlerUtil(projectDependencyToolsProvider)
+        dependencyHandlerUtil = initBaseDependencyHandlerUtil()
+    }
+
+    open fun initBaseDependencyHandlerUtil(): DependencyHandlerUtil {
+        return DependencyHandlerUtil(projectDependencyToolsProvider)
     }
 
     @Test
@@ -72,7 +76,7 @@ class DependencyHandlerUtilTest : BaseMockable() {
         }
     }
 
-    private fun verifyDependencyAdded(dependency: Any) {
+    protected fun verifyDependencyAdded(dependency: Any) {
         verify {
             dependencyHandler.add("compileOnly", dependency)
         }
