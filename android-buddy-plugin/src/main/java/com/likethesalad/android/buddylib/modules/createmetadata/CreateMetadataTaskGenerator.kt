@@ -59,8 +59,7 @@ class CreateMetadataTaskGenerator @Inject constructor(
         task: CreateAndroidBuddyLibraryMetadata,
         destinationDir: File
     ) {
-        val collection = fileCollectionProvider.createCollectionForFiles(destinationDir)
-        collection.builtBy(task)
+        val collection = fileCollectionProvider.createCollectionForFiles(destinationDir).builtBy(task)
         variant.registerPreJavacGeneratedBytecode(collection)
     }
 }

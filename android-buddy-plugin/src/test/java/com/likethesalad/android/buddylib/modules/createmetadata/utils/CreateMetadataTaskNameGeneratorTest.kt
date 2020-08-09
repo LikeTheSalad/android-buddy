@@ -18,6 +18,6 @@ class CreateMetadataTaskNameGeneratorTest {
         val variantName = "someName"
 
         Truth.assertThat(createMetadataTaskNameGenerator.generateTaskName(variantName))
-            .isEqualTo("createSomeNameAndroidBuddyLibraryProperties")
+            .isEqualTo("createSomeNameAndroidBuddyLibraryMetadata")
     }
 }
