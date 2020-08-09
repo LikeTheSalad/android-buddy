@@ -7,6 +7,6 @@ import javax.inject.Inject
 class CreateMetadataTaskNameGenerator @Inject constructor() {
 
     fun generateTaskName(variantName: String): String {
-        return "create${variantName.capitalize()}AndroidBuddyLibraryProperties"
+        return "create${variantName.capitalize()}AndroidBuddyLibraryMetadata"
     }
 }

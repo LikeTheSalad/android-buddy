@@ -18,7 +18,7 @@ class AndroidBuddyLibraryPluginsExtractor
         val scanResult = getClassGraphScan(jarFiles)
         val names = mutableSetOf<String>()
 
-        scanResult.getResourcesWithLeafName(Constants.PLUGINS_PROPERTIES_FILE_NAME)
+        scanResult.getResourcesWithLeafName(Constants.PLUGINS_METADATA_FILE_NAME)
             .forEachInputStreamIgnoringIOException { _, inputStream ->
                 names.addAll(getPluginNamesFromPropertiesFile(inputStream))
             }
@@ -29,7 +29,7 @@ class AndroidBuddyLibraryPluginsExtractor
     private fun getClassGraphScan(jarFiles: Set<File>): ScanResult {
         return instantiatorWrapper.getClassGraph()
             .overrideClassLoaders(jarFilesToClassLoader(jarFiles))
-            .acceptPaths(Constants.LIBRARY_PROPERTIES_DIR)
+            .acceptPaths(Constants.LIBRARY_METADATA_DIR)
             .scan()
     }
 

@@ -3,9 +3,9 @@ package com.likethesalad.android.buddylib.modules.createmetadata.action
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
 import com.likethesalad.android.common.actions.BaseAction
-import com.likethesalad.android.common.utils.Constants.LIBRARY_PROPERTIES_DIR
+import com.likethesalad.android.common.utils.Constants.LIBRARY_METADATA_DIR
+import com.likethesalad.android.common.utils.Constants.PLUGINS_METADATA_FILE_NAME
 import com.likethesalad.android.common.utils.Constants.PLUGINS_PROPERTIES_CLASSES_KEY
-import com.likethesalad.android.common.utils.Constants.PLUGINS_PROPERTIES_FILE_NAME
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import com.likethesalad.android.common.utils.Logger
 import java.io.File
@@ -21,18 +21,19 @@ class CreateAndroidBuddyLibraryMetadataAction(
 
     override fun execute() {
         cleanUpDir()
-        val propertiesFile = File(
+        val metadataFile = File(
             getPropertiesDir(),
-            PLUGINS_PROPERTIES_FILE_NAME
+            PLUGINS_METADATA_FILE_NAME
         )
         val properties = Properties()
         properties.setProperty(
             PLUGINS_PROPERTIES_CLASSES_KEY,
             pluginNames.joinToString(",")
         )
-        propertiesFile.writer().use {
+        metadataFile.writer().use {
             properties.store(it, null)
         }
+
         logger.debug("Plugins found: {}", pluginNames)
     }
 
@@ -43,7 +44,7 @@ class CreateAndroidBuddyLibraryMetadataAction(
     private fun getPropertiesDir(): File {
         val dir = File(
             outputDir,
-            LIBRARY_PROPERTIES_DIR
+            LIBRARY_METADATA_DIR
         )
         dir.mkdirs()
         return dir

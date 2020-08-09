@@ -5,6 +5,7 @@ import com.android.build.gradle.LibraryExtension
 import com.likethesalad.android.buddylib.di.LibraryInjector
 import com.likethesalad.android.buddylib.extension.AndroidBuddyLibExtension
 import com.likethesalad.android.buddylib.providers.AndroidBuddyLibExtensionProvider
+import com.likethesalad.android.buddylib.providers.FileCollectionProvider
 import com.likethesalad.android.buddylib.providers.IncrementalDirProvider
 import com.likethesalad.android.buddylib.providers.TaskContainerProvider
 import com.likethesalad.android.common.base.BuddyPlugin
@@ -12,6 +13,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.TaskContainer
 import java.io.File
@@ -19,7 +21,7 @@ import java.io.File
 
 @Suppress("UnstableApiUsage")
 open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin, TaskContainerProvider,
-    AndroidBuddyLibExtensionProvider, IncrementalDirProvider {
+    AndroidBuddyLibExtensionProvider, IncrementalDirProvider, FileCollectionProvider {
 
     private lateinit var project: Project
     private lateinit var libExtension: AndroidBuddyLibExtension
@@ -64,5 +66,11 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin, TaskContain
 
     override fun createIncrementalDir(dirName: String): File {
         return project.file("${project.buildDir}/intermediates/incremental/$dirName")
+    }
+
+    override fun createCollectionForFiles(vararg files: File): ConfigurableFileCollection {
+        return project.files(project.provider {
+            files.toList()
+        })
     }
 }

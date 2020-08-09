@@ -6,11 +6,12 @@ import com.likethesalad.android.buddylib.extension.AndroidBuddyLibExtension
 import com.likethesalad.android.buddylib.modules.createmetadata.data.CreateMetadataTaskArgs
 import com.likethesalad.android.buddylib.modules.createmetadata.utils.CreateMetadataTaskNameGenerator
 import com.likethesalad.android.buddylib.providers.AndroidBuddyLibExtensionProvider
+import com.likethesalad.android.buddylib.providers.FileCollectionProvider
 import com.likethesalad.android.buddylib.providers.IncrementalDirProvider
 import com.likethesalad.android.buddylib.providers.TaskContainerProvider
 import com.likethesalad.android.common.utils.android.AndroidExtensionDataProvider
 import org.gradle.api.tasks.TaskContainer
-import org.gradle.api.tasks.TaskProvider
+import java.io.File
 import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
@@ -21,7 +22,8 @@ class CreateMetadataTaskGenerator @Inject constructor(
     private val createMetadataTaskArgs: CreateMetadataTaskArgs,
     private val taskContainerProvider: TaskContainerProvider,
     private val extensionProvider: AndroidBuddyLibExtensionProvider,
-    private val incrementalDirProvider: IncrementalDirProvider
+    private val incrementalDirProvider: IncrementalDirProvider,
+    private val fileCollectionProvider: FileCollectionProvider
 ) {
 
     private val taskContainer: TaskContainer by lazy {
@@ -34,29 +36,31 @@ class CreateMetadataTaskGenerator @Inject constructor(
 
     fun createTaskPerVariant() {
         androidExtensionDataProvider.allVariants {
-            attachTaskToVariantJavaResources(it, createTaskForVariant(it))
+            val taskName = createMetadataTaskNameGenerator.generateTaskName(it.name)
+            val destinationDir = incrementalDirProvider.createIncrementalDir(taskName)
+            val task = createTaskForVariant(taskName, destinationDir)
+            attachTaskToVariantJavaResources(it, task, destinationDir)
         }
     }
 
-    private fun createTaskForVariant(variant: BaseVariant): TaskProvider<CreateAndroidBuddyLibraryMetadata> {
-        val taskName = createMetadataTaskNameGenerator.generateTaskName(variant.name)
-        val task = taskContainer.register(
+    private fun createTaskForVariant(taskName: String, destinationDir: File)
+            : CreateAndroidBuddyLibraryMetadata {
+        val task = taskContainer.create(
             taskName, CreateAndroidBuddyLibraryMetadata::class.java, createMetadataTaskArgs
         )
-        task.configure {
-            it.inputClassNames = extension.pluginNames
-            it.outputDir.set(incrementalDirProvider.createIncrementalDir(taskName))
-        }
+        task.inputClassNames = extension.pluginNames
+        task.outputDir.set(destinationDir)
 
         return task
     }
 
     private fun attachTaskToVariantJavaResources(
         variant: BaseVariant,
-        task: TaskProvider<CreateAndroidBuddyLibraryMetadata>
+        task: CreateAndroidBuddyLibraryMetadata,
+        destinationDir: File
     ) {
-        variant.processJavaResourcesProvider.configure {
-            it.from(task)
-        }
+        val collection = fileCollectionProvider.createCollectionForFiles(destinationDir)
+        collection.builtBy(task)
+        variant.registerPreJavacGeneratedBytecode(collection)
     }
 }
