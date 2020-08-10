@@ -11,7 +11,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.slot
 import io.mockk.verify
-import org.gradle.api.Action
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.junit.Before
@@ -52,27 +51,23 @@ class CustomBucketConfigurationCreatorTest : BaseMockable() {
         val custom1Name = "androidBuddyImplementation"
         val custom2Name = "demoOriginal2AndroidBuddyApi"
         val onConfigurationFound = onConfigurationFoundCaptor.captured
-        val customConfig1ActionCaptor = slot<Action<Configuration>>()
-        val customConfig2ActionCaptor = slot<Action<Configuration>>()
         val originalBucket1 = createOriginalBucket(original1Name, "", "implementation")
         val originalBucket2 = createOriginalBucket(original2Name, "demoOriginal2", "Api")
         val customConfig1 = mockk<Configuration>()
         val customConfig2 = mockk<Configuration>()
         every {
-            configurationContainer.create(custom1Name, capture(customConfig1ActionCaptor))
+            configurationContainer.maybeCreate(custom1Name)
         }.returns(customConfig1)
         every {
-            configurationContainer.create(custom2Name, capture(customConfig2ActionCaptor))
+            configurationContainer.maybeCreate(custom2Name)
         }.returns(customConfig2)
 
         onConfigurationFound.invoke(originalBucket1)
         onConfigurationFound.invoke(originalBucket2)
 
-        customConfig1ActionCaptor.captured.execute(customConfig1)
-        customConfig2ActionCaptor.captured.execute(customConfig2)
         verify {
-            configurationContainer.create(custom1Name, any<Action<Configuration>>())
-            configurationContainer.create(custom2Name, any<Action<Configuration>>())
+            configurationContainer.maybeCreate(custom1Name)
+            configurationContainer.maybeCreate(custom2Name)
             originalBucket1.configuration.extendsFrom(customConfig1)
             originalBucket2.configuration.extendsFrom(customConfig2)
             customConfig1.isCanBeConsumed = false

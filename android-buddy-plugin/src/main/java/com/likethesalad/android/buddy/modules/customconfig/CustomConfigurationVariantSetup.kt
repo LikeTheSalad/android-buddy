@@ -73,11 +73,12 @@ class CustomConfigurationVariantSetup
     }
 
     private fun createResolvableConfiguration(name: String): Configuration {
-        return configurations.create(name) {
-            it.isCanBeResolved = true
-            it.isCanBeConsumed = false
-            it.isTransitive = false
-        }
+        val config = configurations.maybeCreate(name)
+        config.isCanBeResolved = true
+        config.isCanBeConsumed = false
+        config.isTransitive = false
+
+        return config
     }
 
     private fun namesToConfigurations(names: List<String>): List<Configuration> {

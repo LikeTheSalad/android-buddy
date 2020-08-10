@@ -18,7 +18,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.slot
 import io.mockk.verify
-import org.gradle.api.Action
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.attributes.Attribute
@@ -77,15 +76,11 @@ class CustomConfigurationVariantSetupTest : BaseMockable() {
     )
     private val androidCompileConfigAttributes = mutableMapOf<Attribute<Any>, Any>()
     private val androidRuntimeConfigAttributes = mutableMapOf<Attribute<Any>, Any>()
-    private lateinit var variantCompileResolvableActionCaptor: CapturingSlot<Action<Configuration>>
-    private lateinit var variantRuntimeResolvableActionCaptor: CapturingSlot<Action<Configuration>>
     private lateinit var customConfigurationVariantSetup: CustomConfigurationVariantSetup
 
     @Before
     fun setUp() {
         variantProcessActionCaptor = slot()
-        variantCompileResolvableActionCaptor = slot()
-        variantRuntimeResolvableActionCaptor = slot()
         every { variant.name }.returns(variantName)
         every {
             androidExtensionDataProvider.allVariants(capture(variantProcessActionCaptor))
@@ -94,16 +89,10 @@ class CustomConfigurationVariantSetupTest : BaseMockable() {
         every { variant.compileConfiguration }.returns(variantCompileConfig)
         every { variant.runtimeConfiguration }.returns(variantRuntimeConfig)
         every {
-            configurationContainer.create(
-                customCompileResolvableName,
-                capture(variantCompileResolvableActionCaptor)
-            )
+            configurationContainer.maybeCreate(customCompileResolvableName)
         }.returns(customCompileResolvableConfig)
         every {
-            configurationContainer.create(
-                customRuntimeResolvableName,
-                capture(variantRuntimeResolvableActionCaptor)
-            )
+            configurationContainer.maybeCreate(customRuntimeResolvableName)
         }.returns(customRuntimeResolvableConfig)
         every { customCompileResolvableConfig.attributes }.returns(customCompileResolvableAttributeContainer)
         every { customRuntimeResolvableConfig.attributes }.returns(customRuntimeResolvableAttributeContainer)
@@ -160,15 +149,13 @@ class CustomConfigurationVariantSetupTest : BaseMockable() {
     }
 
     private fun verifyAllCustomResolvableConfigSetUp() {
-        verifyCustomResolvableConfigSetUp(customCompileResolvableConfig, variantCompileResolvableActionCaptor.captured)
-        verifyCustomResolvableConfigSetUp(customRuntimeResolvableConfig, variantRuntimeResolvableActionCaptor.captured)
+        verifyCustomResolvableConfigSetUp(customCompileResolvableConfig)
+        verifyCustomResolvableConfigSetUp(customRuntimeResolvableConfig)
     }
 
     private fun verifyCustomResolvableConfigSetUp(
-        configuration: Configuration,
-        capturedAction: Action<Configuration>
+        configuration: Configuration
     ) {
-        capturedAction.execute(configuration)
         verify {
             configuration.isCanBeResolved = true
             configuration.isCanBeConsumed = false
