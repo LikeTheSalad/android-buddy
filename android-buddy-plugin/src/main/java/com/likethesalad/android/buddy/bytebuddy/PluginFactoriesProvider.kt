@@ -52,13 +52,20 @@ class PluginFactoriesProvider
 
     private fun getLocalPluginNames(dirFiles: Set<File>): Set<String> {
         val pluginNames = getPluginNamesFrom(dirFiles)
-        logger.debug("Local plugins found: {}", pluginNames)
+        logger.debug("Local transformations found: {}", pluginNames)
         return pluginNames
     }
 
     private fun getLibraryPluginNames(jarFiles: Set<File>): Set<String> {
         val pluginNames = androidBuddyLibraryPluginsExtractor.extractPluginNames(jarFiles)
-        logger.debug("Dependencies plugins found: {}", pluginNames)
+        if (pluginNames.isNotEmpty()) {
+            val text = "Dependencies transformations found: {}"
+            if (pluginConfiguration.alwaysLogDependenciesTransformationNames()) {
+                logger.lifecycle(text, pluginNames)
+            } else {
+                logger.debug(text, pluginNames)
+            }
+        }
         return pluginNames
     }
 

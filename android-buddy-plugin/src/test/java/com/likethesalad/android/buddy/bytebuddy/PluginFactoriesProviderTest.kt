@@ -124,8 +124,8 @@ class PluginFactoriesProviderTest : BaseMockable() {
         Truth.assertThat(factories)
             .containsExactly(name1.expectedFactory, name2.expectedFactory, libName1.expectedFactory)
         verify {
-            logger.debug("Local plugins found: {}", setOf(name1.name, name2.name))
-            logger.debug("Dependencies plugins found: {}", setOf(libName1.name))
+            logger.debug("Local transformations found: {}", setOf(name1.name, name2.name))
+            logger.debug("Dependencies transformations found: {}", setOf(libName1.name))
             name1.expectedFactory.with(loggerArgumentResolver)
             name2.expectedFactory.with(loggerArgumentResolver)
             libName1.expectedFactory.with(loggerArgumentResolver)
