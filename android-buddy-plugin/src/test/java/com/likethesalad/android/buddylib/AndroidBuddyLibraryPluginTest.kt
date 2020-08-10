@@ -14,13 +14,16 @@ import io.mockk.verify
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.plugins.PluginManager
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
 import org.junit.Before
 import org.junit.Test
 import java.io.File
+import java.util.concurrent.Callable
 
 class AndroidBuddyLibraryPluginTest : BaseMockable() {
 
@@ -150,5 +153,18 @@ class AndroidBuddyLibraryPluginTest : BaseMockable() {
         verify {
             project.file("some/path/intermediates/incremental/someName")
         }
+    }
+
+    @Test
+    fun `Create file collection for files`() {
+        val files = arrayOf<File>()
+        val expectedCollection = mockk<ConfigurableFileCollection>()
+        val provider = mockk<Provider<Any>>()
+        every { project.provider(any<Callable<Any>>()) }.returns(provider)
+        every { project.files(provider) }.returns(expectedCollection)
+
+        val result = androidBuddyLibraryPlugin.createCollectionForFiles(*files)
+
+        Truth.assertThat(result).isEqualTo(expectedCollection)
     }
 }
