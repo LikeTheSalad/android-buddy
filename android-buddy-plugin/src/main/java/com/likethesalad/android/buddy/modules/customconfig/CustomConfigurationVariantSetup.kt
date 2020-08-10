@@ -76,6 +76,7 @@ class CustomConfigurationVariantSetup
         return configurations.create(name) {
             it.isCanBeResolved = true
             it.isCanBeConsumed = false
+            it.isTransitive = false
         }
     }
 

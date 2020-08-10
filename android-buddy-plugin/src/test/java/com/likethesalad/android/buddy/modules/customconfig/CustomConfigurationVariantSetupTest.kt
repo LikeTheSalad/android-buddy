@@ -172,6 +172,7 @@ class CustomConfigurationVariantSetupTest : BaseMockable() {
         verify {
             configuration.isCanBeResolved = true
             configuration.isCanBeConsumed = false
+            configuration.isTransitive = false
         }
     }
 
