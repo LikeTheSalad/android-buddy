@@ -4,6 +4,7 @@ import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.BaseVariant
+import com.android.build.gradle.api.LibraryVariant
 import com.likethesalad.android.common.providers.AndroidExtensionProvider
 import java.io.File
 import javax.inject.Inject
@@ -22,6 +23,7 @@ class AndroidExtensionDataProvider
     fun getVariantByName(name: String): BaseVariant {
         return when (val extension = this.androidExtension) {
             is AppExtension -> getAppVariantByName(name, extension)
+            is LibraryExtension -> getLibVariantByName(name, extension)
             else -> throw UnsupportedOperationException()
         }
     }
@@ -36,6 +38,12 @@ class AndroidExtensionDataProvider
 
     private fun getAppVariantByName(name: String, appExtension: AppExtension): ApplicationVariant {
         return appExtension.applicationVariants.find {
+            it.name == name
+        }!!
+    }
+
+    private fun getLibVariantByName(name: String, libExtension: LibraryExtension): LibraryVariant {
+        return libExtension.libraryVariants.find {
             it.name == name
         }!!
     }

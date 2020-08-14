@@ -1,6 +1,6 @@
 package com.likethesalad.android.buddy
 
-import com.android.build.gradle.AppExtension
+import com.android.build.gradle.BaseExtension
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.di.AppInjector
 import com.likethesalad.android.buddy.extension.AndroidBuddyExtension
@@ -28,7 +28,7 @@ import java.io.File
 class AndroidBuddyPluginTest : BaseMockable() {
 
     @MockK
-    lateinit var androidExtension: AppExtension
+    lateinit var androidExtension: BaseExtension
 
     @MockK
     lateinit var project: Project
@@ -69,7 +69,7 @@ class AndroidBuddyPluginTest : BaseMockable() {
         every { project.dependencies }.returns(dependencyHandler)
         every { project.repositories }.returns(repositoryHandler)
         every { project.configurations }.returns(configurationContainer)
-        every { extensionContainer.getByType(AppExtension::class.java) }.returns(androidExtension)
+        every { extensionContainer.getByType(BaseExtension::class.java) }.returns(androidExtension)
         every {
             extensionContainer.create(
                 "androidBuddy", AndroidBuddyExtension::class.java

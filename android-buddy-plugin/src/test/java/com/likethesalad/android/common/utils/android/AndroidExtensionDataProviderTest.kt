@@ -72,6 +72,21 @@ class AndroidExtensionDataProviderTest : BaseMockable() {
     }
 
     @Test
+    fun `Get library variant by name`() {
+        val variantName = "someVariantName"
+        val variant = mockk<LibraryVariant>()
+        val iterator = mutableListOf(variant).iterator()
+        val libVariants = mockk<DefaultDomainObjectSet<LibraryVariant>>()
+        every { variant.name }.returns(variantName)
+        every { libVariants.iterator() }.returns(iterator)
+        every { libraryExtension.libraryVariants }.returns(libVariants)
+
+        val result = libraryExtensionDataProvider.getVariantByName(variantName)
+
+        Truth.assertThat(result).isEqualTo(variant)
+    }
+
+    @Test
     fun `Run on all application variants`() {
         val actionCaptor = slot<Action<ApplicationVariant>>()
         val appVariants = mockk<DomainObjectSet<ApplicationVariant>>()
