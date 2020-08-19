@@ -103,7 +103,7 @@ class CreateAndroidBuddyLibraryMetadataActionTest : BaseMockable() {
 
     private fun verifyCommonSuccessActions(pluginNames: Set<String>) {
         verify {
-            logger.debug("Plugins found: {}", pluginNames)
+            logger.debug("Transformations found: {}", pluginNames)
         }
     }
 

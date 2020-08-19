@@ -34,7 +34,7 @@ class CreateAndroidBuddyLibraryMetadataAction(
             properties.store(it, null)
         }
 
-        logger.debug("Plugins found: {}", pluginNames)
+        logger.debug("Transformations found: {}", pluginNames)
     }
 
     private fun cleanUpDir() {

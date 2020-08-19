@@ -102,7 +102,7 @@ class CreateMetadataTaskGeneratorTest : BaseMockable() {
         every { incrementalDirProvider.createIncrementalDir(taskName) }.returns(expectedOutputDir)
         every { createMetadataTaskNameGenerator.generateTaskName(variantName) }.returns(taskName)
         every { createAndroidBuddyLibraryMetadata.outputDir }.returns(outputDir)
-        every { androidBuddyLibExtension.pluginNames }.returns(pluginNames)
+        every { androidBuddyLibExtension.exposedTransformationNames }.returns(pluginNames)
         every { fileCollectionProvider.createCollectionForFiles(expectedOutputDir) }.returns(collection)
         every { collection.builtBy(createAndroidBuddyLibraryMetadata) }.returns(collection)
         every { variant.registerPreJavacGeneratedBytecode(collection) }.returns(variant)
