@@ -8,7 +8,7 @@ Why to use Android Buddy
 ---
 Usually, Byte Buddy takes care of transforming classes (also creating new ones) at runtime within standard Java environments, however, due to Android's custom environment, it is not possible to transform (redefine or rebase) existing classes during runtime. So essentially, if you want to **transform** your own classes using Byte Buddy for Android, that's when Android Buddy comes in handy as it makes it possible, at compile time. If you don't want to transform classes and rather just creating new ones using Byte Buddy, you should consider using the official Byte Buddy library for android: https://github.com/raphw/byte-buddy/tree/master/byte-buddy-android.
 
-As an extra, Android Buddy allows you not only to create your own project's transformations, but also to **produce** transformations for other projects, e.g. create libraries that make use of Android Buddy. This is an example of an Android Buddy library: [INSERT LINK]
+As an extra, Android Buddy allows you not only to create your own project's transformations, but also to **produce** transformations for other projects, e.g. create libraries that make use of Android Buddy. This is an example of an Android library that uses Android Buddy under the hood: [INSERT LINK]
 
 Usage
 --
