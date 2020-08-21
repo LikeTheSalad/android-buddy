@@ -18,7 +18,7 @@ As mentioned above, Android Buddy allows not only to create your own project's t
 This is for when you want to apply Byte Buddy transformations into your project's classes, either from AndroidBuddy libraries, or from your own local transformations. In order to use these transformations, you must first set up your consumer project by applying the `android-buddy` plugin to it on its `build.gradle` file, as explained below under `Setting up a consumer project`.
 
 #### Using your own transformations
-In order to use your own transformations you'd first have to create them by creating a class that extends from `net.bytebuddy.build.Plugin`. Then, for it to be found later by AndroidBuddy, you'd have to annotate your class with `com.likethesalad.android.buddy.tools.Transformation`.
+In order to use your own transformations you'd first have to create them by making a class that extends from `net.bytebuddy.build.Plugin`. Then, for it to be found later by AndroidBuddy, you'd have to annotate your class with `com.likethesalad.android.buddy.tools.Transformation`.
 
 **Example**
 ```kotlin
