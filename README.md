@@ -75,7 +75,7 @@ dependencies {
 ```
 That's it by default, when you compile your project, Android Buddy will apply the exposed transformations of that library.
 
-### Configuration for consumer's dependencies
+#### Configuration for consumer's dependencies
 As mentioned above, by default your consumer project will take all the exposed transformations from any Android Buddy dependency it has, however, sometimes that won't be what you'd want for your project, and you'd rather prefer to explicitly select those libraries you'd like to get their transformations from, or even you'd rather to just ignore all dependencies' transformations altogether. For these mentioned cases, there are configuration parameters that you can change whenever you like to modify the default behavior.
 
 You can do the following in order to configure the way your consumer project uses transformations from its dependencies:
@@ -83,7 +83,7 @@ You can do the following in order to configure the way your consumer project use
 ```groovy
 // Your consumer's build.gradle file
 dependencies {
-    // Some dependencies where there might be Android Buddy libraries
+    // Some dependencies where there might be AndroidBuddy libraries
 }
 //...
 androidBuddy {
@@ -95,11 +95,12 @@ androidBuddy {
         If false, it will show them only if you compile your project using Gradle's '--debug' flag.
         Default is TRUE.*/
         strictMode {
-            enabled = false /* If false, it will take into account all Android Buddy libraries added
+            enabled = false /* If FALSE, it will take into account all AndroidBuddy libraries added
             into your consumer project. If true, it will ONLY take into account the transformations from
-            AndroidBuddy libraries that are defined explicitly using `androidBuddyImplementation` and/or
-            `androidBuddyApi`. e.g:
+            AndroidBuddy libraries that are defined explicitly using the configuration
+            `androidBuddyImplementation` and/or `androidBuddyApi`. e.g:
             dependencies {
+                // With strictMode enabled:
                 androidBuddyImplementation "the.android.buddy:library:x.y.z"
             }
             With strict mode enabled, any AndroidBuddy dependency that is not defined with such
