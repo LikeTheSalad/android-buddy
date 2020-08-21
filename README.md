@@ -88,17 +88,25 @@ dependencies {
 //...
 androidBuddy {
     dependenciesConfig {
-        disableAllTransformations = false // If true, your consumer will ignore all dependencies' transformations. Default is false.
-        alwaysLogTransformationNames = true // If true, it will always log the names of the dependencies' transformations being applied into your project at compile time. If false, it will show them only if you compile your project using Gradle's '--debug' flag. Default is true.
+        disableAllTransformations = false /* If TRUE, your consumer will ignore all dependencies'
+        transformations. Default is FALSE.*/
+        alwaysLogTransformationNames = true /* If TRUE, it will always log the names of the
+        dependencies' transformations being applied into your project at compile time.
+        If false, it will show them only if you compile your project using Gradle's '--debug' flag.
+        Default is TRUE.*/
         strictMode {
-            enabled = false // If false, it will take into account all Android Byddu libraries added into your consumer project. If true, it will ONLY take into account the transformations from AndroidBuddy libraries that are defined explicitly using `androidBuddyImplementation` and/or `androidBuddyApi`. e.g:
-            /*
+            enabled = false /* If false, it will take into account all Android Buddy libraries added
+            into your consumer project. If true, it will ONLY take into account the transformations from
+            AndroidBuddy libraries that are defined explicitly using `androidBuddyImplementation` and/or
+            `androidBuddyApi`. e.g:
             dependencies {
                 androidBuddyImplementation "the.android.buddy:library:x.y.z"
             }
+            With strict mode enabled, any AndroidBuddy dependency that is not defined with such
+            configuration will be ignored.
+
+            strictMode.enabled is FALSE by default.
             */
-            // Any AndroidBuddy dependency that is not defined with such configuration will be ignored.
-            // strictMode.enabled is FALSE by default.
         }
     }
 }
