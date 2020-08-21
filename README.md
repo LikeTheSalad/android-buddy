@@ -15,7 +15,7 @@ Usage
 As mentioned above, Android Buddy allows not only to create your own project's transformations, but also to produce transformations for other projects (create libraries). Depending on what it is that you need to do, for the former, you should take a look at `Consumer usage`, and for the latter (libraries), you should take a look at `Producer usage`.
 
 ### Consumer usage
-This is for when you want to apply Byte Buddy transformations into your project's classes, either from Android Buddy libraries, or from your own local transformations.
+This is for when you want to apply Byte Buddy transformations into your project's classes, either from Android Buddy libraries, or from your own local transformations. In order to use these transformations, you must first set up your consumer project by applying the `android-buddy` plugin to it on its `build.gradle` file, as exmplained below under [INSERT REFERENCE].
 
 #### Using your own transformations
 In order to use your own transformations you'd first have to create them by creating a class that extends from `net.bytebuddy.build.Plugin` and then, for it to be found later by Android Buddy, you'd have to annotate your class with `com.likethesalad.android.buddy.tools.Transformation`.
@@ -112,6 +112,47 @@ androidBuddy {
     }
 }
 ```
+
+### Producer usage
+You can make AndroidBuddy libraries, which will expose their Byte Buddy transformations for an AndroidBuddy consumer project. In order to do so, you'd have to create an [Android Library](https://developer.android.com/studio/projects/android-library) project and then apply the `android-buddy-library` plugin to it on its `build.gradle` file, as explained below under [INSERT REFERENCE].
+
+After setting up your Android Library as an AndroidBuddy producer, you can start creating as many Byte Buddy Plugin classes (`net.bytebuddy.build.Plugin`) as you like, and then you'd have to explicitly define the ones you'd like to expose for consumers, e.g:
+
+**Example**
+```kotlin
+package com.my.transformation.package
+// ...
+
+class MyExposedTransformation : Plugin {
+    override fun apply(
+        builder: DynamicType.Builder<*>,
+        typeDescription: TypeDescription,
+        classFileLocator: ClassFileLocator
+    ): DynamicType.Builder<*> {
+        TODO("Not yet implemented")
+    }
+
+    override fun close() {
+        TODO("Not yet implemented")
+    }
+
+    override fun matches(target: TypeDescription): Boolean {
+        TODO("Not yet implemented")
+    }
+}
+```
+And then, for you to expose your transformation to consumers, you have to add the following into your library's `build.gradle` file:
+
+```groovy
+apply plugin: 'com.android.library'
+apply plugin: 'android-buddy-library'
+
+// ...
+androidBuddyLibrary {
+    exposedTransformationNames = ["com.my.transformation.package.MyExposedTransformation"]
+}
+```
+And that's it, when you add this Android Library as dependency for an AndroidBuddy consumer project, your library's transformation `MyExposedTransformation` will be available right away for the consumer to use.
 
 License
 ---
