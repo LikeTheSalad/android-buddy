@@ -6,19 +6,19 @@ Android Buddy is a plugin that allows transforming Android projects' classes usi
 
 Why to use Android Buddy
 ---
-Usually, Byte Buddy takes care of transforming classes (also creating new ones) at runtime within standard Java environments, however, due to Android's custom environment, it is not possible to transform (redefine or rebase) existing classes during runtime. So essentially, if you want to **transform** your own classes using Byte Buddy for Android, that's when Android Buddy comes in handy as it makes it possible, at compile time. If you don't want to transform classes and rather just creating new ones using Byte Buddy, you should consider using the official Byte Buddy library for android: https://github.com/raphw/byte-buddy/tree/master/byte-buddy-android.
+Usually, Byte Buddy takes care of transforming classes (also creating new ones) at runtime within standard Java environments, however, due to Android's custom environment, it is not possible to transform (redefine or rebase) existing classes during runtime. So essentially, if you want to **transform** your own classes using Byte Buddy for Android, that's when AndroidBuddy comes in handy as it makes it possible, at compile time. If you don't want to transform classes and rather just creating new ones using Byte Buddy, you should consider using the official Byte Buddy library for android: https://github.com/raphw/byte-buddy/tree/master/byte-buddy-android.
 
-As an extra, Android Buddy allows you not only to create your own project's transformations, but also to **produce** transformations for other projects, e.g. create libraries that make use of Android Buddy. This is an example of an Android library that uses Android Buddy under the hood: [INSERT LINK]
+As an extra, Android Buddy allows you not only to create your own project's transformations, but also to **produce** transformations for other projects, e.g. create libraries that make use of AndroidBuddy. This is an example of an Android library that uses AndroidBuddy under the hood: [INSERT LINK]
 
 Usage
 --
 As mentioned above, Android Buddy allows not only to create your own project's transformations, but also to produce transformations for other projects (create libraries). Depending on what it is that you need to do, for the former, you should take a look at `Consumer usage`, and for the latter (libraries), you should take a look at `Producer usage`.
 
 ### Consumer usage
-This is for when you want to apply Byte Buddy transformations into your project's classes, either from Android Buddy libraries, or from your own local transformations. In order to use these transformations, you must first set up your consumer project by applying the `android-buddy` plugin to it on its `build.gradle` file, as exmplained below under [INSERT REFERENCE].
+This is for when you want to apply Byte Buddy transformations into your project's classes, either from AndroidBuddy libraries, or from your own local transformations. In order to use these transformations, you must first set up your consumer project by applying the `android-buddy` plugin to it on its `build.gradle` file, as exmplained below under [INSERT REFERENCE].
 
 #### Using your own transformations
-In order to use your own transformations you'd first have to create them by creating a class that extends from `net.bytebuddy.build.Plugin` and then, for it to be found later by Android Buddy, you'd have to annotate your class with `com.likethesalad.android.buddy.tools.Transformation`.
+In order to use your own transformations you'd first have to create them by creating a class that extends from `net.bytebuddy.build.Plugin`. Then, for it to be found later by AndroidBuddy, you'd have to annotate your class with `com.likethesalad.android.buddy.tools.Transformation`.
 
 **Example**
 ```kotlin
@@ -59,12 +59,12 @@ object MyOnCreateInterceptor {
 ```
 In this example, we created a transformation that intercepts all of the project's classes that extend from `Activity` and then change their `onCreate` method in order to print an Android log after running the original code from the intercepted `onCreate` method.
 
-As an optional operation, we're also printing a Gradle log before adding our interceptor to an Activity. The only type of argument that currently Android Buddy supports within a `Plugin` constructor is a Gradle logger (`org.gradle.api.logging.Logger`). It is optional, you can also have an empty constructor in the case that you don't want to print any logs during compile time.
+As an optional operation, we're also printing a Gradle log before adding our interceptor to an Activity. The only type of argument that currently AndroidBuddy supports within a `Plugin` constructor is a Gradle logger (`org.gradle.api.logging.Logger`). It is optional, you can also have an empty constructor in the case that you don't want to print any logs during compile time.
 
-Android Buddy only takes care here of connecting Android compilation to Byte Buddy's API. You can lean more about all of the possible transformations that Byte Buddy allows by looking at its official documentation page: https://bytebuddy.net/#/tutorial
+AndroidBuddy only takes care here of connecting Android compilation to Byte Buddy's API. You can lean more about all of the possible transformations that Byte Buddy allows by looking at its official documentation page: https://bytebuddy.net/#/tutorial
 
-#### Using Android Buddy library transformations
-You can use transformations provided by an Android Buddy library, here is an example of an Android Buddy library: [INSERT LINK].
+#### Using AndroidBuddy library transformations
+You can use transformations provided by an AndroidBuddy library, here is an example of an AndroidBuddy library: [INSERT LINK].
 
 In order to use them, by default you simply have to include this library into your AndroidBuddy-consumer project as any regular dependency, e.g:
 
@@ -73,15 +73,19 @@ dependencies {
     implementation "the.android.buddy:library:x.y.z"
 }
 ```
-That's it by default, when you compile your project, Android Buddy will apply the exposed transformations of that library.
+That's it by default, when you compile your project, AndroidBuddy will apply the exposed transformations of that library.
 
 #### Configuration for consumer's dependencies
-As mentioned above, by default your consumer project will take all the exposed transformations from any Android Buddy dependency it has, however, sometimes that won't be what you'd want for your project, and you'd rather prefer to explicitly select those libraries you'd like to get their transformations from, or even you'd rather to just ignore all dependencies' transformations altogether. For these mentioned cases, there are configuration parameters that you can change whenever you like to modify the default behavior.
+As mentioned above, by default your consumer project will take all the exposed transformations from any AndroidBuddy dependency it has, however, sometimes that won't be what you'd want for your project, and you'd rather prefer to explicitly select those libraries you'd like to get their transformations from, or even you'd rather to just ignore all dependencies' transformations altogether. For these mentioned cases, there are configuration parameters that you can change whenever you like to modify the default behavior.
 
-You can do the following in order to configure the way your consumer project uses transformations from its dependencies:
+You can do the following into your consumer's `build.gradle` file in order to configure the way your consumer uses transformations from its dependencies:
 
 ```groovy
 // Your consumer's build.gradle file
+apply plugin: 'com.android.application' // OR 'com.android.library'
+apply plugin: 'android-buddy'
+
+// ...
 dependencies {
     // Some dependencies where there might be AndroidBuddy libraries
 }
@@ -141,7 +145,7 @@ class MyExposedTransformation : Plugin {
     }
 }
 ```
-And then, for you to expose your transformation to consumers, you have to add the following into your library's `build.gradle` file:
+And then, for you to expose your transformation to consumers, you have to add its full name into the exposed transformations name config parameter on your library's `build.gradle` file, like so:
 
 ```groovy
 apply plugin: 'com.android.library'
