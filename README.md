@@ -164,7 +164,7 @@ Adding it into your project
 ---
 Whether you're planning to set up a producer or consumer project or both, you'd first have to add AndroidBuddy's Gradle plugin into your `root build.gradle` file first, and then you can proceed to set up your producers and/or consumers.
 
-### Changes into your root build gradle
+### Changes into your root build gradle file
 As a first step for both producers and consumers, you'd have to add AndroidBuddy as a Gradle plugin of your Android project by adding the following line into your `root` `build.gradle` dependencies:
 
 ```groovy
@@ -182,7 +182,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.+' // Requires Android build plugin version 3.3.0 or greater.
+        classpath 'com.android.tools.build:gradle:3.3.+' // Requires Android build plugin version 3.3.0 or higher.
         classpath "com.likethesalad.android:android-buddy-plugin:1.0.0"
     }
 }
