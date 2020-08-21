@@ -1,5 +1,19 @@
 # Android Buddy
 
+Table of Contents
+=================
+
+  * [What it is](#what-it-is)
+  * [Why to use Android Buddy](#why-to-use-android-buddy)
+  * [Usage](#usage)
+     * [Consumer usage](#consumer-usage)
+     * [Producer usage](#producer-usage)
+  * [Adding it into your project](#adding-it-into-your-project)
+     * [Changes into your root build gradle file](#changes-into-your-root-build-gradle-file)
+     * [Setting up a consumer project](#setting-up-a-consumer-project)
+     * [Setting up a producer project](#setting-up-a-producer-project)
+  * [License](#license)
+
 What it is
 ---
 Android Buddy is a plugin that allows transforming Android projects' classes using [Byte Buddy](https://bytebuddy.net/), at compile time. It supports both Java and Kotlin transformations.
@@ -162,7 +176,7 @@ For reference purposes, you can take a look at this AndroidBuddy library: [INSER
 
 Adding it into your project
 ---
-Whether you're planning to set up a producer or consumer project or both, you'd first have to add AndroidBuddy's Gradle plugin into your `root build.gradle` file, and then you can proceed to set up your producers and/or consumers.
+Whether you're planning to set up a producer or consumer project, or both, you'd first have to add AndroidBuddy's Gradle plugin into your `root build.gradle` file, and then you can proceed to set up your producers and/or consumers.
 
 ### Changes into your root build gradle file
 As a first step for both producers and consumers, you'd have to add AndroidBuddy as a Gradle plugin of your Android project by adding the following line into your `root` `build.gradle`'s buildscript' dependencies:
