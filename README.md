@@ -1,3 +1,5 @@
+[ ![Download](https://api.bintray.com/packages/likethesalad/public-repo/android-buddy-plugin/images/download.svg) ](https://bintray.com/likethesalad/public-repo/android-buddy-plugin/_latestVersion)
+
 # Android Buddy
 
 Table of Contents
@@ -182,7 +184,7 @@ Whether you're planning to set up a producer or consumer project, or both, you'd
 As a first step for both producers and consumers, you'd have to add Android Buddy as a Gradle plugin of your Android project by adding the following line into your `root` `build.gradle`'s buildscript' dependencies:
 
 ```groovy
-classpath "com.likethesalad.android:android-buddy-plugin:1.0.0"
+classpath "com.likethesalad.android:android-buddy-plugin:0.8.4"
 ```
 
 **Example**
@@ -197,7 +199,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.3.+' // Requires Android build plugin version 3.3.0 or higher.
-        classpath "com.likethesalad.android:android-buddy-plugin:1.0.0"
+        classpath "com.likethesalad.android:android-buddy-plugin:0.8.4"
     }
 }
 ```
