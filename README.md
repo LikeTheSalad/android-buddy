@@ -165,7 +165,7 @@ Adding it into your project
 Whether you're planning to set up a producer or consumer project or both, you'd first have to add AndroidBuddy's Gradle plugin into your `root build.gradle` file first, and then you can proceed to set up your producers and/or consumers.
 
 ### Changes into your root build gradle file
-As a first step for both producers and consumers, you'd have to add AndroidBuddy as a Gradle plugin of your Android project by adding the following line into your `root` `build.gradle` dependencies:
+As a first step for both producers and consumers, you'd have to add AndroidBuddy as a Gradle plugin of your Android project by adding the following line into your `root` `build.gradle`'s buildscript' dependencies:
 
 ```groovy
 classpath "com.likethesalad.android:android-buddy-plugin:1.0.0"
@@ -187,6 +187,30 @@ buildscript {
     }
 }
 ```
+
+### Setting up a consumer project
+After adding the required changes into your `root` `build.gradle` file as explained above, then you can go into your project's `build.gradle` file, for example `app/build.gradle`, and then add the following to it:
+
+```groovy
+// Your consumer's build.gradle file
+apply plugin: 'com.android.application' // OR 'com.android.library'
+apply plugin: 'android-buddy'
+```
+Both, Android applications and Android libraries can be AndroidBuddy consumers.
+
+And that's it, after adding `android-buddy` as a plugin for your project, you can now make it consume Byte Buddy transformations as explained above under `Consumer usage`.
+
+### Setting up a producer project
+After adding the required changes into your `root` `build.gradle` file as explained above, then you can go into your project's `build.gradle` file, for example `myLibrary/build.gradle`, and then add the following to it:
+
+```groovy
+// Your producer's build.gradle file
+apply plugin: 'com.android.library'
+apply plugin: 'android-buddy-library'
+```
+Only Android libraries can be AndroidBuddy producers.
+
+And that's it, after adding `android-buddy-library` as a plugin for your project, you can now make it expose Byte Buddy transformations as explained above under `Producer usage`.
 
 License
 ---
