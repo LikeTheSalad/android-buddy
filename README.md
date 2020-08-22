@@ -69,7 +69,7 @@ object MyOnCreateInterceptor {
     @JvmStatic
     fun intercept(@SuperCall originalMethodCall: Runnable) {
         originalMethodCall.run()
-        Log.d("Android Buddy", "Hello World!")
+        Log.d("myTag", "Hello World!")
     }
 }
 ```
