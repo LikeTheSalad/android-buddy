@@ -58,6 +58,13 @@ class ByteBuddyTransform @Inject constructor(
         )
     }
 
+    override fun getReferencedScopes(): MutableSet<in QualifiedContent.Scope> {
+        return mutableSetOf(
+            QualifiedContent.Scope.SUB_PROJECTS,
+            QualifiedContent.Scope.EXTERNAL_LIBRARIES
+        )
+    }
+
     override fun transform(transformInvocation: TransformInvocation) {
         super.transform(transformInvocation)
 
@@ -65,8 +72,9 @@ class ByteBuddyTransform @Inject constructor(
         val androidDataProvider = androidVariantDataProviderFactory.create(variantName)
         val transformInvocationDataExtractor = transformInvocationDataExtractorFactory.create(transformInvocation)
         val scopeClasspath = transformInvocationDataExtractor.getScopeClasspath()
+        val dependencies = transformInvocationDataExtractor.getReferenceClasspath()
+        val extraClasspath = (dependencies + androidExtensionDataProvider.getBootClasspath()).toSet()
         val outputFolder = transformInvocationDataExtractor.getOutputFolder(scopes)
-        val extraClasspath = getExtraClasspathExcludingScope(androidDataProvider, scopeClasspath.allFiles)
         val factoriesClassLoader = createFactoriesClassLoader(scopeClasspath, extraClasspath)
 
         directoryCleaner.cleanDirectory(outputFolder)
@@ -78,7 +86,7 @@ class ByteBuddyTransform @Inject constructor(
                 byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder),
                 pluginFactoriesProvider.getFactories(
                     scopeClasspath.dirFiles,
-                    getLibrariesJarsProvider(androidDataProvider, extraClasspath),
+                    getLibrariesJarsProvider(androidDataProvider, dependencies),
                     factoriesClassLoader
                 )
             )
@@ -94,23 +102,6 @@ class ByteBuddyTransform @Inject constructor(
         return compoundSourceFactory.create(origins)
     }
 
-    private fun getExtraClasspathExcludingScope(
-        androidVariantDataProvider: AndroidVariantDataProvider,
-        scopeFiles: Set<File>
-    ): Set<File> {
-        val extraFiles = mutableSetOf<File>()
-        val javaClasspath = androidVariantDataProvider.getJavaClassPath()
-        extraFiles.addAll(androidExtensionDataProvider.getBootClasspath())
-
-        for (extra in javaClasspath) {
-            if (extra !in scopeFiles) {
-                extraFiles.add(extra)
-            }
-        }
-
-        return extraFiles
-    }
-
     private fun createFactoriesClassLoader(
         scopeClasspath: FilesHolder,
         extraClasspath: Set<File>
@@ -123,12 +114,12 @@ class ByteBuddyTransform @Inject constructor(
 
     private fun getLibrariesJarsProvider(
         androidVariantDataProvider: AndroidVariantDataProvider,
-        extraClasspath: Set<File>
+        libraries: Set<File>
     ): LibrariesJarsProvider {
         return if (pluginConfiguration.useOnlyAndroidBuddyImplementations()) {
             customConfigurationLibrariesJarsProviderFactory.create(androidVariantDataProvider)
         } else {
-            defaultLibrariesJarsProviderFactory.create(extraClasspath)
+            defaultLibrariesJarsProviderFactory.create(libraries)
         }
     }
 }

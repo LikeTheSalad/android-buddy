@@ -4,12 +4,14 @@ import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
 import com.likethesalad.android.common.actions.BaseAction
 import com.likethesalad.android.common.utils.Constants.LIBRARY_METADATA_DIR
+import com.likethesalad.android.common.utils.Constants.PLUGINS_METADATA_CLASS_NAME
 import com.likethesalad.android.common.utils.Constants.PLUGINS_METADATA_FILE_NAME
-import com.likethesalad.android.common.utils.Constants.PLUGINS_PROPERTIES_CLASSES_KEY
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import com.likethesalad.android.common.utils.Logger
+import net.bytebuddy.ByteBuddy
+import net.bytebuddy.implementation.FixedValue
+import net.bytebuddy.matcher.ElementMatchers
 import java.io.File
-import java.util.Properties
 
 @AutoFactory
 class CreateAndroidBuddyLibraryMetadataAction(
@@ -25,14 +27,14 @@ class CreateAndroidBuddyLibraryMetadataAction(
             getPropertiesDir(),
             PLUGINS_METADATA_FILE_NAME
         )
-        val properties = Properties()
-        properties.setProperty(
-            PLUGINS_PROPERTIES_CLASSES_KEY,
-            pluginNames.joinToString(",")
-        )
-        metadataFile.writer().use {
-            properties.store(it, null)
-        }
+        val bytes = ByteBuddy().subclass(Any::class.java)
+            .name(PLUGINS_METADATA_CLASS_NAME)
+            .method(ElementMatchers.isToString())
+            .intercept(FixedValue.value(pluginNames.joinToString(",")))
+            .make()
+            .bytes
+
+        metadataFile.writeBytes(bytes)
 
         logger.debug("Transformations found: {}", pluginNames)
     }
