@@ -72,8 +72,8 @@ class ByteBuddyTransform @Inject constructor(
         val androidDataProvider = androidVariantDataProviderFactory.create(variantName)
         val transformInvocationDataExtractor = transformInvocationDataExtractorFactory.create(transformInvocation)
         val scopeClasspath = transformInvocationDataExtractor.getScopeClasspath()
-        val extraClasspath = transformInvocationDataExtractor.getReferenceClasspath() +
-                androidExtensionDataProvider.getBootClasspath()
+        val dependencies = transformInvocationDataExtractor.getReferenceClasspath()
+        val extraClasspath = (dependencies + androidExtensionDataProvider.getBootClasspath()).toSet()
         val outputFolder = transformInvocationDataExtractor.getOutputFolder(scopes)
         val factoriesClassLoader = createFactoriesClassLoader(scopeClasspath, extraClasspath)
 
@@ -86,7 +86,7 @@ class ByteBuddyTransform @Inject constructor(
                 byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder),
                 pluginFactoriesProvider.getFactories(
                     scopeClasspath.dirFiles,
-                    getLibrariesJarsProvider(androidDataProvider, extraClasspath),
+                    getLibrariesJarsProvider(androidDataProvider, dependencies),
                     factoriesClassLoader
                 )
             )
@@ -114,12 +114,12 @@ class ByteBuddyTransform @Inject constructor(
 
     private fun getLibrariesJarsProvider(
         androidVariantDataProvider: AndroidVariantDataProvider,
-        extraClasspath: Set<File>
+        libraries: Set<File>
     ): LibrariesJarsProvider {
         return if (pluginConfiguration.useOnlyAndroidBuddyImplementations()) {
             customConfigurationLibrariesJarsProviderFactory.create(androidVariantDataProvider)
         } else {
-            defaultLibrariesJarsProviderFactory.create(extraClasspath)
+            defaultLibrariesJarsProviderFactory.create(libraries)
         }
     }
 }

@@ -190,14 +190,14 @@ class ByteBuddyTransformTest : BaseMockable() {
         val foldersOrigin = mockk<SourceOriginForMultipleFolders>()
         val javaClasspathFile1 = mockk<File>()
         val javaClasspathFile2 = mockk<File>()
-        val referenceClasspath = setOf(javaClasspathFile1, javaClasspathFile2, folder1)
-        val extraClasspath = referenceClasspath + androidBoothClasspath
+        val dependenciesClasspath = setOf(javaClasspathFile1, javaClasspathFile2, folder1)
+        val extraClasspath = dependenciesClasspath + androidBoothClasspath
         val target = mockk<Plugin.Engine.Target>()
         val factories = listOf<Plugin.Factory>()
         val librariesJarsProvider: LibrariesJarsProvider = if (withAllLibrariesJarsProvider) {
             val response = mockk<DefaultLibrariesJarsProvider>()
             every {
-                defaultLibrariesJarsProviderFactory.create(extraClasspath)
+                defaultLibrariesJarsProviderFactory.create(dependenciesClasspath)
             }.returns(response)
             response
         } else {
@@ -210,7 +210,7 @@ class ByteBuddyTransformTest : BaseMockable() {
         every {
             classLoaderCreator.create(allFiles + extraClasspath, ByteBuddy::class.java.classLoader)
         }.returns(factoriesClassLoader)
-        every { transformInvocationDataExtractor.getReferenceClasspath() }.returns(referenceClasspath)
+        every { transformInvocationDataExtractor.getReferenceClasspath() }.returns(dependenciesClasspath)
         every {
             transformInvocationDataExtractor.getScopeClasspath()
         }.returns(filesHolder)

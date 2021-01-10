@@ -2,17 +2,20 @@ package com.likethesalad.android.buddy.utils
 
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.common.utils.Constants
+import com.likethesalad.android.common.utils.Constants.PLUGINS_METADATA_CLASS_NAME
 import com.likethesalad.android.common.utils.InstantiatorWrapper
 import io.github.classgraph.ClassGraph
 import io.github.classgraph.ScanResult
 import java.io.File
 import java.io.InputStream
-import java.util.Properties
 import javax.inject.Inject
 
 @AppScope
 class AndroidBuddyLibraryPluginsExtractor
-@Inject constructor(private val instantiatorWrapper: InstantiatorWrapper) {
+@Inject constructor(
+    private val instantiatorWrapper: InstantiatorWrapper,
+    private val byteArrayClassLoaderUtil: ByteArrayClassLoaderUtil
+) {
 
     fun extractPluginNames(jarFiles: Set<File>): Set<String> {
         val scanResult = getClassGraphScan(jarFiles)
@@ -40,10 +43,9 @@ class AndroidBuddyLibraryPluginsExtractor
         )
     }
 
-    private fun getPluginNamesFromPropertiesFile(inputStream: InputStream): Set<String> {
-        val properties = Properties()
-        properties.load(inputStream)
-        val classNames = properties.getProperty(Constants.PLUGINS_PROPERTIES_CLASSES_KEY, "")
+    private fun getPluginNamesFromPropertiesFile(stream: InputStream): Set<String> {
+        val classLoaded = byteArrayClassLoaderUtil.loadClass(PLUGINS_METADATA_CLASS_NAME, stream.readBytes())
+        val classNames = classLoaded.newInstance().toString()
 
         return classNames.split(",").toSet()
     }
