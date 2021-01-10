@@ -58,7 +58,7 @@ class TransformInvocationDataExtractorTest : BaseMockable() {
     }
 
     @Test
-    fun `Get classpath`() {
+    fun `Get scope classpath`() {
         val dir1 = mockk<File>()
         val dir2 = mockk<File>()
         val jar1 = mockk<File>()
@@ -73,6 +73,22 @@ class TransformInvocationDataExtractorTest : BaseMockable() {
         Truth.assertThat(result.allFiles).containsExactly(dir1, dir2, jar1, jar2)
         Truth.assertThat(result.dirFiles).containsExactly(dir1, dir2)
         Truth.assertThat(result.jarFiles).containsExactly(jar1, jar2)
+    }
+
+    @Test
+    fun `Get reference classpath`() {
+        val dir1 = mockk<File>()
+        val dir2 = mockk<File>()
+        val jar1 = mockk<File>()
+        val jar2 = mockk<File>()
+        val inputs = createInputs(setOf(dir1, dir2), setOf(jar1, jar2))
+        every {
+            transformInvocation.referencedInputs
+        }.returns(inputs)
+
+        val result = transformInvocationDataExtractor.getReferenceClasspath()
+
+        Truth.assertThat(result).containsExactly(dir1, dir2, jar1, jar2)
     }
 
     private fun createInputs(dirs: Set<File>, jars: Set<File>): MutableCollection<TransformInput> {

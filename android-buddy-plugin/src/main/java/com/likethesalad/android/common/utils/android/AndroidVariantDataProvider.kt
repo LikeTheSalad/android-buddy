@@ -5,7 +5,6 @@ import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
 import com.likethesalad.android.common.utils.Logger
 import org.gradle.api.JavaVersion
-import java.io.File
 
 @Suppress("UnstableApiUsage")
 @AutoFactory
@@ -26,10 +25,6 @@ class AndroidVariantDataProvider(
 
         logger.info("Using java target version {}", javaVersion)
         return javaVersion
-    }
-
-    fun getJavaClassPath(): Set<File> {
-        return variant.javaCompileProvider.get().classpath.files
     }
 
     fun getVariantPath(): List<String> {

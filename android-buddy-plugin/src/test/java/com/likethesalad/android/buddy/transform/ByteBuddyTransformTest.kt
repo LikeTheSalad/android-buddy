@@ -151,6 +151,14 @@ class ByteBuddyTransformTest : BaseMockable() {
     }
 
     @Test
+    fun `Get referenced scopes`() {
+        Truth.assertThat(byteBuddyTransform.referencedScopes).containsExactly(
+            QualifiedContent.Scope.SUB_PROJECTS,
+            QualifiedContent.Scope.EXTERNAL_LIBRARIES
+        )
+    }
+
+    @Test
     fun `Do transform with default libraries jar provider`() {
         every { pluginConfiguration.useOnlyAndroidBuddyImplementations() }.returns(false)
 
@@ -182,9 +190,8 @@ class ByteBuddyTransformTest : BaseMockable() {
         val foldersOrigin = mockk<SourceOriginForMultipleFolders>()
         val javaClasspathFile1 = mockk<File>()
         val javaClasspathFile2 = mockk<File>()
-        val javaClasspath = setOf(javaClasspathFile1, javaClasspathFile2, folder1)
-        val extraClasspath = mutableSetOf(javaClasspathFile1, javaClasspathFile2)
-        extraClasspath.addAll(androidBoothClasspath)
+        val referenceClasspath = setOf(javaClasspathFile1, javaClasspathFile2, folder1)
+        val extraClasspath = referenceClasspath + androidBoothClasspath
         val target = mockk<Plugin.Engine.Target>()
         val factories = listOf<Plugin.Factory>()
         val librariesJarsProvider: LibrariesJarsProvider = if (withAllLibrariesJarsProvider) {
@@ -203,7 +210,7 @@ class ByteBuddyTransformTest : BaseMockable() {
         every {
             classLoaderCreator.create(allFiles + extraClasspath, ByteBuddy::class.java.classLoader)
         }.returns(factoriesClassLoader)
-        every { androidVariantDataProvider.getJavaClassPath() }.returns(javaClasspath)
+        every { transformInvocationDataExtractor.getReferenceClasspath() }.returns(referenceClasspath)
         every {
             transformInvocationDataExtractor.getScopeClasspath()
         }.returns(filesHolder)

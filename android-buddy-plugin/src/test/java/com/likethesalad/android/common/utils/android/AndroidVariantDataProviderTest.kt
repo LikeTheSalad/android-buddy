@@ -11,12 +11,10 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
 import org.gradle.api.DomainObjectSet
-import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.junit.Before
 import org.junit.Test
-import java.io.File
 
 class AndroidVariantDataProviderTest : BaseMockable() {
 
@@ -95,23 +93,6 @@ class AndroidVariantDataProviderTest : BaseMockable() {
         val result = androidVariantDataProvider.getVariantPath()
 
         Truth.assertThat(result).isEqualTo(expectedPath)
-    }
-
-    @Test
-    fun `Get java classpath`() {
-        val variant = createAndSetMainVariantMock()
-        val javaCompile = mockk<JavaCompile>()
-        val javaClasspath = mockk<FileCollection>()
-        val classpathFiles = setOf<File>(mockk())
-        val javaCompileProvider = mockk<TaskProvider<JavaCompile>>()
-        every { javaCompileProvider.hint(JavaCompile::class).get() }.returns(javaCompile)
-        every { javaClasspath.files }.returns(classpathFiles)
-        every { javaCompile.classpath }.returns(javaClasspath)
-        every { variant.javaCompileProvider }.returns(javaCompileProvider)
-
-        val result = androidVariantDataProvider.getJavaClassPath()
-
-        Truth.assertThat(result).isEqualTo(classpathFiles)
     }
 
     private fun getVariantsIterator(

@@ -17,12 +17,12 @@ ext {
     dagger_version = '2.28.1'
     autoValue_version = '1.7.3'
     autoFactory_version = '1.0-beta8'
-    androidBuild_version = '3.3.2'
-    byteBuddy_version = '1.10.13'
+    androidBuild_version = '3.5.4'
+    byteBuddy_version = '1.10.19'
 }
 
 group 'com.likethesalad.android'
-version '0.8.4'
+version '0.8.5'
 
 subprojects {
     repositories {

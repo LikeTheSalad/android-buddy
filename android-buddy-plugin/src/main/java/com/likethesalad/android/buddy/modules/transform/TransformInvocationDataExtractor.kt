@@ -45,4 +45,19 @@ class TransformInvocationDataExtractor(
 
         return FilesHolder(dirFiles, jarFiles, allFiles)
     }
+
+    fun getReferenceClasspath(): Set<File> {
+        val allFiles = mutableSetOf<File>()
+
+        transformInvocation.referencedInputs.forEach {
+            it.directoryInputs.forEach { dir ->
+                allFiles.add(dir.file)
+            }
+            it.jarInputs.forEach { jar ->
+                allFiles.add(jar.file)
+            }
+        }
+
+        return allFiles
+    }
 }
