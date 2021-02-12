@@ -4,7 +4,7 @@ import com.android.build.api.transform.Context
 import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.TransformInvocation
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.AndroidBuddyPluginConfiguration
+import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.bytebuddy.ClassFileLocatorMaker
 import com.likethesalad.android.buddy.bytebuddy.CompoundSource
 import com.likethesalad.android.buddy.bytebuddy.CompoundSourceFactory
@@ -13,7 +13,6 @@ import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFolders
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
-import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProvider
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator

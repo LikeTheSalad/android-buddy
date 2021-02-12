@@ -1,15 +1,19 @@
 package com.likethesalad.android.buddy.extension
 
-import com.likethesalad.android.buddy.extension.dependencies.DependenciesConfig
-import org.gradle.api.Action
+import com.likethesalad.android.buddy.extension.libraries.LibrariesOptions
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 
 @Suppress("UnstableApiUsage")
 open class AndroidBuddyExtension(objectFactory: ObjectFactory) {
 
-    val dependenciesConfig = objectFactory.newInstance(DependenciesConfig::class.java)
+    val librariesOptions = objectFactory.newInstance(LibrariesOptions::class.java)
 
-    fun dependenciesConfig(action: Action<DependenciesConfig>) {
-        action.execute(dependenciesConfig)
+    @JvmOverloads
+    fun librariesPolicy(policyNameProvider: Provider<String>, argsProvider: Provider<Iterable<Any>>? = null) {
+        librariesOptions.policyName.set(policyNameProvider)
+        if (argsProvider != null) {
+            librariesOptions.args.set(argsProvider)
+        }
     }
 }
