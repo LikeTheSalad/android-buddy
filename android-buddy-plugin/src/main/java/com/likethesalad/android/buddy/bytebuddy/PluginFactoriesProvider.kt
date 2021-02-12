@@ -1,7 +1,7 @@
 package com.likethesalad.android.buddy.bytebuddy
 
-import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
+import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
 import com.likethesalad.android.buddy.utils.AndroidBuddyLibraryPluginsExtractor
@@ -60,11 +60,7 @@ class PluginFactoriesProvider
         val pluginNames = androidBuddyLibraryPluginsExtractor.extractPluginNames(jarFiles)
         if (pluginNames.isNotEmpty()) {
             val text = "Dependencies transformations found: {}"
-            if (pluginConfiguration.alwaysLogDependenciesTransformationNames()) {
-                logger.lifecycle(text, pluginNames)
-            } else {
-                logger.debug(text, pluginNames)
-            }
+            logger.debug(text, pluginNames)
         }
         return pluginNames
     }

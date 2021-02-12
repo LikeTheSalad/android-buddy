@@ -1,8 +1,8 @@
 package com.likethesalad.android.buddy.bytebuddy
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
+import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
 import com.likethesalad.android.buddy.utils.AndroidBuddyLibraryPluginsExtractor
 import com.likethesalad.android.common.providers.ProjectLoggerProvider
@@ -115,9 +115,6 @@ class PluginFactoriesProviderTest : BaseMockable() {
         every {
             pluginConfiguration.useDependenciesTransformations()
         }.returns(true)
-        every {
-            pluginConfiguration.alwaysLogDependenciesTransformationNames()
-        }.returns(false)
 
         val factories = pluginFactoriesProvider.getFactories(dirFiles, librariesJarsProvider, classLoader)
 

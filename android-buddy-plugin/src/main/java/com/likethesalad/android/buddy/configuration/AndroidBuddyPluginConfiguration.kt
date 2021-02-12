@@ -15,11 +15,6 @@ class AndroidBuddyPluginConfiguration
 ) {
     private val extension by lazy { androidBuddyExtensionProvider.getAndroidBuddyExtension() }
 
-    fun alwaysLogDependenciesTransformationNames(): Boolean {
-        //return extension.dependenciesConfig.alwaysLogTransformationNames.get() todo
-        return true
-    }
-
     fun useDependenciesTransformations(): Boolean {
         //return !extension.dependenciesConfig.disableAllTransformations.get() todo
         return true
