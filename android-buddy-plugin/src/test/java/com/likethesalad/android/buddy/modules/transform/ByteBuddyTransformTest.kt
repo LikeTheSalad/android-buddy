@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddy.transform
+package com.likethesalad.android.buddy.modules.transform
 
 import com.android.build.api.transform.Context
 import com.android.build.api.transform.QualifiedContent
@@ -13,11 +13,6 @@ import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFolders
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
-import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationLibrariesJarsProvider
-import com.likethesalad.android.buddy.modules.customconfig.CustomConfigurationLibrariesJarsProviderFactory
-import com.likethesalad.android.buddy.modules.transform.ByteBuddyTransform
-import com.likethesalad.android.buddy.modules.transform.TransformInvocationDataExtractor
-import com.likethesalad.android.buddy.modules.transform.TransformInvocationDataExtractorFactory
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProvider
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
@@ -77,9 +72,6 @@ class ByteBuddyTransformTest : BaseMockable() {
     lateinit var defaultLibrariesJarsProviderFactory: DefaultLibrariesJarsProviderFactory
 
     @MockK
-    lateinit var customConfigurationLibrariesJarsProviderFactory: CustomConfigurationLibrariesJarsProviderFactory
-
-    @MockK
     lateinit var pluginConfiguration: AndroidBuddyPluginConfiguration
 
     @MockK
@@ -125,9 +117,7 @@ class ByteBuddyTransformTest : BaseMockable() {
             directoryCleaner,
             androidVariantDataProviderFactory,
             androidExtensionDataProvider,
-            defaultLibrariesJarsProviderFactory,
-            customConfigurationLibrariesJarsProviderFactory,
-            pluginConfiguration
+            defaultLibrariesJarsProviderFactory
         )
     }
 
@@ -160,19 +150,10 @@ class ByteBuddyTransformTest : BaseMockable() {
 
     @Test
     fun `Do transform with default libraries jar provider`() {
-        every { pluginConfiguration.useOnlyAndroidBuddyImplementations() }.returns(false)
-
-        verifyTransform(true)
+        verifyTransform()
     }
 
-    @Test
-    fun `Do transform with custom config libraries jar provider`() {
-        every { pluginConfiguration.useOnlyAndroidBuddyImplementations() }.returns(true)
-
-        verifyTransform(false)
-    }
-
-    private fun verifyTransform(withAllLibrariesJarsProvider: Boolean) {
+    private fun verifyTransform() {
         val factoriesClassLoader = mockk<ClassLoader>()
         val folder1 = mockk<File>()
         val folders = setOf(folder1)
@@ -194,19 +175,10 @@ class ByteBuddyTransformTest : BaseMockable() {
         val extraClasspath = dependenciesClasspath + androidBoothClasspath
         val target = mockk<Plugin.Engine.Target>()
         val factories = listOf<Plugin.Factory>()
-        val librariesJarsProvider: LibrariesJarsProvider = if (withAllLibrariesJarsProvider) {
-            val response = mockk<DefaultLibrariesJarsProvider>()
-            every {
-                defaultLibrariesJarsProviderFactory.create(dependenciesClasspath)
-            }.returns(response)
-            response
-        } else {
-            val response = mockk<CustomConfigurationLibrariesJarsProvider>()
-            every {
-                customConfigurationLibrariesJarsProviderFactory.create(androidVariantDataProvider)
-            }.returns(response)
-            response
-        }
+        val librariesJarsProvider: DefaultLibrariesJarsProvider = mockk()
+        every {
+            defaultLibrariesJarsProviderFactory.create(dependenciesClasspath)
+        }.returns(librariesJarsProvider)
         every {
             classLoaderCreator.create(allFiles + extraClasspath, ByteBuddy::class.java.classLoader)
         }.returns(factoriesClassLoader)

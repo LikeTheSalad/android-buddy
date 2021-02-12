@@ -15,10 +15,6 @@ class AndroidBuddyPluginConfiguration
         return extension.dependenciesConfig.alwaysLogTransformationNames.get()
     }
 
-    fun useOnlyAndroidBuddyImplementations(): Boolean {
-        return extension.dependenciesConfig.strictMode.enabled.get()
-    }
-
     fun useDependenciesTransformations(): Boolean {
         return !extension.dependenciesConfig.disableAllTransformations.get()
     }
