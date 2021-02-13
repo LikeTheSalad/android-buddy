@@ -14,12 +14,7 @@ class AndroidBuddyPluginConfiguration
     private val librariesOptionsMapper: LibrariesOptionsMapper
 ) {
     private val extension by lazy { androidBuddyExtensionProvider.getAndroidBuddyExtension() }
-
-    fun useDependenciesTransformations(): Boolean {
-        //return !extension.dependenciesConfig.disableAllTransformations.get() todo
-        return true
-    }
-
+    
     fun getLibrariesPolicy(): LibrariesPolicy {
         return librariesOptionsMapper.librariesOptionsToLibrariesPolicy(extension.librariesOptions)
     }

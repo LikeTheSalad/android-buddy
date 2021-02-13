@@ -2,9 +2,8 @@ package com.likethesalad.android.buddy.bytebuddy
 
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
-import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
-import com.likethesalad.android.buddy.utils.AndroidBuddyLibraryPluginsExtractor
+import com.likethesalad.android.buddy.modules.libraries.AndroidBuddyLibraryPluginsExtractor
 import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import com.likethesalad.android.common.providers.impl.DefaultClassGraphFilesProvider
 import com.likethesalad.android.common.utils.ClassGraphProvider
@@ -54,9 +53,6 @@ class PluginFactoriesProviderTest : BaseMockable() {
     @MockK
     lateinit var loggerArgumentResolver: Plugin.Factory.UsingReflection.ArgumentResolver
 
-    @MockK
-    lateinit var pluginConfiguration: AndroidBuddyPluginConfiguration
-
     private lateinit var pluginFactoriesProvider: PluginFactoriesProvider
 
     @Before
@@ -74,7 +70,6 @@ class PluginFactoriesProviderTest : BaseMockable() {
             androidBuddyLibraryPluginsExtractor,
             pluginsFinderFactory,
             classGraphProviderFactory,
-            pluginConfiguration,
             logger,
             projectLoggerProvider
         )
@@ -112,9 +107,6 @@ class PluginFactoriesProviderTest : BaseMockable() {
         every {
             androidBuddyLibraryPluginsExtractor.extractPluginNames(librariesJars)
         }.returns(setOf(libName1.name))
-        every {
-            pluginConfiguration.useDependenciesTransformations()
-        }.returns(true)
 
         val factories = pluginFactoriesProvider.getFactories(dirFiles, librariesJarsProvider, classLoader)
 

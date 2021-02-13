@@ -1,6 +1,8 @@
-package com.likethesalad.android.buddy.utils
+package com.likethesalad.android.buddy.modules.libraries
 
+import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.di.AppScope
+import com.likethesalad.android.buddy.utils.ByteArrayClassLoaderUtil
 import com.likethesalad.android.common.utils.Constants
 import com.likethesalad.android.common.utils.Constants.PLUGINS_METADATA_CLASS_NAME
 import com.likethesalad.android.common.utils.InstantiatorWrapper
@@ -14,7 +16,8 @@ import javax.inject.Inject
 class AndroidBuddyLibraryPluginsExtractor
 @Inject constructor(
     private val instantiatorWrapper: InstantiatorWrapper,
-    private val byteArrayClassLoaderUtil: ByteArrayClassLoaderUtil
+    private val byteArrayClassLoaderUtil: ByteArrayClassLoaderUtil,
+    private val pluginConfiguration: AndroidBuddyPluginConfiguration
 ) {
 
     fun extractPluginNames(jarFiles: Set<File>): Set<String> {

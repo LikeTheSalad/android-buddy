@@ -1,10 +1,9 @@
 package com.likethesalad.android.buddy.bytebuddy
 
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
-import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
-import com.likethesalad.android.buddy.utils.AndroidBuddyLibraryPluginsExtractor
+import com.likethesalad.android.buddy.modules.libraries.AndroidBuddyLibraryPluginsExtractor
 import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import com.likethesalad.android.common.providers.impl.DefaultClassGraphFilesProvider
 import com.likethesalad.android.common.utils.ClassGraphProviderFactory
@@ -23,7 +22,6 @@ class PluginFactoriesProvider
     private val androidBuddyLibraryPluginsExtractor: AndroidBuddyLibraryPluginsExtractor,
     private val pluginsFinderFactory: PluginsFinderFactory,
     private val classGraphProviderFactory: ClassGraphProviderFactory,
-    private val pluginConfiguration: AndroidBuddyPluginConfiguration,
     private val logger: Logger,
     projectLoggerProvider: ProjectLoggerProvider
 ) {
@@ -41,11 +39,9 @@ class PluginFactoriesProvider
         classLoader: ClassLoader
     ): List<Plugin.Factory> {
         val pluginNames = mutableSetOf<String>()
-        pluginNames.addAll(getLocalPluginNames(localDirs))
 
-        if (pluginConfiguration.useDependenciesTransformations()) {
-            pluginNames.addAll(getLibraryPluginNames(librariesJarsProvider.getLibrariesJars()))
-        }
+        pluginNames.addAll(getLocalPluginNames(localDirs))
+        pluginNames.addAll(getLibraryPluginNames(librariesJarsProvider.getLibrariesJars()))
 
         return pluginNames.map { nameToFactory(it, classLoader) }
     }

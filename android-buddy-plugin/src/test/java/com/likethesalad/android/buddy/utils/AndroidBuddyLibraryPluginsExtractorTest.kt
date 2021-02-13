@@ -2,18 +2,25 @@ package com.likethesalad.android.buddy.utils
 
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
+import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
+import com.likethesalad.android.buddy.modules.libraries.AndroidBuddyLibraryPluginsExtractor
 import com.likethesalad.android.common.utils.InstantiatorWrapper
+import com.likethesalad.android.testutils.BaseMockable
 import com.likethesalad.android.testutils.DummyResourcesFinder
+import io.mockk.impl.annotations.MockK
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 
-class AndroidBuddyLibraryPluginsExtractorTest {
+class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
 
     private val instantiatorWrapper = InstantiatorWrapper()
     private val dummyResourcesFinder = DummyResourcesFinder()
     private val byteArrayClassLoaderUtil = ByteArrayClassLoaderUtil(ByteBuddyClassesInstantiator())
+
+    @MockK
+    private lateinit var pluginConfiguration: AndroidBuddyPluginConfiguration
 
     private lateinit var androidBuddyLibraryPluginsExtractor: AndroidBuddyLibraryPluginsExtractor
 
@@ -21,7 +28,8 @@ class AndroidBuddyLibraryPluginsExtractorTest {
     fun setUp() {
         androidBuddyLibraryPluginsExtractor = AndroidBuddyLibraryPluginsExtractor(
             instantiatorWrapper,
-            byteArrayClassLoaderUtil
+            byteArrayClassLoaderUtil,
+            pluginConfiguration
         )
     }
 
