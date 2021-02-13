@@ -3,6 +3,7 @@ package com.likethesalad.android.buddylib.modules.createmetadata.action
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
 import com.likethesalad.android.common.actions.BaseAction
+import com.likethesalad.android.common.models.AndroidBuddyLibraryInfo
 import com.likethesalad.android.common.utils.Constants.LIBRARY_METADATA_DIR
 import com.likethesalad.android.common.utils.Constants.PLUGINS_METADATA_CLASS_NAME
 import com.likethesalad.android.common.utils.Constants.PLUGINS_METADATA_FILE_NAME
@@ -17,7 +18,7 @@ import java.io.File
 class CreateAndroidBuddyLibraryMetadataAction(
     @Provided private val directoryCleaner: DirectoryCleaner,
     @Provided private val logger: Logger,
-    private val pluginNames: Set<String>,
+    private val info: AndroidBuddyLibraryInfo,
     private val outputDir: File
 ) : BaseAction {
 
