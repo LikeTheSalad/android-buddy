@@ -1,4 +1,4 @@
-package com.likethesalad.android.common.models
+package com.likethesalad.android.common.models.libinfo
 
 data class AndroidBuddyLibraryInfo(
     val id: String,
