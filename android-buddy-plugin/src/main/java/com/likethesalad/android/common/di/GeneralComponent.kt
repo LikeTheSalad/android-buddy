@@ -1,5 +1,7 @@
 package com.likethesalad.android.common.di
 
+import com.likethesalad.android.common.models.libinfo.LibraryInfoMapper
+import com.likethesalad.android.common.models.libinfo.utils.AndroidBuddyLibraryInfoFqnBuilder
 import com.likethesalad.android.common.providers.ProjectDependencyToolsProvider
 import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import com.likethesalad.android.common.utils.ByteArrayClassLoaderUtil
@@ -25,4 +27,6 @@ interface GeneralComponent {
     fun androidExtensionDataProvider(): AndroidExtensionDataProvider
     fun byteBuddyClassesInstantiator(): ByteBuddyClassesInstantiator
     fun byteArrayClassLoaderUtil(): ByteArrayClassLoaderUtil
+    fun androidBuddyLibraryInfoFqnBuilder(): AndroidBuddyLibraryInfoFqnBuilder
+    fun libraryInfoMapper(): LibraryInfoMapper
 }

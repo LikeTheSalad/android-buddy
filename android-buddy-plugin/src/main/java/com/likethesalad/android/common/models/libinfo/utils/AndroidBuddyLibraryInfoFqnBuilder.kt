@@ -14,7 +14,7 @@ class AndroidBuddyLibraryInfoFqnBuilder @Inject constructor() {
     }
 
     fun buildFqn(info: AndroidBuddyLibraryInfo): String {
-        val name = "${info.group}.${info.name}.${info.id}.${Constants.PLUGINS_METADATA_CLASS_NAME}"
+        val name = "${info.group}.${info.name}.${info.id}.${Constants.PLUGINS_METADATA_FILE_NAME}"
         return cleanUpFqn(name)
     }
 

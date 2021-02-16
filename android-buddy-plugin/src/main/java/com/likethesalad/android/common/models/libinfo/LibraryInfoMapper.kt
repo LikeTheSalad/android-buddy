@@ -24,6 +24,10 @@ class LibraryInfoMapper
 
     fun convertToClassByteArray(info: AndroidBuddyLibraryInfo): NamedClassInfo {
         val name = fqnBuilder.buildFqn(info)
+        val pluginNamesString = when {
+            info.pluginNames.isEmpty() -> ""
+            else -> info.pluginNames.joinToString(",")
+        }
         val byteArray = ByteBuddy()
             .subclass(Any::class.java)
             .name(name)
@@ -34,7 +38,7 @@ class LibraryInfoMapper
             .defineMethod(GET_NAME_METHOD_NAME, String::class.java, Visibility.PUBLIC)
             .intercept(FixedValue.value(info.name))
             .defineMethod(GET_PLUGIN_NAMES_METHOD_NAME, String::class.java, Visibility.PUBLIC)
-            .intercept(FixedValue.value(info.pluginNames.joinToString(",")))
+            .intercept(FixedValue.value(pluginNamesString))
             .make()
             .bytes
 
@@ -48,8 +52,12 @@ class LibraryInfoMapper
         val group = callNoArgsStringMethodByReflection(GET_GROUP_METHOD_NAME, instance)
         val name = callNoArgsStringMethodByReflection(GET_NAME_METHOD_NAME, instance)
         val pluginNamesString = callNoArgsStringMethodByReflection(GET_PLUGIN_NAMES_METHOD_NAME, instance)
+        val pluginNames = when {
+            pluginNamesString.isEmpty() -> emptySet()
+            else -> pluginNamesString.split(",").toSet()
+        }
 
-        return AndroidBuddyLibraryInfo(id, group, name, pluginNamesString.split(",").toSet())
+        return AndroidBuddyLibraryInfo(id, group, name, pluginNames)
     }
 
     private fun callNoArgsStringMethodByReflection(
