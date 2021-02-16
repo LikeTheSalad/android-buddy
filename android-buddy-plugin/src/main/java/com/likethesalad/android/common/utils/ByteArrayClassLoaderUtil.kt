@@ -1,10 +1,10 @@
-package com.likethesalad.android.buddy.utils
+package com.likethesalad.android.common.utils
 
-import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
-import com.likethesalad.android.buddy.di.AppScope
+import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@AppScope
+@Singleton
 class ByteArrayClassLoaderUtil
 @Inject constructor(private val byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator) {
 

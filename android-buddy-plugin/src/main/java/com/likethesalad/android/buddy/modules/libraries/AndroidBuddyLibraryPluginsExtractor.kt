@@ -2,7 +2,7 @@ package com.likethesalad.android.buddy.modules.libraries
 
 import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.di.AppScope
-import com.likethesalad.android.buddy.utils.ByteArrayClassLoaderUtil
+import com.likethesalad.android.common.utils.ByteArrayClassLoaderUtil
 import com.likethesalad.android.common.utils.Constants
 import com.likethesalad.android.common.utils.Constants.PLUGINS_METADATA_CLASS_NAME
 import com.likethesalad.android.common.utils.InstantiatorWrapper
@@ -24,7 +24,7 @@ class AndroidBuddyLibraryPluginsExtractor
         val scanResult = getClassGraphScan(jarFiles)
         val names = mutableSetOf<String>()
 
-        scanResult.getResourcesWithLeafName(Constants.PLUGINS_METADATA_FILE_NAME)
+        scanResult.getResourcesWithLeafName(Constants.PLUGINS_METADATA_FILE_EXT)
             .forEachInputStreamIgnoringIOException { _, inputStream ->
                 names.addAll(getPluginNamesFromPropertiesFile(inputStream))
             }

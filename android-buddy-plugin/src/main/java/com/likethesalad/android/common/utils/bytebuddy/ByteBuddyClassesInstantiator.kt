@@ -1,6 +1,5 @@
-package com.likethesalad.android.buddy.bytebuddy.utils
+package com.likethesalad.android.common.utils.bytebuddy
 
-import com.likethesalad.android.buddy.di.AppScope
 import net.bytebuddy.ClassFileVersion
 import net.bytebuddy.build.EntryPoint
 import net.bytebuddy.build.Plugin
@@ -10,8 +9,9 @@ import net.bytebuddy.dynamic.scaffold.inline.MethodNameTransformer
 import java.io.File
 import java.util.jar.JarFile
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@AppScope
+@Singleton
 class ByteBuddyClassesInstantiator @Inject constructor() {
 
     fun makeJarClassFileLocator(jarFile: File): ClassFileLocator {

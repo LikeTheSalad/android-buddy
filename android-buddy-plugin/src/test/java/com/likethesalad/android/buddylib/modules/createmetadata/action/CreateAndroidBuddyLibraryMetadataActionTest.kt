@@ -1,9 +1,8 @@
 package com.likethesalad.android.buddylib.modules.createmetadata.action
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
-import com.likethesalad.android.buddy.utils.ByteArrayClassLoaderUtil
-import com.likethesalad.android.common.utils.DirectoryCleaner
+import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
+import com.likethesalad.android.common.utils.ByteArrayClassLoaderUtil
 import com.likethesalad.android.common.utils.Logger
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.impl.annotations.MockK
@@ -103,8 +102,9 @@ class CreateAndroidBuddyLibraryMetadataActionTest : BaseMockable() {
 
     private fun createInstance(pluginNames: Set<String>)
             : CreateAndroidBuddyLibraryMetadataAction {
-        return CreateAndroidBuddyLibraryMetadataAction(
+        /*return CreateAndroidBuddyLibraryMetadataAction(
             DirectoryCleaner(), logger, pluginNames, outputDir
-        )
+        )*/
+        throw UnsupportedOperationException()
     }
 }

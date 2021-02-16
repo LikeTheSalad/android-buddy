@@ -1,7 +1,7 @@
 package com.likethesalad.android.buddy.bytebuddy
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
+import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
 import com.likethesalad.android.buddy.modules.libraries.AndroidBuddyLibraryPluginsExtractor
 import com.likethesalad.android.common.providers.ProjectLoggerProvider

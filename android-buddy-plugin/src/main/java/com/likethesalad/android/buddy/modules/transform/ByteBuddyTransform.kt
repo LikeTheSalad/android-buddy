@@ -9,7 +9,7 @@ import com.likethesalad.android.buddy.bytebuddy.CompoundSourceFactory
 import com.likethesalad.android.buddy.bytebuddy.PluginEngineProvider
 import com.likethesalad.android.buddy.bytebuddy.PluginFactoriesProvider
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
-import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
+import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
