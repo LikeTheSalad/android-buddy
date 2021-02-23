@@ -6,5 +6,6 @@ import javax.inject.Inject
 
 @LibraryScope
 data class CreateMetadataTaskArgs @Inject constructor(
-    val createAndroidBuddyLibraryMetadataActionFactory: CreateAndroidBuddyLibraryMetadataActionFactory
+    val createAndroidBuddyLibraryMetadataActionFactory: CreateAndroidBuddyLibraryMetadataActionFactory,
+    val androidBuddyLibraryInfoMaker: AndroidBuddyLibraryInfoMaker
 )
