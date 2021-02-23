@@ -19,6 +19,7 @@ class LibraryInfoMapper
         private const val GET_ID_METHOD_NAME = "getId"
         private const val GET_GROUP_METHOD_NAME = "getGroup"
         private const val GET_NAME_METHOD_NAME = "getName"
+        private const val GET_VERSION_METHOD_NAME = "getVersion"
         private const val GET_PLUGIN_NAMES_METHOD_NAME = "getPluginNames"
     }
 
@@ -37,6 +38,8 @@ class LibraryInfoMapper
             .intercept(FixedValue.value(info.group))
             .defineMethod(GET_NAME_METHOD_NAME, String::class.java, Visibility.PUBLIC)
             .intercept(FixedValue.value(info.name))
+            .defineMethod(GET_VERSION_METHOD_NAME, String::class.java, Visibility.PUBLIC)
+            .intercept(FixedValue.value(info.version))
             .defineMethod(GET_PLUGIN_NAMES_METHOD_NAME, String::class.java, Visibility.PUBLIC)
             .intercept(FixedValue.value(pluginNamesString))
             .make()
@@ -51,13 +54,14 @@ class LibraryInfoMapper
         val id = callNoArgsStringMethodByReflection(GET_ID_METHOD_NAME, instance)
         val group = callNoArgsStringMethodByReflection(GET_GROUP_METHOD_NAME, instance)
         val name = callNoArgsStringMethodByReflection(GET_NAME_METHOD_NAME, instance)
+        val version = callNoArgsStringMethodByReflection(GET_VERSION_METHOD_NAME, instance)
         val pluginNamesString = callNoArgsStringMethodByReflection(GET_PLUGIN_NAMES_METHOD_NAME, instance)
         val pluginNames = when {
             pluginNamesString.isEmpty() -> emptySet()
             else -> pluginNamesString.split(",").toSet()
         }
 
-        return AndroidBuddyLibraryInfo(id, group, name, pluginNames)
+        return AndroidBuddyLibraryInfo(id, group, name, version, pluginNames)
     }
 
     private fun callNoArgsStringMethodByReflection(

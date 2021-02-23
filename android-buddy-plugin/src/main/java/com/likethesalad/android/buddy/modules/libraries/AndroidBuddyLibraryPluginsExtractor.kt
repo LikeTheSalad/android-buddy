@@ -4,7 +4,7 @@ import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfigurat
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.common.utils.ByteArrayClassLoaderUtil
 import com.likethesalad.android.common.utils.Constants
-import com.likethesalad.android.common.utils.Constants.PLUGINS_METADATA_CLASS_NAME
+import com.likethesalad.android.common.utils.Constants.PLUGINS_METADATA_FILE_NAME
 import com.likethesalad.android.common.utils.InstantiatorWrapper
 import io.github.classgraph.ClassGraph
 import io.github.classgraph.ScanResult
@@ -47,7 +47,7 @@ class AndroidBuddyLibraryPluginsExtractor
     }
 
     private fun getPluginNamesFromPropertiesFile(stream: InputStream): Set<String> {
-        val classLoaded = byteArrayClassLoaderUtil.loadClass(PLUGINS_METADATA_CLASS_NAME, stream.readBytes())
+        val classLoaded = byteArrayClassLoaderUtil.loadClass(PLUGINS_METADATA_FILE_NAME, stream.readBytes())
         val classNames = classLoaded.newInstance().toString()
 
         return classNames.split(",").toSet()

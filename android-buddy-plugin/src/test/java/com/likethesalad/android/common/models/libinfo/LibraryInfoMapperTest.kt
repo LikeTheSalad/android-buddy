@@ -30,8 +30,9 @@ class LibraryInfoMapperTest : BaseMockable() {
         val id = "SomeId"
         val group = "some.group"
         val name = "some-project-name"
+        val version = "1.0.0"
         val plugins = setOf("one.Class", "another.Class")
-        val info = AndroidBuddyLibraryInfo(id, group, name, plugins)
+        val info = AndroidBuddyLibraryInfo(id, group, name, version, plugins)
         val pluginNamesString = "one.Class,another.Class"
         val expectedClassName = "some.group.some_project_name.library_definition"
         every { fqnBuilder.buildFqn(info) }.returns(expectedClassName)
@@ -57,8 +58,9 @@ class LibraryInfoMapperTest : BaseMockable() {
         val id = "SomeId"
         val group = "some.group"
         val name = "some-project-name"
+        val version = "1.0.1"
         val plugins = setOf("one.Class", "another.Class")
-        val info = AndroidBuddyLibraryInfo(id, group, name, plugins)
+        val info = AndroidBuddyLibraryInfo(id, group, name, version, plugins)
         val expectedClassName = "some.group.some_project_name.library_definition"
         every { fqnBuilder.buildFqn(info) }.returns(expectedClassName)
 

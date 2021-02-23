@@ -37,6 +37,7 @@ class CreateAndroidBuddyLibraryMetadataActionTest : BaseMockable() {
     private val id = "some-id"
     private val group = "some.group"
     private val name = "some-name"
+    private val version = "1.0.1"
     private val expectedClassName = "some.group.some_name.some_id.library_definition"
 
     @Before
@@ -103,7 +104,7 @@ class CreateAndroidBuddyLibraryMetadataActionTest : BaseMockable() {
     }
 
     private fun verifyStandardMetadataSaved(expectedPlugins: Set<String>) {
-        val info = AndroidBuddyLibraryInfo(id, group, name, expectedPlugins.toSet())
+        val info = AndroidBuddyLibraryInfo(id, group, name, version, expectedPlugins.toSet())
         verifyMetadataSaved(info)
     }
 
@@ -125,7 +126,7 @@ class CreateAndroidBuddyLibraryMetadataActionTest : BaseMockable() {
     }
 
     private fun createStandardInstance(pluginNames: Set<String>): CreateAndroidBuddyLibraryMetadataAction {
-        val info = AndroidBuddyLibraryInfo(id, group, name, pluginNames)
+        val info = AndroidBuddyLibraryInfo(id, group, name, version, pluginNames)
         return createInstance(info)
     }
 
