@@ -59,6 +59,9 @@ class AndroidBuddyLibraryInfoMakerTest {
         checkGroupIsValid("", false)
         checkGroupIsValid("    ", false)
         checkGroupIsValid("     ", false)
+        checkGroupIsValid("[[]]", false)
+        checkGroupIsValid("&^$£$^&&", false)
+        checkGroupIsValid("&^ab$£$^&&", true)
     }
 
     @Test
@@ -68,6 +71,9 @@ class AndroidBuddyLibraryInfoMakerTest {
         checkNameIsValid("Some name", true)
         checkNameIsValid("    ", false)
         checkNameIsValid("", false)
+        checkNameIsValid("[[]]", false)
+        checkNameIsValid("&^$£$^&&", false)
+        checkNameIsValid("&^ab$£$^&&", true)
     }
 
     @Test
@@ -150,7 +156,7 @@ class AndroidBuddyLibraryInfoMakerTest {
             if (shouldBeValid) {
                 throw e
             }
-            Truth.assertThat(e.message).isEqualTo("The group provided '$group' is not valid, it cannot be empty")
+            Truth.assertThat(e.message).isEqualTo("The group provided '$group' is not valid.")
         }
     }
 
@@ -169,7 +175,7 @@ class AndroidBuddyLibraryInfoMakerTest {
             if (shouldBeValid) {
                 throw e
             }
-            Truth.assertThat(e.message).isEqualTo("The name provided '$name' is not valid, it cannot be empty")
+            Truth.assertThat(e.message).isEqualTo("The name provided '$name' is not valid.")
         }
     }
 
