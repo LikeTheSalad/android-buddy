@@ -54,8 +54,11 @@ class AndroidBuddyLibraryInfoMakerTest {
     @Test
     fun `Check if group is valid`() {
         checkGroupIsValid("some.group", true)
-        checkGroupIsValid("some group", false)
+        checkGroupIsValid("some group", true)
+        checkGroupIsValid("Some group", true)
         checkGroupIsValid("", false)
+        checkGroupIsValid("    ", false)
+        checkGroupIsValid("     ", false)
     }
 
     @Test
@@ -85,6 +88,26 @@ class AndroidBuddyLibraryInfoMakerTest {
         checkNameFormatted("some name-", "some_name")
         checkNameFormatted("some name.", "some_name")
         checkNameFormatted("some name-", "some_name")
+    }
+
+    @Test
+    fun `Format group if needed`() {
+        checkGroupFormatted("some.group", "some.group")
+        checkGroupFormatted("some-group", "some.group")
+        checkGroupFormatted("some group", "some.group")
+        checkGroupFormatted("somegroup", "somegroup")
+        checkGroupFormatted("Some group", "some.group")
+        checkGroupFormatted("Some group  ", "some.group")
+        checkGroupFormatted("Some  group  ", "some.group")
+        checkGroupFormatted(" Some  group  ", "some.group")
+        checkGroupFormatted(" Some  group", "some.group")
+        checkGroupFormatted(" Some group  ", "some.group")
+        checkGroupFormatted("-some group", "some.group")
+        checkGroupFormatted("-.somegroup", "somegroup")
+        checkGroupFormatted("somegroup--", "somegroup")
+        checkGroupFormatted("some group-", "some.group")
+        checkGroupFormatted("some group.", "some.group")
+        checkGroupFormatted("some group-", "some.group")
     }
 
     private fun checkIdIsValid(id: String, shouldBeValid: Boolean) {
@@ -127,7 +150,7 @@ class AndroidBuddyLibraryInfoMakerTest {
             if (shouldBeValid) {
                 throw e
             }
-            Truth.assertThat(e.message).isEqualTo("The group provided '$group' has not a valid format")
+            Truth.assertThat(e.message).isEqualTo("The group provided '$group' is not valid, it cannot be empty")
         }
     }
 
@@ -159,6 +182,17 @@ class AndroidBuddyLibraryInfoMakerTest {
         val info = callMake(id, group, originalName, version, pluginNames)
 
         Truth.assertThat(info.name).isEqualTo(expectedName)
+    }
+
+    private fun checkGroupFormatted(originalGroup: String, expectedGroup: String) {
+        val id = "some.id"
+        val name = "some.name"
+        val version = "1.0.0"
+        val pluginNames = setOf("some.Plugin")
+
+        val info = callMake(id, originalGroup, name, version, pluginNames)
+
+        Truth.assertThat(info.group).isEqualTo(expectedGroup)
     }
 
     private fun callMake(

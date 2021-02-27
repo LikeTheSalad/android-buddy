@@ -9,9 +9,9 @@ class AndroidBuddyLibraryInfoMaker @Inject constructor() {
 
     companion object {
         private val VALID_ID_REGEX = Regex("[a-z]+[a-z0-9]*([.-]?[a-z0-9]+)*")
-        private val VALID_GROUP_REGEX = Regex("[^\\s\\t\\n]+")
-        private val CHECK_NAME_WRAPPING = Regex("(^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+\$)")
+        private val CHECK_NAME_AND_GROUP_WRAPPING = Regex("(^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+\$)")
         private val CLEAN_NAME_SPACING = Regex("[\\s\\t\\n]+")
+        private val CLEAN_GROUP_ILLEGAL_CHARS = Regex("[^a-z0-9.]+")
     }
 
     fun make(
@@ -27,7 +27,7 @@ class AndroidBuddyLibraryInfoMaker @Inject constructor() {
 
         return AndroidBuddyLibraryInfo(
             id,
-            group,
+            cleanGroup(group),
             cleanName(name),
             version,
             pluginNames
@@ -47,8 +47,8 @@ class AndroidBuddyLibraryInfoMaker @Inject constructor() {
     }
 
     private fun validateGroup(group: String) {
-        if (!VALID_GROUP_REGEX.matches(group)) {
-            throw IllegalArgumentException("The group provided '$group' has not a valid format")
+        if (group.trim().isEmpty()) {
+            throw IllegalArgumentException("The group provided '$group' is not valid, it cannot be empty")
         }
     }
 
@@ -59,8 +59,13 @@ class AndroidBuddyLibraryInfoMaker @Inject constructor() {
     }
 
     private fun cleanName(name: String): String {
-        val nameProperlyWrapped = name.replace(CHECK_NAME_WRAPPING, "")
+        val nameProperlyWrapped = name.replace(CHECK_NAME_AND_GROUP_WRAPPING, "")
         return nameProperlyWrapped.replace(CLEAN_NAME_SPACING, "_").toLowerCase()
+    }
+
+    private fun cleanGroup(group: String): String {
+        val groupProperlyWrapped = group.replace(CHECK_NAME_AND_GROUP_WRAPPING, "").toLowerCase()
+        return groupProperlyWrapped.replace(CLEAN_GROUP_ILLEGAL_CHARS, ".")
     }
 
 }
