@@ -1,12 +1,11 @@
 package com.likethesalad.android.buddylib.modules.createmetadata.data
 
 import com.likethesalad.android.buddylib.di.LibraryScope
-import com.likethesalad.android.buddylib.providers.ProjectInfoProvider
 import com.likethesalad.android.common.models.libinfo.AndroidBuddyLibraryInfo
 import javax.inject.Inject
 
 @LibraryScope
-class AndroidBuddyLibraryInfoMaker @Inject constructor(private val projectInfoProvider: ProjectInfoProvider) {
+class AndroidBuddyLibraryInfoMaker @Inject constructor() {
 
     companion object {
         private val VALID_ID_REGEX = Regex("[a-z]+[a-z0-9]*([.-]?[a-z0-9]+)*")
@@ -17,12 +16,11 @@ class AndroidBuddyLibraryInfoMaker @Inject constructor(private val projectInfoPr
 
     fun make(
         id: String,
+        group: String,
+        name: String,
+        version: String,
         pluginNames: Set<String>
     ): AndroidBuddyLibraryInfo {
-        val group = projectInfoProvider.getGroup()
-        val name = projectInfoProvider.getName()
-        val version = projectInfoProvider.getVersion()
-
         validateId(id)
         validateGroup(group)
         validateName(name)

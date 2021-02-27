@@ -1,25 +1,18 @@
 package com.likethesalad.android.buddylib.modules.createmetadata.data
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddylib.providers.ProjectInfoProvider
 import com.likethesalad.android.common.models.libinfo.AndroidBuddyLibraryInfo
-import com.likethesalad.android.testutils.BaseMockable
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 
-class AndroidBuddyLibraryInfoMakerTest : BaseMockable() {
-
-    @MockK
-    lateinit var projectInfoProvider: ProjectInfoProvider
+class AndroidBuddyLibraryInfoMakerTest {
 
     private lateinit var androidBuddyLibraryInfoMaker: AndroidBuddyLibraryInfoMaker
 
     @Before
     fun setUp() {
-        androidBuddyLibraryInfoMaker = AndroidBuddyLibraryInfoMaker(projectInfoProvider)
+        androidBuddyLibraryInfoMaker = AndroidBuddyLibraryInfoMaker()
     }
 
     @Test
@@ -175,9 +168,10 @@ class AndroidBuddyLibraryInfoMakerTest : BaseMockable() {
         version: String,
         pluginNames: Set<String>
     ): AndroidBuddyLibraryInfo {
-        every { projectInfoProvider.getGroup() }.returns(group)
-        every { projectInfoProvider.getName() }.returns(name)
-        every { projectInfoProvider.getVersion() }.returns(version)
-        return androidBuddyLibraryInfoMaker.make(id, pluginNames)
+        return androidBuddyLibraryInfoMaker.make(
+            id,
+            group, name, version,
+            pluginNames
+        )
     }
 }
