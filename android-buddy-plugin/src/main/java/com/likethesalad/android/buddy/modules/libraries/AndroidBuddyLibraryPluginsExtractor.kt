@@ -2,8 +2,10 @@ package com.likethesalad.android.buddy.modules.libraries
 
 import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.di.AppScope
-import com.likethesalad.android.common.utils.ByteArrayClassLoaderUtil
+import com.likethesalad.android.common.models.libinfo.LibraryInfoMapper
+import com.likethesalad.android.common.models.libinfo.NamedClassInfo
 import com.likethesalad.android.common.utils.Constants
+import com.likethesalad.android.common.utils.Constants.PLUGINS_METADATA_FILE_EXT
 import com.likethesalad.android.common.utils.Constants.PLUGINS_METADATA_FILE_NAME
 import com.likethesalad.android.common.utils.InstantiatorWrapper
 import io.github.classgraph.ClassGraph
@@ -16,20 +18,29 @@ import javax.inject.Inject
 class AndroidBuddyLibraryPluginsExtractor
 @Inject constructor(
     private val instantiatorWrapper: InstantiatorWrapper,
-    private val byteArrayClassLoaderUtil: ByteArrayClassLoaderUtil,
-    private val pluginConfiguration: AndroidBuddyPluginConfiguration
+    private val pluginConfiguration: AndroidBuddyPluginConfiguration,
+    private val libraryInfoMapper: LibraryInfoMapper
 ) {
+
+    companion object {
+        private val RESOURCE_DEFINITION_PATTERN =
+            Regex(".+$PLUGINS_METADATA_FILE_NAME\\.$PLUGINS_METADATA_FILE_EXT").toPattern()
+    }
 
     fun extractPluginNames(jarFiles: Set<File>): Set<String> {
         val scanResult = getClassGraphScan(jarFiles)
         val names = mutableSetOf<String>()
 
-        scanResult.getResourcesWithLeafName(Constants.PLUGINS_METADATA_FILE_EXT)
-            .forEachInputStreamIgnoringIOException { _, inputStream ->
-                names.addAll(getPluginNamesFromPropertiesFile(inputStream))
+        scanResult.getResourcesMatchingPattern(RESOURCE_DEFINITION_PATTERN)
+            .forEachInputStreamIgnoringIOException { resource, inputStream ->
+                names.addAll(getPluginNamesFromPropertiesFile(extractNameFromPath(resource.path), inputStream))
             }
 
         return names
+    }
+
+    private fun extractNameFromPath(path: String): String {
+        return File(path).nameWithoutExtension
     }
 
     private fun getClassGraphScan(jarFiles: Set<File>): ScanResult {
@@ -46,10 +57,9 @@ class AndroidBuddyLibraryPluginsExtractor
         )
     }
 
-    private fun getPluginNamesFromPropertiesFile(stream: InputStream): Set<String> {
-        val classLoaded = byteArrayClassLoaderUtil.loadClass(PLUGINS_METADATA_FILE_NAME, stream.readBytes())
-        val classNames = classLoaded.newInstance().toString()
+    private fun getPluginNamesFromPropertiesFile(name: String, stream: InputStream): Set<String> {
+        val info = libraryInfoMapper.convertToAndroidBuddyLibraryInfo(NamedClassInfo(name, stream.readBytes()))
 
-        return classNames.split(",").toSet()
+        return info.pluginNames
     }
 }
