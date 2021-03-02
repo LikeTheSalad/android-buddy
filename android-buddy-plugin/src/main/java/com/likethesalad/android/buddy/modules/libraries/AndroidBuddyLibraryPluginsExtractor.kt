@@ -2,6 +2,7 @@ package com.likethesalad.android.buddy.modules.libraries
 
 import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.di.AppScope
+import com.likethesalad.android.common.models.libinfo.AndroidBuddyLibraryInfo
 import com.likethesalad.android.common.models.libinfo.LibraryInfoMapper
 import com.likethesalad.android.common.models.libinfo.NamedClassInfo
 import com.likethesalad.android.common.utils.Constants
@@ -29,14 +30,15 @@ class AndroidBuddyLibraryPluginsExtractor
 
     fun extractPluginNames(jarFiles: Set<File>): Set<String> {
         val scanResult = getClassGraphScan(jarFiles)
-        val names = mutableSetOf<String>()
+        val libraries = mutableListOf<AndroidBuddyLibraryInfo>()
 
         scanResult.getResourcesMatchingPattern(RESOURCE_DEFINITION_PATTERN)
             .forEachInputStreamIgnoringIOException { resource, inputStream ->
-                names.addAll(getPluginNamesFromPropertiesFile(extractNameFromPath(resource.path), inputStream))
+                libraries.add(getLibraryInfoFromPropertiesFile(extractNameFromPath(resource.path), inputStream))
             }
 
-        return names
+        validateNoSharedPluginNamesAcrossLibraries(libraries)
+        return libraries.map { it.pluginNames }.flatten().toSet()
     }
 
     private fun extractNameFromPath(path: String): String {
@@ -50,6 +52,23 @@ class AndroidBuddyLibraryPluginsExtractor
             .scan()
     }
 
+    private fun validateNoSharedPluginNamesAcrossLibraries(libraries: List<AndroidBuddyLibraryInfo>) {
+        val size = libraries.size
+        val lastIndex = size - 1
+        libraries.forEachIndexed { index, info ->
+            if (index == lastIndex) {
+                return
+            }
+            for (otherIndex in index + 1 until size) {
+                val otherInfo = libraries[otherIndex]
+                val commonPluginNames = info.pluginNames.intersect(otherInfo.pluginNames)
+                if (commonPluginNames.isNotEmpty()) {
+                    throw DuplicatedByteBuddyPluginException(commonPluginNames, listOf(info, otherInfo))
+                }
+            }
+        }
+    }
+
     private fun jarFilesToClassLoader(jarFiles: Set<File>): ClassLoader {
         return instantiatorWrapper.getUrlClassLoader(
             jarFiles.map { it.toURI().toURL() }.toTypedArray(),
@@ -57,9 +76,7 @@ class AndroidBuddyLibraryPluginsExtractor
         )
     }
 
-    private fun getPluginNamesFromPropertiesFile(name: String, stream: InputStream): Set<String> {
-        val info = libraryInfoMapper.convertToAndroidBuddyLibraryInfo(NamedClassInfo(name, stream.readBytes()))
-
-        return info.pluginNames
+    private fun getLibraryInfoFromPropertiesFile(name: String, stream: InputStream): AndroidBuddyLibraryInfo {
+        return libraryInfoMapper.convertToAndroidBuddyLibraryInfo(NamedClassInfo(name, stream.readBytes()))
     }
 }
