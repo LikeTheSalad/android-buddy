@@ -3,7 +3,8 @@ package com.likethesalad.android.buddy.utils
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.modules.libraries.AndroidBuddyLibraryPluginsExtractor
-import com.likethesalad.android.buddy.modules.libraries.DuplicatedByteBuddyPluginException
+import com.likethesalad.android.buddy.modules.libraries.DuplicateByteBuddyPluginException
+import com.likethesalad.android.buddy.modules.libraries.DuplicateLibraryIdException
 import com.likethesalad.android.common.models.libinfo.AndroidBuddyLibraryInfo
 import com.likethesalad.android.common.models.libinfo.LibraryInfoMapper
 import com.likethesalad.android.common.models.libinfo.utils.AndroidBuddyLibraryInfoFqnBuilder
@@ -29,6 +30,32 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
     private lateinit var pluginConfiguration: AndroidBuddyPluginConfiguration
 
     private lateinit var androidBuddyLibraryPluginsExtractor: AndroidBuddyLibraryPluginsExtractor
+
+    companion object {
+        private val androidBuddyLibraryInfo = AndroidBuddyLibraryInfo(
+            "some.id",
+            "some.group",
+            "mylibrary",
+            "1.0.2",
+            setOf("com.example.mylibrary.HelloWorldPlugin")
+        )
+
+        private val androidBuddyLibraryDiffIdSharedPluginName = AndroidBuddyLibraryInfo(
+            "some.other.id",
+            "some.group",
+            "mylibrary2",
+            "1.0.2",
+            setOf("com.example.mylibrary.HelloWorldPlugin")
+        )
+
+        private val androidBuddyLibrarySameId = AndroidBuddyLibraryInfo(
+            "some.id",
+            "some.group",
+            "mylibrary2",
+            "1.0.2",
+            setOf("com.example.mylibrary2.HelloWorldPlugin")
+        )
+    }
 
     @Before
     fun setUp() {
@@ -60,24 +87,12 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
         try {
             androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
             fail("It should have failed above")
-        } catch (e: DuplicatedByteBuddyPluginException) {
+        } catch (e: DuplicateByteBuddyPluginException) {
             Truth.assertThat(e.pluginNames).isEqualTo(setOf("com.example.mylibrary.HelloWorldPlugin"))
             Truth.assertThat(e.librariesContainingThePlugin).isEqualTo(
                 listOf(
-                    AndroidBuddyLibraryInfo(
-                        "some.id",
-                        "some.group",
-                        "mylibrary",
-                        "1.0.2",
-                        setOf("com.example.mylibrary.HelloWorldPlugin")
-                    ),
-                    AndroidBuddyLibraryInfo(
-                        "some.other.id",
-                        "some.group",
-                        "mylibrary2",
-                        "1.0.2",
-                        setOf("com.example.mylibrary.HelloWorldPlugin")
-                    )
+                    androidBuddyLibraryInfo,
+                    androidBuddyLibraryDiffIdSharedPluginName
                 )
             )
         }
@@ -85,7 +100,16 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
 
     @Test
     fun `Fail when finding duplicated library IDs`() {
+        val jars = setOf(getAndroidBuddyLibraryJar(), getNormalLibraryJar(), getAndroidBuddyLibraryJarWithSameId())
 
+        try {
+            androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
+            fail("Should have failed above")
+        } catch (e: DuplicateLibraryIdException) {
+            Truth.assertThat(e.id).isEqualTo("some.id")
+            Truth.assertThat(e.librariesWithSameId)
+                .isEqualTo(listOf(androidBuddyLibraryInfo, androidBuddyLibrarySameId))
+        }
     }
 
     private fun getAndroidBuddyLibraryJar(): File {

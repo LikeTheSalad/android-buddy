@@ -37,7 +37,9 @@ class AndroidBuddyLibraryPluginsExtractor
                 libraries.add(getLibraryInfoFromPropertiesFile(extractNameFromPath(resource.path), inputStream))
             }
 
+        validateNoDuplicateLibraryIds(libraries)
         validateNoSharedPluginNamesAcrossLibraries(libraries)
+
         return libraries.map { it.pluginNames }.flatten().toSet()
     }
 
@@ -52,6 +54,15 @@ class AndroidBuddyLibraryPluginsExtractor
             .scan()
     }
 
+    private fun validateNoDuplicateLibraryIds(libraries: List<AndroidBuddyLibraryInfo>) {
+        val librariesById = libraries.groupBy { it.id }
+        librariesById.forEach { (libraryId, infoList) ->
+            if (infoList.size > 1) {
+                throw DuplicateLibraryIdException(libraryId, infoList)
+            }
+        }
+    }
+
     private fun validateNoSharedPluginNamesAcrossLibraries(libraries: List<AndroidBuddyLibraryInfo>) {
         val size = libraries.size
         val lastIndex = size - 1
@@ -63,7 +74,7 @@ class AndroidBuddyLibraryPluginsExtractor
                 val otherInfo = libraries[otherIndex]
                 val commonPluginNames = info.pluginNames.intersect(otherInfo.pluginNames)
                 if (commonPluginNames.isNotEmpty()) {
-                    throw DuplicatedByteBuddyPluginException(commonPluginNames, listOf(info, otherInfo))
+                    throw DuplicateByteBuddyPluginException(commonPluginNames, listOf(info, otherInfo))
                 }
             }
         }

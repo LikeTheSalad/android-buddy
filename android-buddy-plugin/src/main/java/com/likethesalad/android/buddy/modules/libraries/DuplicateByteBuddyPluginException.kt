@@ -3,7 +3,7 @@ package com.likethesalad.android.buddy.modules.libraries
 import com.likethesalad.android.common.base.AndroidBuddyException
 import com.likethesalad.android.common.models.libinfo.AndroidBuddyLibraryInfo
 
-class DuplicatedByteBuddyPluginException(
+class DuplicateByteBuddyPluginException(
     val pluginNames: Set<String>,
     val librariesContainingThePlugin: List<AndroidBuddyLibraryInfo>
 ) : AndroidBuddyException(
