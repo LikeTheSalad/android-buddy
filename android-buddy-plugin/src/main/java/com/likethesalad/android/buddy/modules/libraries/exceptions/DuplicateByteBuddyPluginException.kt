@@ -1,4 +1,4 @@
-package com.likethesalad.android.buddy.modules.libraries
+package com.likethesalad.android.buddy.modules.libraries.exceptions
 
 import com.likethesalad.android.common.base.AndroidBuddyException
 import com.likethesalad.android.common.models.libinfo.AndroidBuddyLibraryInfo

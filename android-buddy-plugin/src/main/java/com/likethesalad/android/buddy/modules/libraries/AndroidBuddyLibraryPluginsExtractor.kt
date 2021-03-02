@@ -1,7 +1,11 @@
 package com.likethesalad.android.buddy.modules.libraries
 
 import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
+import com.likethesalad.android.buddy.configuration.libraries.LibrariesPolicy
 import com.likethesalad.android.buddy.di.AppScope
+import com.likethesalad.android.buddy.modules.libraries.exceptions.AndroidBuddyLibraryNotFoundException
+import com.likethesalad.android.buddy.modules.libraries.exceptions.DuplicateByteBuddyPluginException
+import com.likethesalad.android.buddy.modules.libraries.exceptions.DuplicateLibraryIdException
 import com.likethesalad.android.common.models.libinfo.AndroidBuddyLibraryInfo
 import com.likethesalad.android.common.models.libinfo.LibraryInfoMapper
 import com.likethesalad.android.common.models.libinfo.NamedClassInfo
@@ -29,13 +33,25 @@ class AndroidBuddyLibraryPluginsExtractor
     }
 
     fun extractPluginNames(jarFiles: Set<File>): Set<String> {
+        val policy = pluginConfiguration.getLibrariesPolicy()
+
+        if (policy == LibrariesPolicy.IgnoreAll) {
+            return emptySet()
+        }
+
         val scanResult = getClassGraphScan(jarFiles)
-        val libraries = mutableListOf<AndroidBuddyLibraryInfo>()
+        val librariesFound = mutableListOf<AndroidBuddyLibraryInfo>()
 
         scanResult.getResourcesMatchingPattern(RESOURCE_DEFINITION_PATTERN)
             .forEachInputStreamIgnoringIOException { resource, inputStream ->
-                libraries.add(getLibraryInfoFromPropertiesFile(extractNameFromPath(resource.path), inputStream))
+                librariesFound.add(getLibraryInfoFromPropertiesFile(extractNameFromPath(resource.path), inputStream))
             }
+
+        val libraries = when (policy) {
+            LibrariesPolicy.UseAll -> librariesFound
+            is LibrariesPolicy.UseOnly -> getLibrariesByIds(librariesFound, policy.libraryIds)
+            else -> throw IllegalArgumentException()
+        }
 
         validateNoDuplicateLibraryIds(libraries)
         validateNoSharedPluginNamesAcrossLibraries(libraries)
@@ -52,6 +68,21 @@ class AndroidBuddyLibraryPluginsExtractor
             .overrideClassLoaders(jarFilesToClassLoader(jarFiles))
             .acceptPaths(Constants.LIBRARY_METADATA_DIR)
             .scan()
+    }
+
+    private fun getLibrariesByIds(
+        allLibraries: List<AndroidBuddyLibraryInfo>,
+        requestedIds: Set<String>
+    ): List<AndroidBuddyLibraryInfo> {
+        val librariesFound = allLibraries.filter { it.id in requestedIds }
+        val librariesFoundIds = librariesFound.map { it.id }
+        val notFoundIds = requestedIds.filter { it !in librariesFoundIds }
+
+        if (notFoundIds.isNotEmpty()) {
+            throw AndroidBuddyLibraryNotFoundException(notFoundIds)
+        }
+
+        return librariesFound
     }
 
     private fun validateNoDuplicateLibraryIds(libraries: List<AndroidBuddyLibraryInfo>) {
