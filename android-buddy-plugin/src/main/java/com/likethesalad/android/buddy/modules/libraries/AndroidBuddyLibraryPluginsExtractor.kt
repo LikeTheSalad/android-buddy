@@ -6,6 +6,7 @@ import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.modules.libraries.exceptions.AndroidBuddyLibraryNotFoundException
 import com.likethesalad.android.buddy.modules.libraries.exceptions.DuplicateByteBuddyPluginException
 import com.likethesalad.android.buddy.modules.libraries.exceptions.DuplicateLibraryIdException
+import com.likethesalad.android.buddy.modules.libraries.models.LibraryPluginsExtracted
 import com.likethesalad.android.common.models.libinfo.AndroidBuddyLibraryInfo
 import com.likethesalad.android.common.models.libinfo.LibraryInfoMapper
 import com.likethesalad.android.common.models.libinfo.NamedClassInfo
@@ -32,11 +33,11 @@ class AndroidBuddyLibraryPluginsExtractor
             Regex(".+$PLUGINS_METADATA_FILE_NAME\\.$PLUGINS_METADATA_FILE_EXT").toPattern()
     }
 
-    fun extractPluginNames(jarFiles: Set<File>): Set<String> {
+    fun extractPluginNames(jarFiles: Set<File>): LibraryPluginsExtracted {
         val policy = pluginConfiguration.getLibrariesPolicy()
 
         if (policy == LibrariesPolicy.IgnoreAll) {
-            return emptySet()
+            return LibraryPluginsExtracted.EMPTY
         }
 
         val scanResult = getClassGraphScan(jarFiles)
@@ -56,7 +57,8 @@ class AndroidBuddyLibraryPluginsExtractor
         validateNoDuplicateLibraryIds(libraries)
         validateNoSharedPluginNamesAcrossLibraries(libraries)
 
-        return libraries.map { it.pluginNames }.flatten().toSet()
+        val pluginNames = libraries.map { it.pluginNames }.flatten().toSet()
+        return LibraryPluginsExtracted(pluginNames, emptyList(), emptyList())
     }
 
     private fun extractNameFromPath(path: String): String {

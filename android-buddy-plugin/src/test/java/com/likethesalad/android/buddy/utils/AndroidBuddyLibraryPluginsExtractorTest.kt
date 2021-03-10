@@ -87,7 +87,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
 
         val result = androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
 
-        Truth.assertThat(result).isEqualTo(expectedNames)
+        Truth.assertThat(result.pluginNames).isEqualTo(expectedNames)
     }
 
     @Test
@@ -100,7 +100,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
 
         val result = androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
 
-        Truth.assertThat(result).isEqualTo(expectedNames)
+        Truth.assertThat(result.pluginNames).isEqualTo(expectedNames)
     }
 
     @Test
@@ -111,7 +111,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
 
         val result = androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
 
-        Truth.assertThat(result).isEqualTo(expectedNames)
+        Truth.assertThat(result.pluginNames).isEqualTo(expectedNames)
     }
 
     @Test
@@ -134,7 +134,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
 
         val result = androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
 
-        Truth.assertThat(result).isEqualTo(emptySet<String>())
+        Truth.assertThat(result.pluginNames).isEqualTo(emptySet<String>())
     }
 
     @Test
@@ -161,7 +161,6 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
 
     @Test
     fun `Do not fail when finding duplicated plugin names on non selected libraries in UseOnly policy`() {
-        // TODO ensure to use only the JAR for the selected library ID later on ByteBuddy
         val expectedNames = setOf("com.example.mylibrary.HelloWorldPlugin")
         val jars = setOf(
             getAndroidBuddyLibraryJar(),
@@ -172,7 +171,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
 
         val result = androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
 
-        Truth.assertThat(result).isEqualTo(expectedNames)
+        Truth.assertThat(result.pluginNames).isEqualTo(expectedNames)
     }
 
     @Test

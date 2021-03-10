@@ -53,7 +53,7 @@ class PluginFactoriesProvider
     }
 
     private fun getLibraryPluginNames(jarFiles: Set<File>): Set<String> {
-        val pluginNames = androidBuddyLibraryPluginsExtractor.extractPluginNames(jarFiles)
+        val pluginNames = androidBuddyLibraryPluginsExtractor.extractPluginNames(jarFiles).pluginNames
         if (pluginNames.isNotEmpty()) {
             val text = "Dependencies transformations found: {}"
             logger.debug(text, pluginNames)
