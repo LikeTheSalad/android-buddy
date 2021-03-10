@@ -7,6 +7,7 @@ import com.likethesalad.android.buddy.modules.libraries.AndroidBuddyLibraryPlugi
 import com.likethesalad.android.buddy.modules.libraries.exceptions.AndroidBuddyLibraryNotFoundException
 import com.likethesalad.android.buddy.modules.libraries.exceptions.DuplicateByteBuddyPluginException
 import com.likethesalad.android.buddy.modules.libraries.exceptions.DuplicateLibraryIdException
+import com.likethesalad.android.buddy.modules.libraries.models.LibraryPluginsExtracted
 import com.likethesalad.android.common.models.libinfo.AndroidBuddyLibraryInfo
 import com.likethesalad.android.common.models.libinfo.LibraryInfoMapper
 import com.likethesalad.android.common.models.libinfo.utils.AndroidBuddyLibraryInfoFqnBuilder
@@ -85,9 +86,11 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
         val expectedNames = setOf("com.example.mylibrary.HelloWorldPlugin")
         val jars = setOf(getAndroidBuddyLibraryJar(), getNormalLibraryJar())
 
-        val result = androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
+        val result = androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(jars)
 
         Truth.assertThat(result.pluginNames).isEqualTo(expectedNames)
+        Truth.assertThat(result.jarsContainingPlugins).containsExactly(getAndroidBuddyLibraryJar())
+        Truth.assertThat(result.extraJars).containsExactly(getNormalLibraryJar())
     }
 
     @Test
@@ -98,9 +101,12 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
         )
         val jars = setOf(getAndroidBuddyLibraryJar(), getNormalLibraryJar(), getAndroidBuddyLibrary2Jar())
 
-        val result = androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
+        val result = androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(jars)
 
         Truth.assertThat(result.pluginNames).isEqualTo(expectedNames)
+        Truth.assertThat(result.jarsContainingPlugins)
+            .containsExactly(getAndroidBuddyLibraryJar(), getAndroidBuddyLibrary2Jar())
+        Truth.assertThat(result.extraJars).containsExactly(getNormalLibraryJar())
     }
 
     @Test
@@ -109,9 +115,11 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
         val jars = setOf(getAndroidBuddyLibraryJar(), getNormalLibraryJar(), getAndroidBuddyLibrary2Jar())
         every { pluginConfiguration.getLibrariesPolicy() }.returns(LibrariesPolicy.UseOnly(setOf("some.other.id")))
 
-        val result = androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
+        val result = androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(jars)
 
         Truth.assertThat(result.pluginNames).isEqualTo(expectedNames)
+        Truth.assertThat(result.jarsContainingPlugins).containsExactly(getAndroidBuddyLibrary2Jar())
+        Truth.assertThat(result.extraJars).containsExactly(getNormalLibraryJar(), getAndroidBuddyLibraryJar())
     }
 
     @Test
@@ -120,7 +128,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
         every { pluginConfiguration.getLibrariesPolicy() }.returns(LibrariesPolicy.UseOnly(setOf("some.nonexistent.id")))
 
         try {
-            androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
+            androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(jars)
             fail("It should have failed above")
         } catch (e: AndroidBuddyLibraryNotFoundException) {
             Truth.assertThat(e.idsNotFound).isEqualTo(listOf("some.nonexistent.id"))
@@ -132,9 +140,9 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
         val jars = setOf(getAndroidBuddyLibraryJar(), getNormalLibraryJar(), getAndroidBuddyLibrary2Jar())
         every { pluginConfiguration.getLibrariesPolicy() }.returns(LibrariesPolicy.IgnoreAll)
 
-        val result = androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
+        val result = androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(jars)
 
-        Truth.assertThat(result.pluginNames).isEqualTo(emptySet<String>())
+        Truth.assertThat(result).isEqualTo(LibraryPluginsExtracted.EMPTY)
     }
 
     @Test
@@ -146,7 +154,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
         )
 
         try {
-            androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
+            androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(jars)
             fail("It should have failed above")
         } catch (e: DuplicateByteBuddyPluginException) {
             Truth.assertThat(e.pluginNames).isEqualTo(setOf("com.example.mylibrary.HelloWorldPlugin"))
@@ -169,9 +177,14 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
         )
         every { pluginConfiguration.getLibrariesPolicy() }.returns(LibrariesPolicy.UseOnly(setOf("some.id")))
 
-        val result = androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
+        val result = androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(jars)
 
         Truth.assertThat(result.pluginNames).isEqualTo(expectedNames)
+        Truth.assertThat(result.jarsContainingPlugins).containsExactly(getAndroidBuddyLibraryJar())
+        Truth.assertThat(result.extraJars).containsExactly(
+            getNormalLibraryJar(),
+            getAndroidBuddyLibraryJarWithDiffIdButSamePluginName()
+        )
     }
 
     @Test
@@ -179,7 +192,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
         val jars = setOf(getAndroidBuddyLibraryJar(), getNormalLibraryJar(), getAndroidBuddyLibraryJarWithSameId())
 
         try {
-            androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
+            androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(jars)
             fail("Should have failed above")
         } catch (e: DuplicateLibraryIdException) {
             Truth.assertThat(e.id).isEqualTo("some.id")
@@ -194,7 +207,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
         every { pluginConfiguration.getLibrariesPolicy() }.returns(LibrariesPolicy.UseOnly(setOf("some.id")))
 
         try {
-            androidBuddyLibraryPluginsExtractor.extractPluginNames(jars)
+            androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(jars)
             fail("Should have failed above")
         } catch (e: DuplicateLibraryIdException) {
             Truth.assertThat(e.id).isEqualTo("some.id")
