@@ -1,17 +1,13 @@
-package com.likethesalad.android.buddy.bytebuddy
+package com.likethesalad.android.buddy.modules.transform.utils
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
-import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
 import com.likethesalad.android.buddy.modules.libraries.AndroidBuddyLibraryPluginsExtractor
+import com.likethesalad.android.buddy.modules.libraries.models.LibraryPluginsExtracted
+import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
 import com.likethesalad.android.common.providers.ProjectLoggerProvider
-import com.likethesalad.android.common.providers.impl.DefaultClassGraphFilesProvider
-import com.likethesalad.android.common.utils.ClassGraphProvider
-import com.likethesalad.android.common.utils.ClassGraphProviderFactory
 import com.likethesalad.android.common.utils.InstantiatorWrapper
 import com.likethesalad.android.common.utils.Logger
-import com.likethesalad.android.common.utils.PluginsFinder
-import com.likethesalad.android.common.utils.PluginsFinderFactory
+import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -33,12 +29,6 @@ class PluginFactoriesProviderTest : BaseMockable() {
     lateinit var byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator
 
     @MockK
-    lateinit var pluginsFinderFactory: PluginsFinderFactory
-
-    @MockK
-    lateinit var classGraphProviderFactory: ClassGraphProviderFactory
-
-    @MockK
     lateinit var logger: Logger
 
     @MockK
@@ -52,6 +42,9 @@ class PluginFactoriesProviderTest : BaseMockable() {
 
     @MockK
     lateinit var loggerArgumentResolver: Plugin.Factory.UsingReflection.ArgumentResolver
+
+    @MockK
+    lateinit var localPluginsExtractor: LocalPluginsExtractor
 
     private lateinit var pluginFactoriesProvider: PluginFactoriesProvider
 
@@ -68,47 +61,35 @@ class PluginFactoriesProviderTest : BaseMockable() {
             instantiatorWrapper,
             byteBuddyClassesInstantiator,
             androidBuddyLibraryPluginsExtractor,
-            pluginsFinderFactory,
-            classGraphProviderFactory,
+            localPluginsExtractor,
             logger,
             projectLoggerProvider
         )
     }
 
     @Test
-    fun `Get factories from local and external classpath`() {
-        val librariesJars = setOf<File>(mockk(), mockk())
-        val dirFiles = setOf<File>(mockk())
+    fun `Get factories from local and external classpaths`() {
+        val androidBuddyJar = mockk<File>()
+        val normalJar = mockk<File>()
+        val librariesJars = setOf(normalJar, androidBuddyJar)
+        val localDirs = setOf<File>(mockk())
         val classLoader = mockk<ClassLoader>()
+        val librariesJarsProvider = mockk<LibrariesJarsProvider>()
+
         val name1 = createNameAndPluginAndFactory(SomePlugin1::class.java, classLoader)
         val name2 = createNameAndPluginAndFactory(SomePlugin2::class.java, classLoader)
         val libName1 = createNameAndPluginAndFactory(SomeLibPlugin1::class.java, classLoader)
-        val jarsClassGraphProvider = mockk<ClassGraphProvider>()
-        val dirsClassGraphProvider = mockk<ClassGraphProvider>()
-        val jarsPluginsFinder = mockk<PluginsFinder>()
-        val dirsPluginsFinder = mockk<PluginsFinder>()
-        val librariesJarsProvider = mockk<LibrariesJarsProvider>()
+        val libraryPluginsExtracted = LibraryPluginsExtracted(setOf(libName1.name), setOf(androidBuddyJar))
+
         every { librariesJarsProvider.getLibrariesJars() }.returns(librariesJars)
         every {
-            classGraphProviderFactory.create(DefaultClassGraphFilesProvider(dirFiles))
-        }.returns(dirsClassGraphProvider)
+            androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(librariesJars)
+        }.returns(libraryPluginsExtracted)
         every {
-            pluginsFinderFactory.create(dirsClassGraphProvider)
-        }.returns(dirsPluginsFinder)
-        every {
-            dirsPluginsFinder.findBuiltPluginClassNames()
+            localPluginsExtractor.getLocalPluginNames(localDirs)
         }.returns(setOf(name1.name, name2.name))
-        every {
-            classGraphProviderFactory.create(DefaultClassGraphFilesProvider(librariesJars))
-        }.returns(jarsClassGraphProvider)
-        every {
-            pluginsFinderFactory.create(jarsClassGraphProvider)
-        }.returns(jarsPluginsFinder)
-        every {
-            androidBuddyLibraryPluginsExtractor.extractPluginNames(librariesJars)
-        }.returns(setOf(libName1.name))
 
-        val factories = pluginFactoriesProvider.getFactories(dirFiles, librariesJarsProvider, classLoader)
+        val factories = pluginFactoriesProvider.getFactories(localDirs, librariesJarsProvider, classLoader)
 
         Truth.assertThat(factories)
             .containsExactly(name1.expectedFactory, name2.expectedFactory, libName1.expectedFactory)

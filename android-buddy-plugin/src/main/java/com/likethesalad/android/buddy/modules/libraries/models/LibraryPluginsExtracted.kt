@@ -4,10 +4,9 @@ import java.io.File
 
 data class LibraryPluginsExtracted(
     val pluginNames: Set<String>,
-    val jarsContainingPlugins: Set<File>,
-    val extraJars: Set<File>
+    val jarsContainingPlugins: Set<File>
 ) {
     companion object {
-        val EMPTY = LibraryPluginsExtracted(emptySet(), emptySet(), emptySet())
+        val EMPTY = LibraryPluginsExtracted(emptySet(), emptySet())
     }
 }

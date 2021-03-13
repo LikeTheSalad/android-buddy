@@ -90,7 +90,6 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
 
         Truth.assertThat(result.pluginNames).isEqualTo(expectedNames)
         Truth.assertThat(result.jarsContainingPlugins).containsExactly(getAndroidBuddyLibraryJar())
-        Truth.assertThat(result.extraJars).containsExactly(getNormalLibraryJar())
     }
 
     @Test
@@ -106,7 +105,6 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
         Truth.assertThat(result.pluginNames).isEqualTo(expectedNames)
         Truth.assertThat(result.jarsContainingPlugins)
             .containsExactly(getAndroidBuddyLibraryJar(), getAndroidBuddyLibrary2Jar())
-        Truth.assertThat(result.extraJars).containsExactly(getNormalLibraryJar())
     }
 
     @Test
@@ -119,7 +117,6 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
 
         Truth.assertThat(result.pluginNames).isEqualTo(expectedNames)
         Truth.assertThat(result.jarsContainingPlugins).containsExactly(getAndroidBuddyLibrary2Jar())
-        Truth.assertThat(result.extraJars).containsExactly(getNormalLibraryJar(), getAndroidBuddyLibraryJar())
     }
 
     @Test
@@ -181,10 +178,6 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
 
         Truth.assertThat(result.pluginNames).isEqualTo(expectedNames)
         Truth.assertThat(result.jarsContainingPlugins).containsExactly(getAndroidBuddyLibraryJar())
-        Truth.assertThat(result.extraJars).containsExactly(
-            getNormalLibraryJar(),
-            getAndroidBuddyLibraryJarWithDiffIdButSamePluginName()
-        )
     }
 
     @Test

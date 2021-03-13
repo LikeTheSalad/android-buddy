@@ -56,8 +56,7 @@ class AndroidBuddyLibraryPluginsExtractor
 
         val pluginNames = librariesInfo.map { it.pluginNames }.flatten().toSet()
         val jarsContainingPlugins = librariesToUse.map { it.jarFile }.toSet()
-        val extraJars = jarFiles.filter { it !in jarsContainingPlugins }.map { it }.toSet()
-        return LibraryPluginsExtracted(pluginNames, jarsContainingPlugins, extraJars)
+        return LibraryPluginsExtracted(pluginNames, jarsContainingPlugins)
     }
 
     private fun findLibraries(scanResult: ScanResult): List<AndroidBuddyLibraryExtracted> {

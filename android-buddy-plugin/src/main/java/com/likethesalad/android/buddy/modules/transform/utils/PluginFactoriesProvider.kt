@@ -1,15 +1,12 @@
-package com.likethesalad.android.buddy.bytebuddy
+package com.likethesalad.android.buddy.modules.transform.utils
 
-import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.di.AppScope
-import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
 import com.likethesalad.android.buddy.modules.libraries.AndroidBuddyLibraryPluginsExtractor
+import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
 import com.likethesalad.android.common.providers.ProjectLoggerProvider
-import com.likethesalad.android.common.providers.impl.DefaultClassGraphFilesProvider
-import com.likethesalad.android.common.utils.ClassGraphProviderFactory
 import com.likethesalad.android.common.utils.InstantiatorWrapper
 import com.likethesalad.android.common.utils.Logger
-import com.likethesalad.android.common.utils.PluginsFinderFactory
+import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import net.bytebuddy.build.Plugin
 import java.io.File
 import javax.inject.Inject
@@ -20,8 +17,7 @@ class PluginFactoriesProvider
     private val instantiatorWrapper: InstantiatorWrapper,
     private val byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator,
     private val androidBuddyLibraryPluginsExtractor: AndroidBuddyLibraryPluginsExtractor,
-    private val pluginsFinderFactory: PluginsFinderFactory,
-    private val classGraphProviderFactory: ClassGraphProviderFactory,
+    private val localPluginsExtractor: LocalPluginsExtractor,
     private val logger: Logger,
     projectLoggerProvider: ProjectLoggerProvider
 ) {
@@ -47,7 +43,7 @@ class PluginFactoriesProvider
     }
 
     private fun getLocalPluginNames(dirFiles: Set<File>): Set<String> {
-        val pluginNames = getPluginNamesFrom(dirFiles)
+        val pluginNames = localPluginsExtractor.getLocalPluginNames(dirFiles)
         logger.debug("Local transformations found: {}", pluginNames)
         return pluginNames
     }
@@ -65,14 +61,5 @@ class PluginFactoriesProvider
         return byteBuddyClassesInstantiator.makeFactoryUsingReflection(
             instantiatorWrapper.getClassForName(className, false, classLoader)
         ).with(loggerArgumentResolver)
-    }
-
-    private fun getPluginNamesFrom(files: Set<File>): Set<String> {
-        if (files.isEmpty()) {
-            return emptySet()
-        }
-        val classGraphProvider = classGraphProviderFactory.create(DefaultClassGraphFilesProvider(files))
-        val pluginsFinder = pluginsFinderFactory.create(classGraphProvider)
-        return pluginsFinder.findBuiltPluginClassNames()
     }
 }
