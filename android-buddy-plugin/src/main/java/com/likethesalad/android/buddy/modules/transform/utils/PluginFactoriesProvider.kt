@@ -3,6 +3,7 @@ package com.likethesalad.android.buddy.modules.transform.utils
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.modules.libraries.AndroidBuddyLibraryPluginsExtractor
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
+import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.common.providers.ProjectLoggerProvider
 import com.likethesalad.android.common.utils.InstantiatorWrapper
 import com.likethesalad.android.common.utils.Logger
@@ -18,6 +19,7 @@ class PluginFactoriesProvider
     private val byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator,
     private val androidBuddyLibraryPluginsExtractor: AndroidBuddyLibraryPluginsExtractor,
     private val localPluginsExtractor: LocalPluginsExtractor,
+    private val classLoaderCreator: ClassLoaderCreator,
     private val logger: Logger,
     projectLoggerProvider: ProjectLoggerProvider
 ) {
@@ -32,28 +34,44 @@ class PluginFactoriesProvider
     fun getFactories(
         localDirs: Set<File>,
         librariesJarsProvider: LibrariesJarsProvider,
-        classLoader: ClassLoader
+        parentClassLoader: ClassLoader
     ): List<Plugin.Factory> {
         val pluginNames = mutableSetOf<String>()
-
+        val allLibraries = librariesJarsProvider.getLibrariesJars()
         pluginNames.addAll(getLocalPluginNames(localDirs))
-        pluginNames.addAll(getLibraryPluginNames(librariesJarsProvider.getLibrariesJars()))
 
-        return pluginNames.map { nameToFactory(it, classLoader) }
+        val libraryPlugins = androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(allLibraries)
+        if (libraryPlugins.pluginNames.isNotEmpty()) {
+            logger.debug("Dependencies transformations found: {}", libraryPlugins.pluginNames)
+            pluginNames.addAll(libraryPlugins.pluginNames)
+        }
+
+        val factoriesClassloader = createFactoriesClassloader(
+            parentClassLoader,
+            allLibraries,
+            libraryPlugins.jarsContainingPlugins
+        )
+
+        return pluginNames.map { nameToFactory(it, factoriesClassloader) }
+    }
+
+    private fun createFactoriesClassloader(
+        parentClassLoader: ClassLoader,
+        allLibraries: Set<File>,
+        librariesWithPlugins: Set<File>
+    ): ClassLoader {
+        return if (librariesWithPlugins.isEmpty() || librariesWithPlugins == allLibraries) {
+            classLoaderCreator.create(allLibraries, parentClassLoader)
+        } else {
+            val librariesWithoutPlugins = allLibraries.filter { it !in librariesWithPlugins }.toSet()
+            val pluginsClassloader = classLoaderCreator.create(librariesWithPlugins, parentClassLoader)
+            classLoaderCreator.create(librariesWithoutPlugins, pluginsClassloader)
+        }
     }
 
     private fun getLocalPluginNames(dirFiles: Set<File>): Set<String> {
         val pluginNames = localPluginsExtractor.getLocalPluginNames(dirFiles)
         logger.debug("Local transformations found: {}", pluginNames)
-        return pluginNames
-    }
-
-    private fun getLibraryPluginNames(jarFiles: Set<File>): Set<String> {
-        val pluginNames = androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(jarFiles).pluginNames
-        if (pluginNames.isNotEmpty()) {
-            val text = "Dependencies transformations found: {}"
-            logger.debug(text, pluginNames)
-        }
         return pluginNames
     }
 
