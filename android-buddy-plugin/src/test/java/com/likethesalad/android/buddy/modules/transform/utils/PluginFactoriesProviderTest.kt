@@ -11,7 +11,6 @@ import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantia
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.slot
 import io.mockk.verify
 import net.bytebuddy.build.Plugin
 import net.bytebuddy.description.type.TypeDescription
