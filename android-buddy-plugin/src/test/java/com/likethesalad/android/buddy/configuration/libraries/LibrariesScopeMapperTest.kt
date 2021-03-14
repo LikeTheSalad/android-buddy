@@ -1,7 +1,9 @@
 package com.likethesalad.android.buddy.configuration.libraries
 
 import com.google.common.truth.Truth.assertThat
-import com.likethesalad.android.buddy.extension.libraries.LibrariesOptions
+import com.likethesalad.android.buddy.configuration.libraries.scope.LibrariesScope
+import com.likethesalad.android.buddy.configuration.libraries.scope.LibrariesScopeMapper
+import com.likethesalad.android.buddy.extension.libraries.scope.LibrariesScopeExtension
 import io.mockk.every
 import io.mockk.mockk
 import org.gradle.api.provider.ListProperty
@@ -10,16 +12,16 @@ import org.junit.Assert.fail
 import org.junit.Test
 
 @Suppress("UnstableApiUsage")
-class LibrariesOptionsMapperTest {
+class LibrariesScopeMapperTest {
 
-    private val librariesOptionsMapper = LibrariesOptionsMapper()
+    private val librariesOptionsMapper = LibrariesScopeMapper()
 
     @Test
     fun `Map LibrariesOptions to LibrariesPolicy`() {
-        assertThat(verifyMapping("UseAll")).isEqualTo(LibrariesPolicy.UseAll)
-        assertThat(verifyMapping("IgnoreAll")).isEqualTo(LibrariesPolicy.IgnoreAll)
+        assertThat(verifyMapping("UseAll")).isEqualTo(LibrariesScope.UseAll)
+        assertThat(verifyMapping("IgnoreAll")).isEqualTo(LibrariesScope.IgnoreAll)
         assertThat(verifyMapping("UseOnly", listOf("abc", "def")))
-            .isEqualTo(LibrariesPolicy.UseOnly(setOf("abc", "def")))
+            .isEqualTo(LibrariesScope.UseOnly(setOf("abc", "def")))
     }
 
     @Test
@@ -64,11 +66,11 @@ class LibrariesOptionsMapperTest {
         }
     }
 
-    private fun verifyMapping(policyName: String, args: List<Any> = emptyList()): LibrariesPolicy {
-        val options = mockk<LibrariesOptions>()
+    private fun verifyMapping(policyName: String, args: List<Any> = emptyList()): LibrariesScope {
+        val options = mockk<LibrariesScopeExtension>()
         val policyNameProperty = createPropertyMock(policyName)
         val argsProperty = createListPropertyMock(args)
-        every { options.policyName }.returns(policyNameProperty)
+        every { options.type }.returns(policyNameProperty)
         every { options.args }.returns(argsProperty)
 
         return librariesOptionsMapper.librariesOptionsToLibrariesPolicy(options)

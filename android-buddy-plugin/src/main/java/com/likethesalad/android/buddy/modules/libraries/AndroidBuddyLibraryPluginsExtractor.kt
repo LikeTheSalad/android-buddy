@@ -1,7 +1,7 @@
 package com.likethesalad.android.buddy.modules.libraries
 
 import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
-import com.likethesalad.android.buddy.configuration.libraries.LibrariesPolicy
+import com.likethesalad.android.buddy.configuration.libraries.scope.LibrariesScope
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.modules.libraries.exceptions.AndroidBuddyLibraryNotFoundException
 import com.likethesalad.android.buddy.modules.libraries.exceptions.DuplicateByteBuddyPluginException
@@ -36,17 +36,17 @@ class AndroidBuddyLibraryPluginsExtractor
     }
 
     fun extractLibraryPlugins(jarFiles: Set<File>): LibraryPluginsExtracted {
-        val policy = pluginConfiguration.getLibrariesPolicy()
+        val scope = pluginConfiguration.getLibrariesScope()
 
-        if (policy == LibrariesPolicy.IgnoreAll) {
+        if (scope == LibrariesScope.IgnoreAll) {
             return LibraryPluginsExtracted.EMPTY
         }
 
         val librariesFound = findLibraries(getClassGraphScan(jarFiles))
 
-        val librariesToUse = when (policy) {
-            LibrariesPolicy.UseAll -> librariesFound
-            is LibrariesPolicy.UseOnly -> getLibrariesByIds(librariesFound, policy.libraryIds)
+        val librariesToUse = when (scope) {
+            LibrariesScope.UseAll -> librariesFound
+            is LibrariesScope.UseOnly -> getLibrariesByIds(librariesFound, scope.libraryIds)
             else -> throw IllegalArgumentException()
         }
         val librariesInfo = librariesToUse.map { it.info }

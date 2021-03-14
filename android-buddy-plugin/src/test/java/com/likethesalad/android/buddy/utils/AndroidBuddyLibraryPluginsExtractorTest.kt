@@ -2,7 +2,7 @@ package com.likethesalad.android.buddy.utils
 
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
-import com.likethesalad.android.buddy.configuration.libraries.LibrariesPolicy
+import com.likethesalad.android.buddy.configuration.libraries.scope.LibrariesScope
 import com.likethesalad.android.buddy.modules.libraries.AndroidBuddyLibraryPluginsExtractor
 import com.likethesalad.android.buddy.modules.libraries.exceptions.AndroidBuddyLibraryNotFoundException
 import com.likethesalad.android.buddy.modules.libraries.exceptions.DuplicateByteBuddyPluginException
@@ -34,7 +34,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
     private lateinit var pluginConfiguration: AndroidBuddyPluginConfiguration
 
     private lateinit var androidBuddyLibraryPluginsExtractor: AndroidBuddyLibraryPluginsExtractor
-    private val defaultLibraryPolicy = LibrariesPolicy.UseAll
+    private val defaultLibrariesScope = LibrariesScope.UseAll
 
     companion object {
         private val androidBuddyLibraryInfo = AndroidBuddyLibraryInfo(
@@ -72,7 +72,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
 
     @Before
     fun setUp() {
-        every { pluginConfiguration.getLibrariesPolicy() }.returns(defaultLibraryPolicy)
+        every { pluginConfiguration.getLibrariesScope() }.returns(defaultLibrariesScope)
 
         androidBuddyLibraryPluginsExtractor = AndroidBuddyLibraryPluginsExtractor(
             instantiatorWrapper,
@@ -111,7 +111,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
     fun `Get plugin class names from android buddy libraries allowed by IDs in UseOnly`() {
         val expectedNames = setOf("com.example.mylibrary2.HelloWorldPlugin")
         val jars = setOf(getAndroidBuddyLibraryJar(), getNormalLibraryJar(), getAndroidBuddyLibrary2Jar())
-        every { pluginConfiguration.getLibrariesPolicy() }.returns(LibrariesPolicy.UseOnly(setOf("some.other.id")))
+        every { pluginConfiguration.getLibrariesScope() }.returns(LibrariesScope.UseOnly(setOf("some.other.id")))
 
         val result = androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(jars)
 
@@ -122,7 +122,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
     @Test
     fun `Fail when using policy UseOnly and any id specified isn't found`() {
         val jars = setOf(getAndroidBuddyLibraryJar(), getNormalLibraryJar(), getAndroidBuddyLibrary2Jar())
-        every { pluginConfiguration.getLibrariesPolicy() }.returns(LibrariesPolicy.UseOnly(setOf("some.nonexistent.id")))
+        every { pluginConfiguration.getLibrariesScope() }.returns(LibrariesScope.UseOnly(setOf("some.nonexistent.id")))
 
         try {
             androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(jars)
@@ -135,7 +135,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
     @Test
     fun `Get no plugin class names from any android buddy library when policy is IgnoreAll`() {
         val jars = setOf(getAndroidBuddyLibraryJar(), getNormalLibraryJar(), getAndroidBuddyLibrary2Jar())
-        every { pluginConfiguration.getLibrariesPolicy() }.returns(LibrariesPolicy.IgnoreAll)
+        every { pluginConfiguration.getLibrariesScope() }.returns(LibrariesScope.IgnoreAll)
 
         val result = androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(jars)
 
@@ -172,7 +172,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
             getNormalLibraryJar(),
             getAndroidBuddyLibraryJarWithDiffIdButSamePluginName()
         )
-        every { pluginConfiguration.getLibrariesPolicy() }.returns(LibrariesPolicy.UseOnly(setOf("some.id")))
+        every { pluginConfiguration.getLibrariesScope() }.returns(LibrariesScope.UseOnly(setOf("some.id")))
 
         val result = androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(jars)
 
@@ -197,7 +197,7 @@ class AndroidBuddyLibraryPluginsExtractorTest : BaseMockable() {
     @Test
     fun `Fail when finding duplicated library IDs on selected libraries in UseOnly policy`() {
         val jars = setOf(getAndroidBuddyLibraryJar(), getNormalLibraryJar(), getAndroidBuddyLibraryJarWithSameId())
-        every { pluginConfiguration.getLibrariesPolicy() }.returns(LibrariesPolicy.UseOnly(setOf("some.id")))
+        every { pluginConfiguration.getLibrariesScope() }.returns(LibrariesScope.UseOnly(setOf("some.id")))
 
         try {
             androidBuddyLibraryPluginsExtractor.extractLibraryPlugins(jars)
