@@ -11,6 +11,7 @@ import com.likethesalad.android.buddy.bytebuddy.PluginEngineProvider
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFolders
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
 import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
+import com.likethesalad.android.buddy.configuration.libraries.scope.LibrariesScope
 import com.likethesalad.android.buddy.modules.transform.utils.PluginFactoriesProvider
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProvider
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
@@ -71,9 +72,6 @@ class ByteBuddyTransformTest : BaseMockable() {
     lateinit var defaultLibrariesJarsProviderFactory: DefaultLibrariesJarsProviderFactory
 
     @MockK
-    lateinit var pluginConfiguration: AndroidBuddyPluginConfiguration
-
-    @MockK
     lateinit var transformInvocation: TransformInvocation
 
     @MockK
@@ -87,6 +85,9 @@ class ByteBuddyTransformTest : BaseMockable() {
 
     @MockK
     lateinit var pluginEngine: Plugin.Engine
+
+    @MockK
+    lateinit var androidBuddyPluginConfiguration: AndroidBuddyPluginConfiguration
 
     private val variantName = "someName"
     private val javaTargetVersion = 8
@@ -116,7 +117,8 @@ class ByteBuddyTransformTest : BaseMockable() {
             directoryCleaner,
             androidVariantDataProviderFactory,
             androidExtensionDataProvider,
-            defaultLibrariesJarsProviderFactory
+            defaultLibrariesJarsProviderFactory,
+            androidBuddyPluginConfiguration
         )
     }
 
@@ -145,6 +147,18 @@ class ByteBuddyTransformTest : BaseMockable() {
             QualifiedContent.Scope.SUB_PROJECTS,
             QualifiedContent.Scope.EXTERNAL_LIBRARIES
         )
+    }
+
+    @Test
+    fun `Get map with config hashes`() {
+        val librariesScope = mockk<LibrariesScope>()
+        val hash = 1
+        every { librariesScope.hashCode() }.returns(hash)
+        every { androidBuddyPluginConfiguration.getLibrariesScope() }.returns(librariesScope)
+
+        val result = byteBuddyTransform.parameterInputs
+
+        Truth.assertThat(result).containsExactly("librariesScopeHash", hash)
     }
 
     @Test

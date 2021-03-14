@@ -14,8 +14,11 @@ class AndroidBuddyPluginConfiguration
     private val librariesScopeMapper: LibrariesScopeMapper
 ) {
     private val extension by lazy { androidBuddyExtensionProvider.getAndroidBuddyExtension() }
+    private val lazyLibrariesScope: LibrariesScope by lazy {
+        librariesScopeMapper.librariesScopeExtensionToLibrariesScope(extension.librariesPolicy.scope)
+    }
 
     fun getLibrariesScope(): LibrariesScope {
-        return librariesScopeMapper.librariesOptionsToLibrariesPolicy(extension.librariesPolicy.scope)
+        return lazyLibrariesScope
     }
 }

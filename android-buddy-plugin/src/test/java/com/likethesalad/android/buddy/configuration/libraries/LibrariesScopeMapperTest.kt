@@ -17,7 +17,7 @@ class LibrariesScopeMapperTest {
     private val librariesOptionsMapper = LibrariesScopeMapper()
 
     @Test
-    fun `Map LibrariesOptions to LibrariesPolicy`() {
+    fun `Map LibrariesOptions to LibrariesScope`() {
         assertThat(verifyMapping("UseAll")).isEqualTo(LibrariesScope.UseAll)
         assertThat(verifyMapping("IgnoreAll")).isEqualTo(LibrariesScope.IgnoreAll)
         assertThat(verifyMapping("UseOnly", listOf("abc", "def")))
@@ -25,13 +25,13 @@ class LibrariesScopeMapperTest {
     }
 
     @Test
-    fun `Expect exception when no valid library policy name is provided`() {
+    fun `Expect exception when no valid library scope name is provided`() {
         try {
             verifyMapping("NotValidName")
             fail("Should've crashed above")
         } catch (e: IllegalArgumentException) {
             assertThat(e.message).isEqualTo(
-                "Invalid library policy name: 'NotValidName', " +
+                "Invalid library scope type name: 'NotValidName', " +
                         "the available options are: [UseAll, IgnoreAll, UseOnly]"
             )
         }
@@ -45,7 +45,7 @@ class LibrariesScopeMapperTest {
         } catch (e: IllegalArgumentException) {
             assertThat(e.message).isEqualTo(
                 "No library ids specified for 'UseOnly', if you don't want to use any library you " +
-                        "should set the libraries policy to 'IgnoreAll' instead."
+                        "should set the libraries scope to 'IgnoreAll' instead."
             )
         }
     }
@@ -56,24 +56,24 @@ class LibrariesScopeMapperTest {
         verifyNoArgExpectedException("IgnoreAll")
     }
 
-    private fun verifyNoArgExpectedException(policyName: String) {
+    private fun verifyNoArgExpectedException(scopeType: String) {
         val dummyArgs = listOf("arg1", "arg2")
         try {
-            verifyMapping(policyName, dummyArgs)
+            verifyMapping(scopeType, dummyArgs)
             fail("Should've crashed above")
         } catch (e: IllegalArgumentException) {
-            assertThat(e.message).isEqualTo("No args should be passed for the '$policyName' policy")
+            assertThat(e.message).isEqualTo("No args should be passed for the '$scopeType' scope")
         }
     }
 
-    private fun verifyMapping(policyName: String, args: List<Any> = emptyList()): LibrariesScope {
+    private fun verifyMapping(scopeType: String, args: List<Any> = emptyList()): LibrariesScope {
         val options = mockk<LibrariesScopeExtension>()
-        val policyNameProperty = createPropertyMock(policyName)
+        val scopeNameProperty = createPropertyMock(scopeType)
         val argsProperty = createListPropertyMock(args)
-        every { options.type }.returns(policyNameProperty)
+        every { options.type }.returns(scopeNameProperty)
         every { options.args }.returns(argsProperty)
 
-        return librariesOptionsMapper.librariesOptionsToLibrariesPolicy(options)
+        return librariesOptionsMapper.librariesScopeExtensionToLibrariesScope(options)
     }
 
     private fun <T> createPropertyMock(value: T): Property<T> {

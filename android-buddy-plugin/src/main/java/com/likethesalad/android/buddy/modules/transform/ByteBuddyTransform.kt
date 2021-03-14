@@ -8,6 +8,7 @@ import com.likethesalad.android.buddy.bytebuddy.CompoundSource
 import com.likethesalad.android.buddy.bytebuddy.CompoundSourceFactory
 import com.likethesalad.android.buddy.bytebuddy.PluginEngineProvider
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
+import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.modules.transform.utils.PluginFactoriesProvider
 import com.likethesalad.android.buddy.providers.LibrariesJarsProvider
@@ -36,7 +37,8 @@ class ByteBuddyTransform @Inject constructor(
     private val directoryCleaner: DirectoryCleaner,
     private val androidVariantDataProviderFactory: AndroidVariantDataProviderFactory,
     private val androidExtensionDataProvider: AndroidExtensionDataProvider,
-    private val defaultLibrariesJarsProviderFactory: DefaultLibrariesJarsProviderFactory
+    private val defaultLibrariesJarsProviderFactory: DefaultLibrariesJarsProviderFactory,
+    private val androidBuddyPluginConfiguration: AndroidBuddyPluginConfiguration
 ) : Transform() {
 
     override fun getName(): String = "androidBuddy"
@@ -57,6 +59,12 @@ class ByteBuddyTransform @Inject constructor(
         return mutableSetOf(
             QualifiedContent.Scope.SUB_PROJECTS,
             QualifiedContent.Scope.EXTERNAL_LIBRARIES
+        )
+    }
+
+    override fun getParameterInputs(): MutableMap<String, Any> {
+        return mutableMapOf(
+            "librariesScopeHash" to androidBuddyPluginConfiguration.getLibrariesScope().hashCode()
         )
     }
 
