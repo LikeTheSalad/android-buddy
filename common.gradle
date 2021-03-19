@@ -9,7 +9,6 @@ ext {
     url = "https://github.com/LikeTheSalad/android-buddy"
     vcsUrl = "https://github.com/LikeTheSalad/android-buddy.git"
     issueTrackerUrl = "https://github.com/LikeTheSalad/android-buddy/issues"
-    tags = ['android', 'gradle', 'plugin', 'byte-buddy', 'android-buddy']
 }
 
 task sourcesJar(type: Jar) {
@@ -56,6 +55,10 @@ publishing {
                 }
                 scm {
                     url = project.url
+                    connection = project.vcsUrl
+                }
+                issueManagement {
+                    url = project.issueTrackerUrl
                 }
             }
         }
