@@ -8,8 +8,10 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.github.gmazzo:gradle-buildconfig-plugin:2.0.2"
+        classpath "io.github.gradle-nexus:publish-plugin:1.0.0"
     }
 }
+apply plugin: "io.github.gradle-nexus.publish-plugin"
 
 ext {
     kotlin_version = '1.3.72'
@@ -27,6 +29,14 @@ subprojects {
     repositories {
         mavenCentral()
         google()
-        jcenter()
+    }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            username.set(System.getenv("OSSRH_USER"))
+            password.set(System.getenv("OSSRH_PASSWORD"))
+        }
     }
 }
