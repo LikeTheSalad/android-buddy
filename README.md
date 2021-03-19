@@ -1,4 +1,4 @@
-[ ![Download](https://api.bintray.com/packages/likethesalad/public-repo/android-buddy-plugin/images/download.svg) ](https://bintray.com/likethesalad/public-repo/android-buddy-plugin/_latestVersion)
+![version](https://img.shields.io/maven-central/v/com.likethesalad.android/android-buddy-plugin?color=default)
 
 # Android Buddy
 
@@ -163,7 +163,10 @@ apply plugin: 'android-buddy-library'
 
 // ...
 androidBuddyLibrary {
-    id = "my-library-id" // It is mandatory to set a unique ID for your library. This will help consumers to select it for use with the "UseOnly" scope (explained above under "Configuration for consumer's dependencies").
+    id = "my-library-id" // It is mandatory to set a unique ID 
+    // for your library. This will help consumers to select it 
+    // for using it with the "UseOnly" scope (explained above 
+    // under "Configuration for consumer's dependencies").
     exposedTransformationNames = ["com.my.transformation.package.MyExposedTransformation"]
 }
 ```
