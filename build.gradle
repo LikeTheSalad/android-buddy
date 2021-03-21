@@ -35,9 +35,6 @@ subprojects {
 
 nexusPublishing {
     repositories {
-        sonatype {
-            username.set(System.getenv("OSSRH_USER"))
-            password.set(System.getenv("OSSRH_PASSWORD"))
-        }
+        sonatype()
     }
 }
