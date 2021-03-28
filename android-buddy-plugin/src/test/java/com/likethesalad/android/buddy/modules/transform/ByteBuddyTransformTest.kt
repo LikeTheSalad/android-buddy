@@ -240,12 +240,12 @@ class ByteBuddyTransformTest : BaseMockable() {
         val mainClassLoader = mockk<ClassLoader>()
         val projectClassLoader = mockk<ClassLoader>()
         every {
-            classLoaderCreator.create(projectFiles, ByteBuddy::class.java.classLoader)
-        }.returns(projectClassLoader)
-        every {
-            classLoaderCreator.create(androidBoothClasspath.toSet(), projectClassLoader)
+            classLoaderCreator.create(androidBoothClasspath.toSet(), ByteBuddy::class.java.classLoader)
         }.returns(mainClassLoader)
+        every {
+            classLoaderCreator.create(projectFiles, mainClassLoader)
+        }.returns(projectClassLoader)
 
-        return mainClassLoader
+        return projectClassLoader
     }
 }

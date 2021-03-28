@@ -109,13 +109,13 @@ class ByteBuddyTransform @Inject constructor(
         scopeClasspath: FilesHolder,
         systemClasspath: Set<File>
     ): ClassLoader {
-        val project = classLoaderCreator.create(
-            scopeClasspath.allFiles,
+        val androidClassLoader = classLoaderCreator.create(
+            systemClasspath,
             ByteBuddy::class.java.classLoader
         )
         return classLoaderCreator.create(
-            systemClasspath,
-            project
+            scopeClasspath.allFiles,
+            androidClassLoader
         )
     }
 

@@ -74,14 +74,10 @@ class PluginFactoriesProviderTest : BaseMockable() {
 
     @Test
     fun `Get factories from local and external classpaths`() {
-        val androidBuddyJar = mockk<File>()
-        val normalJar = mockk<File>()
-        val librariesWithPlugins = setOf(androidBuddyJar)
-        val librariesWithoutPlugins = setOf(normalJar)
+        val allLibraries = setOf(mockk<File>())
         val baseClassLoader = mockk<ClassLoader>()
         val factoryClassLoader = createFactoryClassLoaderMock(
-            baseClassLoader, librariesWithPlugins,
-            librariesWithoutPlugins
+            baseClassLoader, allLibraries
         )
 
         val localFactoryWrappers =
@@ -91,7 +87,7 @@ class PluginFactoriesProviderTest : BaseMockable() {
         val libTransformationNames = libFactoryWrappers.map { it.name }.toSet()
 
         verifyFactoriesProvided(
-            librariesWithPlugins, librariesWithoutPlugins, baseClassLoader,
+            allLibraries, baseClassLoader,
             localFactoryWrappers + libFactoryWrappers
         )
 
@@ -103,13 +99,10 @@ class PluginFactoriesProviderTest : BaseMockable() {
 
     @Test
     fun `Get factories from local and external classpaths with no library plugins`() {
-        val normalJar = mockk<File>()
-        val librariesWithPlugins = emptySet<File>()
-        val librariesWithoutPlugins = setOf(normalJar)
+        val libraries = emptySet<File>()
         val baseClassLoader = mockk<ClassLoader>()
         val factoryClassLoader = createFactoryClassLoaderMock(
-            baseClassLoader, librariesWithPlugins,
-            librariesWithoutPlugins
+            baseClassLoader, libraries
         )
 
         val localFactoryWrappers =
@@ -117,8 +110,7 @@ class PluginFactoriesProviderTest : BaseMockable() {
         val localTransformationNames = localFactoryWrappers.map { it.name }.toSet()
 
         verifyFactoriesProvided(
-            librariesWithPlugins, librariesWithoutPlugins, baseClassLoader,
-            localFactoryWrappers
+            libraries, baseClassLoader, localFactoryWrappers
         )
 
         verify {
@@ -131,34 +123,22 @@ class PluginFactoriesProviderTest : BaseMockable() {
 
     private fun createFactoryClassLoaderMock(
         baseClassLoader: ClassLoader,
-        librariesWithPlugins: Set<File>,
-        librariesWithoutPlugins: Set<File>
+        allLibraries: Set<File>
     ): ClassLoader {
         val factoryClassLoader = mockk<ClassLoader>()
-        if (librariesWithPlugins.isNotEmpty()) {
-            val pluginsClassloader = mockk<ClassLoader>()
-            every {
-                classLoaderCreator.create(librariesWithPlugins, baseClassLoader)
-            }.returns(pluginsClassloader)
-            every {
-                classLoaderCreator.create(librariesWithoutPlugins, pluginsClassloader)
-            }.returns(factoryClassLoader)
-        } else {
-            every {
-                classLoaderCreator.create(librariesWithoutPlugins, baseClassLoader)
-            }.returns(factoryClassLoader)
-        }
+
+        every {
+            classLoaderCreator.create(allLibraries, baseClassLoader)
+        }.returns(factoryClassLoader)
 
         return factoryClassLoader
     }
 
     private fun verifyFactoriesProvided(
-        androidBuddyLibraries: Set<File>,
-        normalLibraries: Set<File>,
+        librariesJars: Set<File>,
         baseClassLoader: ClassLoader,
         expectedFactoryWrappers: List<FactoryWrapper>
     ) {
-        val librariesJars = normalLibraries + androidBuddyLibraries
         val libraryFactoryWrappers =
             expectedFactoryWrappers.filter { LibraryPlugin::class.java.isAssignableFrom(it.pluginClass) }
         val localFactoryWrappers =
@@ -171,7 +151,7 @@ class PluginFactoriesProviderTest : BaseMockable() {
 
         val libraryPluginsExtracted = LibraryPluginsExtracted(
             libraryPluginNames,
-            androidBuddyLibraries
+            setOf()
         )
 
         every { librariesJarsProvider.getLibrariesJars() }.returns(librariesJars)

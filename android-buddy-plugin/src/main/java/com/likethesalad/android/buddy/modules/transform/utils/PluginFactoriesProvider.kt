@@ -46,27 +46,9 @@ class PluginFactoriesProvider
             pluginNames.addAll(libraryPlugins.pluginNames)
         }
 
-        val factoriesClassloader = createFactoriesClassloader(
-            parentClassLoader,
-            allLibraries,
-            libraryPlugins.jarsContainingPlugins
-        )
+        val factoriesClassloader = classLoaderCreator.create(allLibraries, parentClassLoader)
 
         return pluginNames.map { nameToFactory(it, factoriesClassloader) }
-    }
-
-    private fun createFactoriesClassloader(
-        parentClassLoader: ClassLoader,
-        allLibraries: Set<File>,
-        librariesWithPlugins: Set<File>
-    ): ClassLoader {
-        return if (librariesWithPlugins.isEmpty() || librariesWithPlugins == allLibraries) {
-            classLoaderCreator.create(allLibraries, parentClassLoader)
-        } else {
-            val librariesWithoutPlugins = allLibraries.filter { it !in librariesWithPlugins }.toSet()
-            val pluginsClassloader = classLoaderCreator.create(librariesWithPlugins, parentClassLoader)
-            classLoaderCreator.create(librariesWithoutPlugins, pluginsClassloader)
-        }
     }
 
     private fun getLocalPluginNames(dirFiles: Set<File>): Set<String> {
