@@ -19,6 +19,7 @@ import io.mockk.slot
 import io.mockk.verify
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.TaskContainer
 import org.junit.Before
@@ -97,12 +98,14 @@ class CreateMetadataTaskGeneratorTest : BaseMockable() {
     fun `Create jar description properties generator task`() {
         val pluginNames = mockk<SetProperty<String>>()
         val outputDir = mockk<DirectoryProperty>()
+        val pluginId = mockk<Property<String>>()
         val expectedOutputDir = mockk<File>()
         val collection = mockk<ConfigurableFileCollection>()
         every { incrementalDirProvider.createIncrementalDir(taskName) }.returns(expectedOutputDir)
         every { createMetadataTaskNameGenerator.generateTaskName(variantName) }.returns(taskName)
         every { createAndroidBuddyLibraryMetadata.outputDir }.returns(outputDir)
         every { androidBuddyLibExtension.exposedTransformationNames }.returns(pluginNames)
+        every { androidBuddyLibExtension.id }.returns(pluginId)
         every { fileCollectionProvider.createCollectionForFiles(expectedOutputDir) }.returns(collection)
         every { collection.builtBy(createAndroidBuddyLibraryMetadata) }.returns(collection)
         every { variant.registerPreJavacGeneratedBytecode(collection) }.returns(variant)
@@ -116,6 +119,7 @@ class CreateMetadataTaskGeneratorTest : BaseMockable() {
                 createMetadataTaskArgs
             )
             createAndroidBuddyLibraryMetadata.inputClassNames = pluginNames
+            createAndroidBuddyLibraryMetadata.id = pluginId
             outputDir.set(expectedOutputDir)
             collection.builtBy(createAndroidBuddyLibraryMetadata)
             variant.registerPreJavacGeneratedBytecode(collection)

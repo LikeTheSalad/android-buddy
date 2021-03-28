@@ -3,40 +3,35 @@ package com.likethesalad.android.buddylib.modules.createmetadata.action
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
 import com.likethesalad.android.common.actions.BaseAction
+import com.likethesalad.android.common.models.libinfo.AndroidBuddyLibraryInfo
+import com.likethesalad.android.common.models.libinfo.LibraryInfoMapper
+import com.likethesalad.android.common.utils.Constants
 import com.likethesalad.android.common.utils.Constants.LIBRARY_METADATA_DIR
-import com.likethesalad.android.common.utils.Constants.PLUGINS_METADATA_CLASS_NAME
-import com.likethesalad.android.common.utils.Constants.PLUGINS_METADATA_FILE_NAME
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import com.likethesalad.android.common.utils.Logger
-import net.bytebuddy.ByteBuddy
-import net.bytebuddy.implementation.FixedValue
-import net.bytebuddy.matcher.ElementMatchers
 import java.io.File
 
 @AutoFactory
 class CreateAndroidBuddyLibraryMetadataAction(
     @Provided private val directoryCleaner: DirectoryCleaner,
     @Provided private val logger: Logger,
-    private val pluginNames: Set<String>,
+    @Provided private val libraryInfoMapper: LibraryInfoMapper,
+    private val info: AndroidBuddyLibraryInfo,
     private val outputDir: File
 ) : BaseAction {
 
     override fun execute() {
         cleanUpDir()
+        val classInfo = libraryInfoMapper.convertToClassByteArray(info)
+
         val metadataFile = File(
             getPropertiesDir(),
-            PLUGINS_METADATA_FILE_NAME
+            "${classInfo.name}.${Constants.PLUGINS_METADATA_FILE_EXT}"
         )
-        val bytes = ByteBuddy().subclass(Any::class.java)
-            .name(PLUGINS_METADATA_CLASS_NAME)
-            .method(ElementMatchers.isToString())
-            .intercept(FixedValue.value(pluginNames.joinToString(",")))
-            .make()
-            .bytes
 
-        metadataFile.writeBytes(bytes)
+        metadataFile.writeBytes(classInfo.byteArray)
 
-        logger.debug("Transformations found: {}", pluginNames)
+        logger.debug("Transformations found: {}", info.pluginNames)
     }
 
     private fun cleanUpDir() {

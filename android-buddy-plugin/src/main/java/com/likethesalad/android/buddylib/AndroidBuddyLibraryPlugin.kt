@@ -7,6 +7,7 @@ import com.likethesalad.android.buddylib.extension.AndroidBuddyLibExtension
 import com.likethesalad.android.buddylib.providers.AndroidBuddyLibExtensionProvider
 import com.likethesalad.android.buddylib.providers.FileCollectionProvider
 import com.likethesalad.android.buddylib.providers.IncrementalDirProvider
+import com.likethesalad.android.buddylib.providers.ProjectInfoProvider
 import com.likethesalad.android.buddylib.providers.TaskContainerProvider
 import com.likethesalad.android.common.base.BuddyPlugin
 import org.gradle.api.Plugin
@@ -21,7 +22,8 @@ import java.io.File
 
 @Suppress("UnstableApiUsage")
 open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin, TaskContainerProvider,
-    AndroidBuddyLibExtensionProvider, IncrementalDirProvider, FileCollectionProvider {
+    AndroidBuddyLibExtensionProvider, IncrementalDirProvider, FileCollectionProvider,
+    ProjectInfoProvider {
 
     private lateinit var project: Project
     private lateinit var libExtension: AndroidBuddyLibExtension
@@ -72,5 +74,17 @@ open class AndroidBuddyLibraryPlugin : Plugin<Project>, BuddyPlugin, TaskContain
         return project.files(project.provider {
             files.toList()
         })
+    }
+
+    override fun getName(): String {
+        return project.name
+    }
+
+    override fun getGroup(): String {
+        return project.group.toString()
+    }
+
+    override fun getVersion(): String {
+        return project.version.toString()
     }
 }

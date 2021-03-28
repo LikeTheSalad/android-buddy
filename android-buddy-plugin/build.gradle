@@ -1,4 +1,4 @@
-apply plugin: 'java-gradle-plugin'
+apply plugin: 'java-library'
 apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'kotlin-kapt'
 apply plugin: "com.github.gmazzo.buildconfig"
@@ -9,6 +9,7 @@ ext {
 }
 
 dependencies {
+    api gradleApi()
     implementation project(":$tools_dependency_name")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "com.google.dagger:dagger:$dagger_version"
@@ -42,19 +43,6 @@ buildConfig {
             "ANDROID_BUDDY_TOOLS_URI",
             "\"${project.group}:$tools_dependency_name:${project.version}\""
     )
-}
-
-gradlePlugin {
-    plugins {
-        byteBuddyApp {
-            id = 'android-buddy'
-            implementationClass = 'com.likethesalad.android.buddy.AndroidBuddyPlugin'
-        }
-        byteBuddyLibrary {
-            id = 'android-buddy-library'
-            implementationClass = 'com.likethesalad.android.buddylib.AndroidBuddyLibraryPlugin'
-        }
-    }
 }
 
 kapt {

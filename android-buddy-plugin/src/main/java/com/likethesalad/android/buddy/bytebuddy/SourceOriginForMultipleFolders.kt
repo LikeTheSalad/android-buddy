@@ -2,7 +2,7 @@ package com.likethesalad.android.buddy.bytebuddy
 
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
-import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
+import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.utils.ConcatIterator
 import net.bytebuddy.build.Plugin
 import net.bytebuddy.dynamic.ClassFileLocator

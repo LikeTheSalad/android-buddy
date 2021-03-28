@@ -1,6 +1,6 @@
 package com.likethesalad.android.buddy.bytebuddy
 
-import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
+import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.di.AppScope
 import net.bytebuddy.dynamic.ClassFileLocator
 import java.io.File

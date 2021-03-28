@@ -32,9 +32,7 @@ open class AndroidBuddyPlugin : Plugin<Project>, BuddyPlugin, FileTreeIteratorPr
         androidBuddyExtension = project.extensions.create(EXTENSION_NAME, AndroidBuddyExtension::class.java)
         androidExtension = project.extensions.getByType(BaseExtension::class.java)
         AppInjector.init(this)
-        AppInjector.getCustomConfigurationCreator().createAndroidBuddyConfigurations()
         AppInjector.getDependencyHandlerUtil().addDependencies()
-        AppInjector.getCustomConfigurationVariantSetup().arrangeConfigurationsPerVariant()
 
         androidExtension.registerTransform(AppInjector.getByteBuddyTransform())
     }

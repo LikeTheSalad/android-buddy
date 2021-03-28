@@ -4,6 +4,7 @@ import com.likethesalad.android.buddylib.AndroidBuddyLibraryPlugin
 import com.likethesalad.android.buddylib.providers.AndroidBuddyLibExtensionProvider
 import com.likethesalad.android.buddylib.providers.FileCollectionProvider
 import com.likethesalad.android.buddylib.providers.IncrementalDirProvider
+import com.likethesalad.android.buddylib.providers.ProjectInfoProvider
 import com.likethesalad.android.buddylib.providers.TaskContainerProvider
 import dagger.Module
 import dagger.Provides
@@ -32,6 +33,12 @@ class LibraryModule(private val androidBuddyLibraryPlugin: AndroidBuddyLibraryPl
     @Provides
     @LibraryScope
     fun provideFileCollectionProvider(): FileCollectionProvider {
+        return androidBuddyLibraryPlugin
+    }
+
+    @Provides
+    @LibraryScope
+    fun provideProjectInfoProvider(): ProjectInfoProvider {
         return androidBuddyLibraryPlugin
     }
 }

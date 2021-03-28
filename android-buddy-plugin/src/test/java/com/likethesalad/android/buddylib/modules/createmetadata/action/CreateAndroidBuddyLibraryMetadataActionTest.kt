@@ -1,10 +1,14 @@
 package com.likethesalad.android.buddylib.modules.createmetadata.action
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
-import com.likethesalad.android.buddy.utils.ByteArrayClassLoaderUtil
+import com.likethesalad.android.common.models.libinfo.AndroidBuddyLibraryInfo
+import com.likethesalad.android.common.models.libinfo.LibraryInfoMapper
+import com.likethesalad.android.common.models.libinfo.NamedClassInfo
+import com.likethesalad.android.common.models.libinfo.utils.AndroidBuddyLibraryInfoFqnBuilder
+import com.likethesalad.android.common.utils.ByteArrayClassLoaderUtil
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import com.likethesalad.android.common.utils.Logger
+import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
@@ -23,8 +27,18 @@ class CreateAndroidBuddyLibraryMetadataActionTest : BaseMockable() {
     lateinit var logger: Logger
 
     private val byteArrayClassLoaderUtil = ByteArrayClassLoaderUtil(ByteBuddyClassesInstantiator())
+    private val androidBuddyLibraryInfoFqnBuilder = AndroidBuddyLibraryInfoFqnBuilder()
+    private val infoMapper = LibraryInfoMapper(
+        androidBuddyLibraryInfoFqnBuilder,
+        byteArrayClassLoaderUtil
+    )
     private lateinit var outputDir: File
     private val outputDirName = "android-buddy"
+    private val id = "some-id"
+    private val group = "some.group"
+    private val name = "some-name"
+    private val version = "1.0.1"
+    private val expectedClassName = "some.group.some_name.some_id.library_definition"
 
     @Before
     fun setUp() {
@@ -35,10 +49,10 @@ class CreateAndroidBuddyLibraryMetadataActionTest : BaseMockable() {
     fun `Store multiple plugin class names into a metadata file`() {
         val pluginNames = setOf("some.class.Name", "some.other.class.Name")
 
-        val action = createInstance(pluginNames)
+        val action = createStandardInstance(pluginNames)
         action.execute()
 
-        verifyPluginsSaved(listOf("some.class.Name,some.other.class.Name"))
+        verifyStandardMetadataSaved(setOf("some.class.Name", "some.other.class.Name"))
         verifyCommonSuccessActions(pluginNames)
     }
 
@@ -46,10 +60,10 @@ class CreateAndroidBuddyLibraryMetadataActionTest : BaseMockable() {
     fun `Store empty plugin class names into a metadata file`() {
         val pluginNames = setOf<String>()
 
-        val action = createInstance(pluginNames)
+        val action = createStandardInstance(pluginNames)
         action.execute()
 
-        verifyPluginsSaved(emptyList())
+        verifyStandardMetadataSaved(emptySet())
         verifyCommonSuccessActions(pluginNames)
     }
 
@@ -57,10 +71,10 @@ class CreateAndroidBuddyLibraryMetadataActionTest : BaseMockable() {
     fun `Store one plugin class names into a metadata file`() {
         val pluginNames = setOf("the.one.Class")
 
-        val action = createInstance(pluginNames)
+        val action = createStandardInstance(pluginNames)
         action.execute()
 
-        verifyPluginsSaved(listOf("the.one.Class"))
+        verifyStandardMetadataSaved(setOf("the.one.Class"))
         verifyCommonSuccessActions(pluginNames)
     }
 
@@ -73,7 +87,7 @@ class CreateAndroidBuddyLibraryMetadataActionTest : BaseMockable() {
         Truth.assertThat(outputDir.listFiles()).asList().containsExactly(randomFile)
 
         val pluginNames = setOf("the.one.Class")
-        val action = createInstance(pluginNames)
+        val action = createStandardInstance(pluginNames)
         action.execute()
 
 
@@ -89,22 +103,37 @@ class CreateAndroidBuddyLibraryMetadataActionTest : BaseMockable() {
         }
     }
 
-    private fun verifyPluginsSaved(expectedPlugins: List<String>) {
-        val file = getGeneratedMetadataFile()
-        val loaded = byteArrayClassLoaderUtil.loadClass("plugins_definitions", file.readBytes())
+    private fun verifyStandardMetadataSaved(expectedPlugins: Set<String>) {
+        val info = AndroidBuddyLibraryInfo(id, group, name, version, expectedPlugins.toSet())
+        verifyMetadataSaved(info)
+    }
 
-        Truth.assertThat(expectedPlugins.joinToString(",")).isEqualTo(loaded.newInstance().toString())
+    private fun verifyMetadataSaved(expectedInfo: AndroidBuddyLibraryInfo) {
+        val file = getGeneratedMetadataFile()
+        val loaded = infoMapper.convertToAndroidBuddyLibraryInfo(
+            NamedClassInfo(
+                expectedClassName,
+                file.readBytes()
+            )
+        )
+
+        Truth.assertThat(loaded).isEqualTo(expectedInfo)
     }
 
     private fun getGeneratedMetadataFile(): File {
         val dir = File(outputDir, "META-INF/android-buddy-plugins")
-        return File(dir, "plugins_definitions.class")
+        return File(dir, "$expectedClassName.class")
     }
 
-    private fun createInstance(pluginNames: Set<String>)
+    private fun createStandardInstance(pluginNames: Set<String>): CreateAndroidBuddyLibraryMetadataAction {
+        val info = AndroidBuddyLibraryInfo(id, group, name, version, pluginNames)
+        return createInstance(info)
+    }
+
+    private fun createInstance(info: AndroidBuddyLibraryInfo)
             : CreateAndroidBuddyLibraryMetadataAction {
         return CreateAndroidBuddyLibraryMetadataAction(
-            DirectoryCleaner(), logger, pluginNames, outputDir
+            DirectoryCleaner(), logger, infoMapper, info, outputDir
         )
     }
 }

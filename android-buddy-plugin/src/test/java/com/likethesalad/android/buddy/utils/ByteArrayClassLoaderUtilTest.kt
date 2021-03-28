@@ -1,7 +1,8 @@
 package com.likethesalad.android.buddy.utils
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.buddy.bytebuddy.utils.ByteBuddyClassesInstantiator
+import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
+import com.likethesalad.android.common.utils.ByteArrayClassLoaderUtil
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

@@ -1,20 +1,24 @@
-[ ![Download](https://api.bintray.com/packages/likethesalad/public-repo/android-buddy-plugin/images/download.svg) ](https://bintray.com/likethesalad/public-repo/android-buddy-plugin/_latestVersion)
+
+![version](https://img.shields.io/maven-central/v/com.likethesalad.android/android-buddy-plugin)
 
 # Android Buddy
 
 Table of Contents
 =================
 
-  * [What it is](#what-it-is)
-  * [Why to use Android Buddy](#why-to-use-android-buddy)
-  * [Usage](#usage)
-     * [Consumer usage](#consumer-usage)
-     * [Producer usage](#producer-usage)
-  * [Adding it into your project](#adding-it-into-your-project)
-     * [Changes into your root build gradle file](#changes-into-your-root-build-gradle-file)
-     * [Setting up a consumer project](#setting-up-a-consumer-project)
-     * [Setting up a producer project](#setting-up-a-producer-project)
-  * [License](#license)
+* [What it is](#what-it-is)
+* [Why to use Android Buddy](#why-to-use-android-buddy)
+* [Usage](#usage)
+  * [Consumer usage](#consumer-usage)
+    * [Using your own transformations](#using-your-own-transformations)
+    * [Using Android Buddy libraries transformations](#using-android-buddy-libraries-transformations)
+  * [Producer usage](#producer-usage)
+    * [What's the Android Buddy ID for?](#whats-the-android-buddy-id-for)
+* [Adding it into your project](#adding-it-into-your-project)
+  * [Changes into your root build gradle file](#changes-into-your-root-build-gradle-file)
+  * [Setting up a consumer project](#setting-up-a-consumer-project)
+  * [Setting up a producer project](#setting-up-a-producer-project)
+* [License](#license)
 
 What it is
 ---
@@ -77,24 +81,50 @@ In this example, we created a transformation that intercepts all of the project'
 
 As an optional operation, we're also printing a Gradle log before adding our interceptor to an Activity. The only type of argument that currently Android Buddy supports within a `Plugin` constructor is a Gradle logger (`org.gradle.api.logging.Logger`). It is optional, you can also have an empty constructor in the case that you don't want to print any logs during compile time.
 
-Android Buddy only takes care here of connecting Android compilation to Byte Buddy's API. You can lean more about all of the possible transformations that Byte Buddy allows by looking at its official documentation page: https://bytebuddy.net/#/tutorial
+Android Buddy only takes care of connecting Android compilation to Byte Buddy's API. You can lean more about all of the possible transformations that Byte Buddy allows by looking at its official documentation page: https://bytebuddy.net/#/tutorial
 
-#### Using Android Buddy library transformations
+#### Using Android Buddy libraries transformations
 You can use transformations provided by an Android Buddy library, here is an example of an Android Buddy library: [Aaper](https://github.com/LikeTheSalad/aaper).
 
-In order to use them, by default you simply have to include this library into your Android Buddy-consumer project as any regular dependency, e.g:
+In order to use them, by default you simply have to include those libraries into your Android Buddy-consumer project as any regular dependency, e.g:
 
 ```groovy
 dependencies {
     implementation "the.android.buddy:library:x.y.z"
 }
 ```
-That's it by default, when you compile your project, Android Buddy will apply the exposed transformations of that library.
+That's it by default, when you compile your project, Android Buddy will apply to it the exposed transformations from that library.
 
 #### Configuration for consumer's dependencies
-As mentioned above, by default your consumer project will take all the exposed transformations from any Android Buddy dependency it has, however, sometimes that won't be what you'd want for your project, and you'd rather prefer to explicitly select those libraries you'd like to get their transformations from, or even you'd rather to just ignore all dependencies' transformations altogether. For these mentioned cases, there are configuration parameters that you can change whenever you like to modify the default behavior.
+As mentioned above, by default your consumer project will take all the exposed transformations from any Android Buddy library it has, however, sometimes that won't be what you'd want for your project, and you'd rather prefer to explicitly select those libraries you'd like to get their transformations from, or even you'd rather to just ignore all dependencies' transformations altogether. For these mentioned cases, there are configuration parameters that you can change whenever you like to modify the default behavior.
 
-You can do the following into your consumer's `build.gradle` file in order to configure the way your consumer uses transformations from its dependencies:
+The way you can choose what Android Buddy libraries will be used by your project is by setting up a libraries **scope**. This can be done within your project's `build.gradle` file under the `androidBuddy -> librariesPolicy` block like so:
+
+```groovy
+apply plugin: 'com.android.application' // OR 'com.android.library'
+apply plugin: 'android-buddy'
+
+///...
+
+androidBuddy {
+    librariesPolicy {
+        scope {
+            // Here you can define the scope of libraries you'd like to use.
+            // Setting up a scope is optional as there is one already defined
+            // by default (more details below).
+            type = // The name of the scope.
+            args = // (Optional) Arguments to be used along with the scope type.
+		           // More details below.
+        }
+}
+```
+
+**Available scopes**
+- **UseAll**: This is the default scope, if you don't define any scope within your build.gradle file then what will happen is that your project will use this scope which basically means that **any** Android Buddy library that your project has in it will be taken into account for Byte Buddy transformations on your project classes at compile time.
+- **IgnoreAll**: If you set up this scope, it'd mean that all Android Buddy libraries will be ignored for the Byte Buddy transformation process. Only your local transformations (defined by yourself within your project) will make changes to your project's classes.
+- **UseOnly**: This scope lets you choose which Android Buddy libraries you want your project to use for the Byte Buddy transformation process. You would have to provide a list of Android Buddy libraries IDs along with this scope, which will be the libraries that your project will use.
+
+**Example of how to set up any scope:**
 
 ```groovy
 // Your consumer's build.gradle file
@@ -107,28 +137,24 @@ dependencies {
 }
 //...
 androidBuddy {
-    dependenciesConfig {
-        disableAllTransformations = false /* If TRUE, your consumer will ignore all dependencies'
-        transformations. Default is FALSE.*/
-        alwaysLogTransformationNames = true /* If TRUE, it will always log the names of the
-        dependencies' transformations being applied into your project at compile time.
-        If false, it will show them only if you compile your project using Gradle's '--debug' flag.
-        Default is TRUE.*/
-        strictMode {
-            enabled = false /* If FALSE, it will take into account all Android Buddy libraries added
-            into your consumer project. If true, it will ONLY take into account the transformations from
-            Android Buddy libraries that are defined explicitly using the configuration
-            `androidBuddyImplementation` and/or `androidBuddyApi`. e.g:
-            dependencies {
-                // With strictMode enabled:
-                androidBuddyImplementation "the.android.buddy:library:x.y.z"
-            }
-            With strict mode enabled, any Android Buddy dependency that is not defined with such
-            configuration will be ignored.
-
-            strictMode.enabled is FALSE by default.
-            */
+    librariesPolicy {
+        scope {
+            type = "UseAll" // Default type
         }
+        // Other options are:
+        // scope {
+        //     type = "IgnoreAll" - It won't use any library that has
+        //                          Android Buddy transformations.
+        // }
+        // 
+        // scope {
+        //     type = "UseOnly" - It will only use Android Buddy 
+        //                        transformations from the libraries specified
+        //                        by their IDs in the "args" list.
+        //     args = ["some-lib-id", "some.other.lib.id"] - These are the
+        //.                              libraries which transformations
+        //                               will be used on the consumer project.
+        // }
     }
 }
 ```
@@ -136,7 +162,7 @@ androidBuddy {
 ### Producer usage
 You can make Android Buddy libraries, which will expose their Byte Buddy transformations for an Android Buddy consumer project. In order to do so, you'd have to create an [Android Library](https://developer.android.com/studio/projects/android-library) project and then apply the `android-buddy-library` plugin to it on its `build.gradle` file, as explained below under `Setting up a producer project`.
 
-After setting up your Android Library as an Android Buddy producer, you can start creating as many Byte Buddy Plugin classes (`net.bytebuddy.build.Plugin`) as you like, and then you'd have to explicitly define the ones you'd like to expose for consumers, e.g:
+After setting up your Android Library as an Android Buddy producer, you can start creating as many Byte Buddy Plugin classes (`net.bytebuddy.build.Plugin`) as you like, and then you'd have to explicitly define the ones you'd like to expose for consumers in your library's `build.gradle` file, e.g:
 
 **Example**
 ```kotlin
@@ -169,9 +195,24 @@ apply plugin: 'android-buddy-library'
 
 // ...
 androidBuddyLibrary {
+    id = "my-library-id" // It is mandatory to set a unique ID 
+    // for your library (details below). This will help consumers
+    // to select it for using it with the "UseOnly" scope (explained above 
+    // under "Configuration for consumer's dependencies").
     exposedTransformationNames = ["com.my.transformation.package.MyExposedTransformation"]
 }
 ```
+As you might have noticed, you must also set a **unique ID** for your library. This could be used further by consumers that would want to explicitly select your library to run.
+
+The that ID you choose for your Android Buddy library must meet the following criteria:
+- Only lowercase letters, numbers, `.` and `-` are allowed
+- It must start with a letter.
+- It cannot end neither with `-` nor with `.`
+- There cannot be a consecutive `-` or `.` after a `-` and/or `.`
+
+>#### What's the Android Buddy ID for?
+>The Android Buddy ID is a unique identifier for Android Buddy libraries (producers), which servers as a means for consumers of such libraries to select which libraries to allow making transformations to the consumer's classes. In other words, a consumer can select which libraries to "enable" using their IDs. The way it works is by setting up in the consumer's project a scope of type `UseOnly` along with the list of Android Buddy libraries IDs that said consumer wants to enable. More details above under `Configuration for consumer’s dependencies`.
+
 And that's it, when you add this Android Library as dependency for an Android Buddy consumer project, your library's transformation `MyExposedTransformation` will be available right away for the consumer to use.
 
 For reference purposes, you can take a look at this Android Buddy library: [Aaper](https://github.com/LikeTheSalad/aaper).
@@ -184,23 +225,21 @@ Whether you're planning to set up a producer or consumer project, or both, you'd
 As a first step for both producers and consumers, you'd have to add Android Buddy as a Gradle plugin of your Android project by adding the following line into your `root` `build.gradle`'s buildscript' dependencies:
 
 ```groovy
-classpath "com.likethesalad.android:android-buddy-plugin:0.8.5"
+classpath "com.likethesalad.android:android-buddy-plugin:1.0.1"
 ```
 
 **Example**
 ```groovy
 // root build.gradle file
 buildscript {
-    repositories {
-        jcenter()
-        // OR
-        mavenCentral()
-    }
+  repositories {
+    mavenCentral()
+  }
 
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.+' // Requires Android build plugin version 3.5.4 or higher.
-        classpath "com.likethesalad.android:android-buddy-plugin:0.8.5"
-    }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:3.5.+' // Requires Android build plugin version 3.5.4 or higher.
+    classpath "com.likethesalad.android:android-buddy-plugin:1.0.1"
+  }
 }
 ```
 
