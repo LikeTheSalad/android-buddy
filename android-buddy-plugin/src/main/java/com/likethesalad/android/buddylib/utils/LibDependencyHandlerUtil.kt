@@ -18,6 +18,6 @@ class LibDependencyHandlerUtil
 
     override fun addDependencies() {
         super.addDependencies()
-        addCompileOnly(BYTE_BUDDY_URI)
+        addImplementation(BYTE_BUDDY_URI)
     }
 }

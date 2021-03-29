@@ -19,13 +19,13 @@ open class DependencyHandlerUtil @Inject constructor(
 
     open fun addDependencies() {
         addGradleReleasesRepo()
-        addCompileOnly(SLF4J_API_DEPENDENCY_URI)
-        addCompileOnly(GRADLE_LOGGING_DEPENDENCY_URI)
+        addImplementation(SLF4J_API_DEPENDENCY_URI)
+        addImplementation(GRADLE_LOGGING_DEPENDENCY_URI)
     }
 
-    protected fun addCompileOnly(dependencyUri: String) {
+    protected fun addImplementation(dependencyUri: String) {
         dependencyHandler.add(
-            "compileOnly", dependencyUri
+            "implementation", dependencyUri // todo use compileOnly
         )
     }
 
