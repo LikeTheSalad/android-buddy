@@ -26,6 +26,10 @@ class ByteBuddyClassesInstantiator @Inject constructor() {
         return ClassFileLocator.Compound(locators)
     }
 
+    fun makeClassLoaderClassFileLocator(classLoader: ClassLoader): ClassFileLocator {
+        return ClassFileLocator.ForClassLoader.of(classLoader)
+    }
+
     fun makeSourceElementForFile(root: File, file: File): Plugin.Engine.Source.Element {
         return Plugin.Engine.Source.Element.ForFile(root, file)
     }

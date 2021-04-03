@@ -6,6 +6,7 @@ import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
+import net.bytebuddy.ByteBuddy
 import net.bytebuddy.dynamic.ClassFileLocator
 import org.junit.Before
 import org.junit.Test
@@ -30,10 +31,14 @@ class ClassFileLocatorMakerTest : BaseMockable() {
         val dir3 = createDirectoryAndLocatorMock()
         val file1 = createFileAndLocatorMock()
         val file2 = createFileAndLocatorMock()
+        val classLoaderLocator = mockk<ClassFileLocator>()
         val dirs = listOf(dir1.fileOrDir, dir2.fileOrDir, dir3.fileOrDir)
         val files = listOf(file1.fileOrDir, file2.fileOrDir)
         val all = (dirs + files).toSet()
         val expectedResult = mockk<ClassFileLocator>()
+        every {
+            byteBuddyClassesInstantiator.makeClassLoaderClassFileLocator(ByteBuddy::class.java.classLoader)
+        }.returns(classLoaderLocator)
         every { byteBuddyClassesInstantiator.makeCompoundClassFileLocator(any()) }.returns(expectedResult)
 
         val result = classFileLocatorMaker.make(all)
@@ -43,7 +48,7 @@ class ClassFileLocatorMakerTest : BaseMockable() {
             byteBuddyClassesInstantiator.makeCompoundClassFileLocator(
                 listOf(
                     dir1.expectedLocator, dir2.expectedLocator, dir3.expectedLocator,
-                    file1.expectedLocator, file2.expectedLocator
+                    file1.expectedLocator, file2.expectedLocator, classLoaderLocator
                 )
             )
         }
