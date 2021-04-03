@@ -18,6 +18,6 @@ class AppDependencyHandlerUtil
 
     override fun addDependencies() {
         super.addDependencies()
-        addImplementation(ANDROID_BUDDY_TOOLS_DEPENDENCY_URI)
+        addCompileOnly(ANDROID_BUDDY_TOOLS_DEPENDENCY_URI)
     }
 }
