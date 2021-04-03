@@ -225,7 +225,7 @@ Whether you're planning to set up a producer or consumer project, or both, you'd
 As a first step for both producers and consumers, you'd have to add Android Buddy as a Gradle plugin of your Android project by adding the following line into your `root` `build.gradle`'s buildscript' dependencies:
 
 ```groovy
-classpath "com.likethesalad.android:android-buddy-plugin:1.0.2"
+classpath "com.likethesalad.android:android-buddy-plugin:1.0.3"
 ```
 
 **Example**
@@ -238,13 +238,13 @@ buildscript {
 
   dependencies {
     classpath 'com.android.tools.build:gradle:3.5.+' // Requires Android build plugin version 3.5.4 or higher.
-    classpath "com.likethesalad.android:android-buddy-plugin:1.0.2"
+    classpath "com.likethesalad.android:android-buddy-plugin:1.0.3"
   }
 }
 ```
 
 ### Setting up a consumer project
-After adding the required changes into your `root` `build.gradle` file as explained above, then you can go into your project's `build.gradle` file, for example `app/build.gradle`, and then add the following to it:
+After adding the required changes into your `root` `build.gradle` file [as explained above](#changes-into-your-root-build-gradle-file), then you can go into your project's `build.gradle` file, for example `app/build.gradle`, and then add the following to it:
 
 ```groovy
 // Your consumer's build.gradle file
@@ -256,7 +256,7 @@ Both, Android applications and Android libraries can be Android Buddy consumers.
 And that's it, after adding `android-buddy` as a plugin for your project, you can now make it consume Byte Buddy transformations as explained above under `Consumer usage`.
 
 ### Setting up a producer project
-After adding the required changes into your `root` `build.gradle` file as explained above, then you can go into your project's `build.gradle` file, for example `myLibrary/build.gradle`, and then add the following to it:
+After adding the required changes into your `root` `build.gradle` file [as explained above](#changes-into-your-root-build-gradle-file), then you can go into your project's `build.gradle` file, for example `myLibrary/build.gradle`, and then add the following to it:
 
 ```groovy
 // Your producer's build.gradle file
