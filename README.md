@@ -13,7 +13,7 @@ Table of Contents
     * [Using your own transformations](#using-your-own-transformations)
     * [Using Android Buddy libraries transformations](#using-android-buddy-libraries-transformations)
   * [Producer usage](#producer-usage)
-    * [What's the Android Buddy ID for?](#whats-the-android-buddy-id-for)
+    * [What's the Android Buddy library ID for?](#whats-the-android-buddy-library-id-for)
 * [Adding it into your project](#adding-it-into-your-project)
   * [Changes into your root build gradle file](#changes-into-your-root-build-gradle-file)
   * [Setting up a consumer project](#setting-up-a-consumer-project)
@@ -210,8 +210,8 @@ The that ID you choose for your Android Buddy library must meet the following cr
 - It cannot end neither with `-` nor with `.`
 - There cannot be a consecutive `-` or `.` after a `-` and/or `.`
 
->#### What's the Android Buddy ID for?
->The Android Buddy ID is a unique identifier for Android Buddy libraries (producers), which provides a way to consumers of such libraries to select (if they want to, since by default all Android Buddy libraries are enabled) which libraries to allow making transformations to the consumer's classes. In other words, a consumer can select which libraries to "enable" using their IDs. The way it works is by setting up in the consumer's project a scope of type `UseOnly` along with the list of Android Buddy libraries IDs that said consumer wants to enable. More details above under `Configuration for consumer’s dependencies`.
+>#### What's the Android Buddy library ID for?
+>The Android Buddy library ID is a unique identifier for Android Buddy libraries (producers), which provides a way to consumers of such libraries to select (if they want to, since by default all Android Buddy libraries are enabled) which libraries to allow making transformations to the consumer's classes. In other words, a consumer can select which libraries to "enable" using their IDs. The way it works is by setting up in the consumer's project a scope of type `UseOnly` along with the list of Android Buddy libraries IDs that said consumer wants to enable. More details above under `Configuration for consumer’s dependencies`.
 
 And that's it, when you add this Android Library as dependency for an Android Buddy consumer project, your library's transformation `MyExposedTransformation` will be available right away for the consumer to use.
 
