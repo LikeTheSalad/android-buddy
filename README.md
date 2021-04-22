@@ -211,7 +211,7 @@ The that ID you choose for your Android Buddy library must meet the following cr
 - There cannot be a consecutive `-` or `.` after a `-` and/or `.`
 
 >#### What's the Android Buddy ID for?
->The Android Buddy ID is a unique identifier for Android Buddy libraries (producers), which servers as a means for consumers of such libraries to select (if they want to, since by default all Android Buddy libraries are enabled) which libraries to allow making transformations to the consumer's classes. In other words, a consumer can select which libraries to "enable" using their IDs. The way it works is by setting up in the consumer's project a scope of type `UseOnly` along with the list of Android Buddy libraries IDs that said consumer wants to enable. More details above under `Configuration for consumer’s dependencies`.
+>The Android Buddy ID is a unique identifier for Android Buddy libraries (producers), which provides a way to consumers of such libraries to select (if they want to, since by default all Android Buddy libraries are enabled) which libraries to allow making transformations to the consumer's classes. In other words, a consumer can select which libraries to "enable" using their IDs. The way it works is by setting up in the consumer's project a scope of type `UseOnly` along with the list of Android Buddy libraries IDs that said consumer wants to enable. More details above under `Configuration for consumer’s dependencies`.
 
 And that's it, when you add this Android Library as dependency for an Android Buddy consumer project, your library's transformation `MyExposedTransformation` will be available right away for the consumer to use.
 
