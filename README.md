@@ -204,7 +204,7 @@ androidBuddyLibrary {
 ```
 As you might have noticed, you must also set a **unique ID** for your library. This could be used further by consumers that would want to explicitly select your library to run.
 
-The that ID you choose for your Android Buddy library must meet the following criteria:
+The ID you choose for your Android Buddy library must meet the following criteria:
 - Only lowercase letters, numbers, `.` and `-` are allowed
 - It must start with a letter.
 - It cannot end neither with `-` nor with `.`
