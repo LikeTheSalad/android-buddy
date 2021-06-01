@@ -1,18 +1,18 @@
 package com.likethesalad.android.buddy.utils
 
 import net.bytebuddy.build.Plugin
-import javax.net.ssl.HttpsURLConnection
-import kotlin.jvm.javaClass
 
-class ElementsIterator(iterators: MutableList<out Iterator<Plugin.Engine.Source.Element>>) : ConcatIterator<Plugin.Engine.Source.Element>(iterators) {
-    var nextElement: Plugin.Engine.Source.Element? = null
+class SourceElementsIterator(
+    iterators: MutableList<out Iterator<Plugin.Engine.Source.Element>>,
+    private val excludePrefixes: Set<String>
+) : ConcatIterator<Plugin.Engine.Source.Element>(iterators) {
+    private var nextElement: Plugin.Engine.Source.Element? = null
 
     override fun hasNext(): Boolean {
         if (nextElement == null) {
-            var element: Plugin.Engine.Source.Element?
             while (super.hasNext()) {
-                element = super.next()
-                if (!element.name.startsWith("META-INF")) {
+                val element = super.next()
+                if (excludePrefixes.isEmpty() || excludePrefixes.none { element.name.startsWith(it) }) {
                     nextElement = element
                     return true
                 }
@@ -28,17 +28,8 @@ class ElementsIterator(iterators: MutableList<out Iterator<Plugin.Engine.Source.
         hasNext()
 
         val tmp = nextElement
-
-
-        return tmp ?: -1
-        if(tmp != null){
-            return tmp
-        } else {
-
-        }
-         as T
         nextElement = null
-        return tmp
+        return tmp ?: throw IllegalStateException("no next source element available")
     }
 
     override fun remove() {

@@ -17,6 +17,7 @@ import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProvide
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.FilesHolder
+import com.likethesalad.android.buddy.utils.SourceElementsIterator
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import com.likethesalad.android.common.utils.android.AndroidExtensionDataProvider
 import com.likethesalad.android.common.utils.android.AndroidVariantDataProvider
@@ -105,6 +106,12 @@ class ByteBuddyTransformTest : BaseMockable() {
         every { androidExtensionDataProvider.getBootClasspath() }.returns(androidBoothClasspath)
         every { androidVariantDataProvider.getJavaTargetCompatibilityVersion() }.returns(javaTargetVersion)
         every { pluginEngineProvider.makeEngine(javaTargetVersion) }.returns(pluginEngine)
+        every { androidBuddyPluginConfiguration.getTransformationScope() }.returns(mutableSetOf(
+            QualifiedContent.Scope.PROJECT,
+            QualifiedContent.Scope.SUB_PROJECTS,
+            QualifiedContent.Scope.EXTERNAL_LIBRARIES
+        ))
+        every { androidBuddyPluginConfiguration.getExcludePrefixes() }.returns(emptySet())
         byteBuddyTransform = ByteBuddyTransform(
             classFileLocatorMaker,
             pluginFactoriesProvider,
@@ -137,7 +144,9 @@ class ByteBuddyTransformTest : BaseMockable() {
     @Test
     fun `Get scopes`() {
         Truth.assertThat(byteBuddyTransform.scopes).containsExactly(
-            QualifiedContent.Scope.PROJECT
+            QualifiedContent.Scope.PROJECT,
+            QualifiedContent.Scope.SUB_PROJECTS,
+            QualifiedContent.Scope.EXTERNAL_LIBRARIES
         )
     }
 
@@ -175,11 +184,12 @@ class ByteBuddyTransformTest : BaseMockable() {
         val allFiles = folders + jarFiles
         val outputFolder = mockk<File>()
         val filesHolder = mockk<FilesHolder>()
-        val transformScopes = mutableSetOf(QualifiedContent.Scope.PROJECT)
+        val transformScopes = mutableSetOf(QualifiedContent.Scope.PROJECT, QualifiedContent.Scope.SUB_PROJECTS, QualifiedContent.Scope.EXTERNAL_LIBRARIES)
         val classFileLocator = mockk<ClassFileLocator>()
         val compoundSource = mockk<CompoundSource>()
         val jarOrigin1 = mockk<Plugin.Engine.Source.Origin.ForJarFile>()
         val jarOrigin2 = mockk<Plugin.Engine.Source.Origin.ForJarFile>()
+        val originIterator = mockk<SourceElementsIterator>()
         val foldersOrigin = mockk<SourceOriginForMultipleFolders>()
         val javaClasspathFile1 = mockk<File>()
         val javaClasspathFile2 = mockk<File>()
@@ -204,10 +214,13 @@ class ByteBuddyTransformTest : BaseMockable() {
         every { filesHolder.allFiles }.returns(allFiles)
         every { classFileLocatorMaker.make(extraClasspath) }.returns(classFileLocator)
         every { sourceOriginForMultipleFoldersFactory.create(folders) }.returns(foldersOrigin)
+        every { jarOrigin1.iterator()}.returns(originIterator)
+        every { jarOrigin2.iterator()}.returns(originIterator)
+        every { originIterator.hasNext()}.returns(true)
         every { byteBuddyClassesInstantiator.makeJarFileSourceOrigin(jarFile1) }.returns(jarOrigin1)
         every { byteBuddyClassesInstantiator.makeJarFileSourceOrigin(jarFile2) }.returns(jarOrigin2)
         every {
-            compoundSourceFactory.create(setOf(foldersOrigin, jarOrigin1, jarOrigin2))
+            compoundSourceFactory.create(setOf(foldersOrigin, jarOrigin1, jarOrigin2), emptySet())
         }.returns(compoundSource)
         every { byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder) }.returns(target)
         every { pluginEngine.with(any<ClassFileLocator>()) }.returns(pluginEngine)

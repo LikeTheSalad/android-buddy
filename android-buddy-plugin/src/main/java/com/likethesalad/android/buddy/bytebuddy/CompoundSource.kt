@@ -4,6 +4,7 @@ import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
 import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.utils.ConcatIterator
+import com.likethesalad.android.buddy.utils.SourceElementsIterator
 import net.bytebuddy.build.Plugin
 import net.bytebuddy.dynamic.ClassFileLocator
 import java.util.jar.Manifest
@@ -11,7 +12,8 @@ import java.util.jar.Manifest
 @AutoFactory
 class CompoundSource(
     @Provided byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator,
-    private val sourceOrigins: Set<Plugin.Engine.Source.Origin>
+    private val sourceOrigins: Set<Plugin.Engine.Source.Origin>,
+    private val excludePrefixes: Set<String>
 ) : Plugin.Engine.Source,
     Plugin.Engine.Source.Origin {
 
@@ -24,9 +26,9 @@ class CompoundSource(
     override fun getManifest(): Manifest? = Plugin.Engine.Source.Origin.NO_MANIFEST
 
     override fun iterator(): MutableIterator<Plugin.Engine.Source.Element> {
-        return ConcatIterator(sourceOrigins.map {
+        return SourceElementsIterator(sourceOrigins.map {
             it.iterator()
-        }.toMutableList())
+        }.toMutableList(), excludePrefixes)
     }
 
     override fun close() {
