@@ -1,5 +1,6 @@
 package com.likethesalad.android.common.utils.bytebuddy
 
+import net.bytebuddy.ByteBuddy
 import net.bytebuddy.ClassFileVersion
 import net.bytebuddy.build.EntryPoint
 import net.bytebuddy.build.Plugin
@@ -42,8 +43,8 @@ class ByteBuddyClassesInstantiator @Inject constructor() {
         return Plugin.Engine.Target.ForFolder(folder)
     }
 
-    fun makeDefaultEntryPoint(): EntryPoint.Default {
-        return EntryPoint.Default.REBASE
+    fun makeByteBuddy(classFileVersion: ClassFileVersion?): ByteBuddy {
+        return ByteBuddy(classFileVersion)
     }
 
     fun makeClassFileVersionOfJavaVersion(javaVersion: Int): ClassFileVersion {
