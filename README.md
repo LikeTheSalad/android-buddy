@@ -267,6 +267,59 @@ Only Android libraries can be Android Buddy producers.
 
 And that's it, after adding `android-buddy-library` as a plugin for your project, you can now make it expose Byte Buddy transformations as explained above under `Producer usage`.
 
+### Advanced configuration
+By default, Android Buddy can only apply transformations to the host project's classes. However,
+there's a way to configure it in order to transform the host project's dependencies classes too as pointed out below,
+although before enabling dependencies' transformations you should know about the downsides and limitations
+of doing so:
+
+> - Classes that [belong into the Android SDK](https://developer.android.com/reference/classes) can't get modified:
+>   This is due to the way Android works, these classes are built into the OS, so the ones you see in your project
+>   are not actually the ones that will get used in the device when your app is running.
+> - Android Libraries cannot transform their libraries' classes: This is a limitation in the Android Build plugin 
+>   [Transform API](https://sites.google.com/a/android.com/tools/tech-docs/new-build-system/transform-api) which is the one this plugin is built on since it's the official way provided by Google to
+>   transform an android project's classes. So in other words, if your project is an Android Library, it can only use this plugin
+>   to transform its own classes, but not the classes of its dependencies.
+> - Your compilation time could increase by enabling dependencies' transformations, as now Buyte Buddy will iterate not only 
+>   through your own project classes, but also through your dependencies' ones.
+
+#### Alternatives to enabling dependencies' transformations
+Depending on the use case you want to address by enabling dependencies transformations, you might be able of avoding
+doing so, while still accomplishing your goals, by following the suggestions below:
+- If you want to transform a class from a library that tends to be used as a base class for your own ones
+  (such as an Activity for example) you could instead create a Byte Buddy transformation that transforms all of your
+  own classes that extend from said class, which is what [Aaper](https://github.com/LikeTheSalad/aaper) does with 
+  Activities for example. You can see more details in the
+  "com.likethesalad.android.aaper.defaults.transformations.ActivityTransformation" class there for more details.
+- If you want to transform a library class that you don't extend from, such as the "android.util.Log" one, you
+  should consider instead wrapping said class within your own class and then add there all the code you need, maybe without
+  having to transform it. This is a good practice that will prevent you from spreading a foreign class across your 
+  project which will in turn give you more power to replace the library you're using in te future if needed (not the 
+  Android SDK one but any other third party lib) and/or to be able of quickly adapt your project to any of said library's
+  breaking changes, if any, in future releases.
+  
+#### Configuration to enable dependencies transformations
+If none of the suggestions above provided suits your needs, then you could enable
+dependencies transformations for your consumer project (a project with the plugin `android-buddy` applied)
+by doing the following:
+
+```groovy
+androidBuddy {
+  transformationScope {
+    scope = 'ALL'
+    // The scopes available right now are:
+    // - PROJECT: This is the default one, with this scope only the consumer's classes are transformable.
+    // - ALL: This will transform both your project and your project dependencies' classes.
+    
+    // This param "excludePrefixes" allows you to define a list of path-like prefixes to avoid transforming any class
+    // located within a path that starts with them.
+    excludePrefixes = [
+            'META-INF/android-buddy-plugins'
+    ]
+  }
+}
+```
+
 License
 ---
     MIT License
