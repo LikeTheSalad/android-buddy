@@ -2,5 +2,5 @@ package com.likethesalad.android.buddy.configuration
 
 enum class TransformationScopeType {
     PROJECT,
-    DEPENDENCIES
+    ALL
 }

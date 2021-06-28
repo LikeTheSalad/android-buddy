@@ -28,7 +28,7 @@ class AndroidBuddyPluginConfiguration
     fun getTransformationScope(): MutableSet<in QualifiedContent.Scope> {
         val scope = transformationScope.scope.getOrElse(TransformationScopeType.PROJECT.name)
         return when (scope.toUpperCase()) {
-            TransformationScopeType.DEPENDENCIES.name -> mutableSetOf(QualifiedContent.Scope.PROJECT, QualifiedContent.Scope.SUB_PROJECTS, QualifiedContent.Scope.EXTERNAL_LIBRARIES)
+            TransformationScopeType.ALL.name -> mutableSetOf(QualifiedContent.Scope.PROJECT, QualifiedContent.Scope.SUB_PROJECTS, QualifiedContent.Scope.EXTERNAL_LIBRARIES)
             else -> mutableSetOf(QualifiedContent.Scope.PROJECT)
         }
     }
