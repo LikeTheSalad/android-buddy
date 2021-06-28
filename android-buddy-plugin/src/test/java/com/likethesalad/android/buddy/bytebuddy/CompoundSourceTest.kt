@@ -30,7 +30,7 @@ class CompoundSourceTest : BaseMockable() {
     @Before
     fun setUp() {
         origins = setOf(origin1, origin2)
-        compoundSource = CompoundSource(byteBuddyClassesInstantiator, origins)
+        compoundSource = CompoundSource(byteBuddyClassesInstantiator, origins, emptySet())
     }
 
     @Test
