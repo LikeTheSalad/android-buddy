@@ -18,6 +18,7 @@ Table of Contents
   * [Changes into your root build gradle file](#changes-into-your-root-build-gradle-file)
   * [Setting up a consumer project](#setting-up-a-consumer-project)
   * [Setting up a producer project](#setting-up-a-producer-project)
+  * [Advanced configuration](#advanced-configuration)
 * [License](#license)
 
 What it is
