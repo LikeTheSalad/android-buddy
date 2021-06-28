@@ -106,11 +106,13 @@ class ByteBuddyTransformTest : BaseMockable() {
         every { androidExtensionDataProvider.getBootClasspath() }.returns(androidBoothClasspath)
         every { androidVariantDataProvider.getJavaTargetCompatibilityVersion() }.returns(javaTargetVersion)
         every { pluginEngineProvider.makeEngine(javaTargetVersion) }.returns(pluginEngine)
-        every { androidBuddyPluginConfiguration.getTransformationScope() }.returns(mutableSetOf(
-            QualifiedContent.Scope.PROJECT,
-            QualifiedContent.Scope.SUB_PROJECTS,
-            QualifiedContent.Scope.EXTERNAL_LIBRARIES
-        ))
+        every { androidBuddyPluginConfiguration.getTransformationScope() }.returns(
+            mutableSetOf(
+                QualifiedContent.Scope.PROJECT,
+                QualifiedContent.Scope.SUB_PROJECTS,
+                QualifiedContent.Scope.EXTERNAL_LIBRARIES
+            )
+        )
         every { androidBuddyPluginConfiguration.getExcludePrefixes() }.returns(emptySet())
         byteBuddyTransform = ByteBuddyTransform(
             classFileLocatorMaker,
@@ -161,13 +163,25 @@ class ByteBuddyTransformTest : BaseMockable() {
     @Test
     fun `Get map with config hashes`() {
         val librariesScope = mockk<LibrariesScope>()
-        val hash = 1
-        every { librariesScope.hashCode() }.returns(hash)
+        val transformationScope = mockk<MutableSet<in QualifiedContent.Scope>>()
+        val excludePrefixes = mockk<Set<String>>()
+        val librariesScopeHash = 1
+        val transformationScopeHash = 2
+        val excludePrefixesHash = 3
+        every { librariesScope.hashCode() }.returns(librariesScopeHash)
+        every { transformationScope.hashCode() }.returns(transformationScopeHash)
+        every { excludePrefixes.hashCode() }.returns(excludePrefixesHash)
         every { androidBuddyPluginConfiguration.getLibrariesScope() }.returns(librariesScope)
+        every { androidBuddyPluginConfiguration.getTransformationScope() }.returns(transformationScope)
+        every { androidBuddyPluginConfiguration.getExcludePrefixes() }.returns(excludePrefixes)
 
         val result = byteBuddyTransform.parameterInputs
 
-        Truth.assertThat(result).containsExactly("librariesScopeHash", hash)
+        Truth.assertThat(result).containsExactly(
+            "librariesScopeHash", librariesScopeHash,
+            "transformationScopeHash", transformationScopeHash,
+            "excludePrefixesScopeHash", excludePrefixesHash
+        )
     }
 
     @Test
@@ -184,7 +198,11 @@ class ByteBuddyTransformTest : BaseMockable() {
         val allFiles = folders + jarFiles
         val outputFolder = mockk<File>()
         val filesHolder = mockk<FilesHolder>()
-        val transformScopes = mutableSetOf(QualifiedContent.Scope.PROJECT, QualifiedContent.Scope.SUB_PROJECTS, QualifiedContent.Scope.EXTERNAL_LIBRARIES)
+        val transformScopes = mutableSetOf(
+            QualifiedContent.Scope.PROJECT,
+            QualifiedContent.Scope.SUB_PROJECTS,
+            QualifiedContent.Scope.EXTERNAL_LIBRARIES
+        )
         val classFileLocator = mockk<ClassFileLocator>()
         val compoundSource = mockk<CompoundSource>()
         val jarOrigin1 = mockk<Plugin.Engine.Source.Origin.ForJarFile>()
@@ -214,9 +232,9 @@ class ByteBuddyTransformTest : BaseMockable() {
         every { filesHolder.allFiles }.returns(allFiles)
         every { classFileLocatorMaker.make(extraClasspath) }.returns(classFileLocator)
         every { sourceOriginForMultipleFoldersFactory.create(folders) }.returns(foldersOrigin)
-        every { jarOrigin1.iterator()}.returns(originIterator)
-        every { jarOrigin2.iterator()}.returns(originIterator)
-        every { originIterator.hasNext()}.returns(true)
+        every { jarOrigin1.iterator() }.returns(originIterator)
+        every { jarOrigin2.iterator() }.returns(originIterator)
+        every { originIterator.hasNext() }.returns(true)
         every { byteBuddyClassesInstantiator.makeJarFileSourceOrigin(jarFile1) }.returns(jarOrigin1)
         every { byteBuddyClassesInstantiator.makeJarFileSourceOrigin(jarFile2) }.returns(jarOrigin2)
         every {
