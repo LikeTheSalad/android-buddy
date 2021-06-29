@@ -2,10 +2,12 @@ package com.likethesalad.android.buddy.utils
 
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkipPolicy
+import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkippedStrategy
 import com.likethesalad.android.testutils.BaseMockable
 import com.likethesalad.android.testutils.MockUtils.createSourceElementMock
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import net.bytebuddy.build.Plugin
 import org.junit.Before
 import org.junit.Test
@@ -14,6 +16,9 @@ class SourceElementsIteratorTest : BaseMockable() {
 
     @MockK
     lateinit var skipPolicy: SourceElementTransformationSkipPolicy
+
+    @MockK
+    lateinit var skippedStrategy: SourceElementTransformationSkippedStrategy
 
     @Before
     fun setUp() {
@@ -61,6 +66,10 @@ class SourceElementsIteratorTest : BaseMockable() {
 
         Truth.assertThat(getItemNamesFromIterator(iterator))
             .containsExactly("item1_1", "item3_2", "item4_1")
+        verify {
+            skippedStrategy.onTransformationSkipped(skipItem1_2)
+            skippedStrategy.onTransformationSkipped(skipItem3_1)
+        }
     }
 
     private fun getItemNamesFromIterator(iterator: SourceElementsIterator): List<String> {
@@ -75,7 +84,7 @@ class SourceElementsIteratorTest : BaseMockable() {
     private fun createSourceElementsIterator(
         iterators: MutableList<out Iterator<Plugin.Engine.Source.Element>>
     ): SourceElementsIterator {
-        return SourceElementsIterator(iterators, skipPolicy)
+        return SourceElementsIterator(iterators, skipPolicy, skippedStrategy)
     }
 
     private fun createIteratorOfSourceElementsWithNames(vararg names: String): Iterator<Plugin.Engine.Source.Element> {

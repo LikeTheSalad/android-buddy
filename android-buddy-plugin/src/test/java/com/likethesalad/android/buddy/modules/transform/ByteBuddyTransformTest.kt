@@ -15,6 +15,8 @@ import com.likethesalad.android.buddy.configuration.libraries.scope.LibrariesSco
 import com.likethesalad.android.buddy.modules.transform.utils.PluginFactoriesProvider
 import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkipPolicy
 import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkipPolicyFactory
+import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkippedStrategy
+import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkippedStrategyFactory
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProvider
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
@@ -98,6 +100,12 @@ class ByteBuddyTransformTest : BaseMockable() {
     @MockK
     lateinit var sourceElementTransformationSkipPolicy: SourceElementTransformationSkipPolicy
 
+    @MockK
+    lateinit var sourceElementTransformationSkippedStrategyFactory: SourceElementTransformationSkippedStrategyFactory
+
+    @MockK
+    lateinit var sourceElementTransformationSkippedStrategy: SourceElementTransformationSkippedStrategy
+
     private val variantName = "someName"
     private val javaTargetVersion = 8
     private val excludePrefixes = setOf("prefix1", "prefix2")
@@ -140,7 +148,8 @@ class ByteBuddyTransformTest : BaseMockable() {
             androidExtensionDataProvider,
             defaultLibrariesJarsProviderFactory,
             androidBuddyPluginConfiguration,
-            sourceElementTransformationSkipPolicyFactory
+            sourceElementTransformationSkipPolicyFactory,
+            sourceElementTransformationSkippedStrategyFactory
         )
     }
 
@@ -240,6 +249,9 @@ class ByteBuddyTransformTest : BaseMockable() {
         every {
             transformInvocationDataExtractor.getOutputFolder(transformScopes)
         }.returns(outputFolder)
+        every {
+            sourceElementTransformationSkippedStrategyFactory.create(outputFolder)
+        }.returns(sourceElementTransformationSkippedStrategy)
         every { filesHolder.dirFiles }.returns(folders)
         every { filesHolder.jarFiles }.returns(jarFiles)
         every { filesHolder.allFiles }.returns(allFiles)
@@ -252,7 +264,8 @@ class ByteBuddyTransformTest : BaseMockable() {
         every { byteBuddyClassesInstantiator.makeJarFileSourceOrigin(jarFile2) }.returns(jarOrigin2)
         every {
             compoundSourceFactory.create(
-                setOf(foldersOrigin, jarOrigin1, jarOrigin2), sourceElementTransformationSkipPolicy
+                setOf(foldersOrigin, jarOrigin1, jarOrigin2),
+                sourceElementTransformationSkipPolicy, sourceElementTransformationSkippedStrategy
             )
         }.returns(compoundSource)
         every { byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder) }.returns(target)

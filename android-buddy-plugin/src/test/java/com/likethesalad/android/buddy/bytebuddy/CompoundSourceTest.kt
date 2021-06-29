@@ -2,6 +2,7 @@ package com.likethesalad.android.buddy.bytebuddy
 
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkipPolicy
+import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkippedStrategy
 import com.likethesalad.android.buddy.utils.ConcatIterator
 import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import com.likethesalad.android.testutils.BaseMockable
@@ -27,6 +28,9 @@ class CompoundSourceTest : BaseMockable() {
     @MockK
     lateinit var sourceElementTransformationSkipPolicy: SourceElementTransformationSkipPolicy
 
+    @MockK
+    lateinit var sourceElementTransformationSkippedStrategy: SourceElementTransformationSkippedStrategy
+
     private lateinit var origins: Set<Plugin.Engine.Source.Origin>
 
     private lateinit var compoundSource: CompoundSource
@@ -34,7 +38,12 @@ class CompoundSourceTest : BaseMockable() {
     @Before
     fun setUp() {
         origins = setOf(origin1, origin2)
-        compoundSource = CompoundSource(byteBuddyClassesInstantiator, origins, sourceElementTransformationSkipPolicy)
+        compoundSource = CompoundSource(
+            byteBuddyClassesInstantiator,
+            origins,
+            sourceElementTransformationSkipPolicy,
+            sourceElementTransformationSkippedStrategy
+        )
     }
 
     @Test

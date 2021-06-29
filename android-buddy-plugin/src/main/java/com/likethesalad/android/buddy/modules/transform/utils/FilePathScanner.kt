@@ -1,10 +1,10 @@
 package com.likethesalad.android.buddy.modules.transform.utils
 
+import com.likethesalad.android.buddy.di.AppScope
 import java.io.File
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@AppScope
 class FilePathScanner @Inject constructor() {
 
     fun scanFilePath(path: String): FileInfo {
