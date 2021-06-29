@@ -11,6 +11,7 @@ import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFa
 import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.modules.transform.utils.PluginFactoriesProvider
+import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkipPolicyFactory
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.FilesHolder
@@ -37,7 +38,8 @@ class ByteBuddyTransform @Inject constructor(
     private val androidVariantDataProviderFactory: AndroidVariantDataProviderFactory,
     private val androidExtensionDataProvider: AndroidExtensionDataProvider,
     private val defaultLibrariesJarsProviderFactory: DefaultLibrariesJarsProviderFactory,
-    private val androidBuddyPluginConfiguration: AndroidBuddyPluginConfiguration
+    private val androidBuddyPluginConfiguration: AndroidBuddyPluginConfiguration,
+    private val sourceElementTransformationSkipPolicyFactory: SourceElementTransformationSkipPolicyFactory
 ) : Transform() {
 
     override fun getName(): String = "androidBuddy"
@@ -93,9 +95,7 @@ class ByteBuddyTransform @Inject constructor(
             )
     }
 
-    private fun getCompoundSource(
-        scopeClasspath: FilesHolder
-    ): CompoundSource {
+    private fun getCompoundSource(scopeClasspath: FilesHolder): CompoundSource {
 
         val origins = mutableSetOf<Plugin.Engine.Source.Origin>()
         origins.add(sourceOriginForMultipleFoldersFactory.create(scopeClasspath.dirFiles))
@@ -106,7 +106,10 @@ class ByteBuddyTransform @Inject constructor(
             }
         }
 
-        return compoundSourceFactory.create(origins, androidBuddyPluginConfiguration.getExcludePrefixes())
+        return compoundSourceFactory.create(
+            origins,
+            sourceElementTransformationSkipPolicyFactory.create(androidBuddyPluginConfiguration.getExcludePrefixes())
+        )
     }
 
 

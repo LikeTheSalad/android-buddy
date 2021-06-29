@@ -13,6 +13,8 @@ import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFa
 import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.configuration.libraries.scope.LibrariesScope
 import com.likethesalad.android.buddy.modules.transform.utils.PluginFactoriesProvider
+import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkipPolicy
+import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkipPolicyFactory
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProvider
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
@@ -90,8 +92,15 @@ class ByteBuddyTransformTest : BaseMockable() {
     @MockK
     lateinit var androidBuddyPluginConfiguration: AndroidBuddyPluginConfiguration
 
+    @MockK
+    lateinit var sourceElementTransformationSkipPolicyFactory: SourceElementTransformationSkipPolicyFactory
+
+    @MockK
+    lateinit var sourceElementTransformationSkipPolicy: SourceElementTransformationSkipPolicy
+
     private val variantName = "someName"
     private val javaTargetVersion = 8
+    private val excludePrefixes = setOf("prefix1", "prefix2")
     private lateinit var androidBoothClasspath: List<File>
     private lateinit var byteBuddyTransform: ByteBuddyTransform
 
@@ -106,6 +115,9 @@ class ByteBuddyTransformTest : BaseMockable() {
         every { androidExtensionDataProvider.getBootClasspath() }.returns(androidBoothClasspath)
         every { androidVariantDataProvider.getJavaTargetCompatibilityVersion() }.returns(javaTargetVersion)
         every { pluginEngineProvider.makeEngine(javaTargetVersion) }.returns(pluginEngine)
+        every {
+            sourceElementTransformationSkipPolicyFactory.create(excludePrefixes)
+        }.returns(sourceElementTransformationSkipPolicy)
         every { androidBuddyPluginConfiguration.getTransformationScope() }.returns(
             mutableSetOf(
                 QualifiedContent.Scope.PROJECT,
@@ -113,7 +125,7 @@ class ByteBuddyTransformTest : BaseMockable() {
                 QualifiedContent.Scope.EXTERNAL_LIBRARIES
             )
         )
-        every { androidBuddyPluginConfiguration.getExcludePrefixes() }.returns(emptySet())
+        every { androidBuddyPluginConfiguration.getExcludePrefixes() }.returns(excludePrefixes)
         byteBuddyTransform = ByteBuddyTransform(
             classFileLocatorMaker,
             pluginFactoriesProvider,
@@ -127,7 +139,8 @@ class ByteBuddyTransformTest : BaseMockable() {
             androidVariantDataProviderFactory,
             androidExtensionDataProvider,
             defaultLibrariesJarsProviderFactory,
-            androidBuddyPluginConfiguration
+            androidBuddyPluginConfiguration,
+            sourceElementTransformationSkipPolicyFactory
         )
     }
 
@@ -238,7 +251,9 @@ class ByteBuddyTransformTest : BaseMockable() {
         every { byteBuddyClassesInstantiator.makeJarFileSourceOrigin(jarFile1) }.returns(jarOrigin1)
         every { byteBuddyClassesInstantiator.makeJarFileSourceOrigin(jarFile2) }.returns(jarOrigin2)
         every {
-            compoundSourceFactory.create(setOf(foldersOrigin, jarOrigin1, jarOrigin2), emptySet())
+            compoundSourceFactory.create(
+                setOf(foldersOrigin, jarOrigin1, jarOrigin2), sourceElementTransformationSkipPolicy
+            )
         }.returns(compoundSource)
         every { byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder) }.returns(target)
         every { pluginEngine.with(any<ClassFileLocator>()) }.returns(pluginEngine)
