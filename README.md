@@ -226,7 +226,7 @@ Whether you're planning to set up a producer or consumer project, or both, you'd
 As a first step for both producers and consumers, you'd have to add Android Buddy as a Gradle plugin of your Android project by adding the following line into your `root` `build.gradle`'s buildscript' dependencies:
 
 ```groovy
-classpath "com.likethesalad.android:android-buddy-plugin:1.1.0"
+classpath "com.likethesalad.android:android-buddy-plugin:1.1.1"
 ```
 
 **Example**
@@ -239,7 +239,7 @@ buildscript {
 
   dependencies {
     classpath 'com.android.tools.build:gradle:3.5.+' // Requires Android build plugin version 3.5.4 or higher.
-    classpath "com.likethesalad.android:android-buddy-plugin:1.1.0"
+    classpath "com.likethesalad.android:android-buddy-plugin:1.1.1"
   }
 }
 ```
