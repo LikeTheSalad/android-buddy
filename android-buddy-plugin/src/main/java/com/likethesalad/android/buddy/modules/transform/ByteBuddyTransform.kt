@@ -3,10 +3,16 @@ package com.likethesalad.android.buddy.modules.transform
 import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.Transform
 import com.android.build.api.transform.TransformInvocation
-import com.likethesalad.android.buddy.bytebuddy.*
+import com.likethesalad.android.buddy.bytebuddy.ClassFileLocatorMaker
+import com.likethesalad.android.buddy.bytebuddy.CompoundSource
+import com.likethesalad.android.buddy.bytebuddy.CompoundSourceFactory
+import com.likethesalad.android.buddy.bytebuddy.PluginEngineProvider
+import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
 import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.modules.transform.utils.PluginFactoriesProvider
+import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkipPolicyFactory
+import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkippedStrategyFactory
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.FilesHolder
@@ -33,7 +39,9 @@ class ByteBuddyTransform @Inject constructor(
     private val androidVariantDataProviderFactory: AndroidVariantDataProviderFactory,
     private val androidExtensionDataProvider: AndroidExtensionDataProvider,
     private val defaultLibrariesJarsProviderFactory: DefaultLibrariesJarsProviderFactory,
-    private val androidBuddyPluginConfiguration: AndroidBuddyPluginConfiguration
+    private val androidBuddyPluginConfiguration: AndroidBuddyPluginConfiguration,
+    private val sourceElementTransformationSkipPolicyFactory: SourceElementTransformationSkipPolicyFactory,
+    private val sourceElementTransformationSkippedStrategyFactory: SourceElementTransformationSkippedStrategyFactory
 ) : Transform() {
 
     override fun getName(): String = "androidBuddy"
@@ -57,7 +65,9 @@ class ByteBuddyTransform @Inject constructor(
 
     override fun getParameterInputs(): MutableMap<String, Any> {
         return mutableMapOf(
-            "librariesScopeHash" to androidBuddyPluginConfiguration.getLibrariesScope().hashCode()
+            "librariesScopeHash" to androidBuddyPluginConfiguration.getLibrariesScope().hashCode(),
+            "transformationScopeHash" to androidBuddyPluginConfiguration.getTransformationScope().hashCode(),
+            "excludePrefixesScopeHash" to androidBuddyPluginConfiguration.getExcludePrefixes().hashCode()
         )
     }
 
@@ -77,7 +87,7 @@ class ByteBuddyTransform @Inject constructor(
         pluginEngineProvider.makeEngine(androidDataProvider.getJavaTargetCompatibilityVersion())
             .with(classFileLocatorMaker.make(dependencies + systemClasspath))
             .apply(
-                getCompoundSource(scopeClasspath),
+                getCompoundSource(scopeClasspath, outputFolder),
                 byteBuddyClassesInstantiator.makeTargetForFolder(outputFolder),
                 pluginFactoriesProvider.getFactories(
                     scopeClasspath.dirFiles,
@@ -87,9 +97,7 @@ class ByteBuddyTransform @Inject constructor(
             )
     }
 
-    private fun getCompoundSource(
-        scopeClasspath: FilesHolder
-    ): CompoundSource {
+    private fun getCompoundSource(scopeClasspath: FilesHolder, outputFolder: File): CompoundSource {
 
         val origins = mutableSetOf<Plugin.Engine.Source.Origin>()
         origins.add(sourceOriginForMultipleFoldersFactory.create(scopeClasspath.dirFiles))
@@ -100,7 +108,11 @@ class ByteBuddyTransform @Inject constructor(
             }
         }
 
-        return compoundSourceFactory.create(origins, androidBuddyPluginConfiguration.getExcludePrefixes())
+        return compoundSourceFactory.create(
+            origins,
+            sourceElementTransformationSkipPolicyFactory.create(androidBuddyPluginConfiguration.getExcludePrefixes()),
+            sourceElementTransformationSkippedStrategyFactory.create(outputFolder)
+        )
     }
 
 

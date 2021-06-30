@@ -226,7 +226,7 @@ Whether you're planning to set up a producer or consumer project, or both, you'd
 As a first step for both producers and consumers, you'd have to add Android Buddy as a Gradle plugin of your Android project by adding the following line into your `root` `build.gradle`'s buildscript' dependencies:
 
 ```groovy
-classpath "com.likethesalad.android:android-buddy-plugin:1.1.0"
+classpath "com.likethesalad.android:android-buddy-plugin:1.1.1"
 ```
 
 **Example**
@@ -239,7 +239,7 @@ buildscript {
 
   dependencies {
     classpath 'com.android.tools.build:gradle:3.5.+' // Requires Android build plugin version 3.5.4 or higher.
-    classpath "com.likethesalad.android:android-buddy-plugin:1.1.0"
+    classpath "com.likethesalad.android:android-buddy-plugin:1.1.1"
   }
 }
 ```
@@ -295,7 +295,7 @@ doing so, while still accomplishing your goals, by following the suggestions bel
 - If you want to transform a library class that you don't extend from, such as the "android.util.Log" one, you
   should consider instead wrapping said class within your own class and then add there all the code you need, maybe without
   having to transform it. This is a good practice that will prevent you from spreading a foreign class across your 
-  project which will in turn give you more power to replace the library you're using in te future if needed (not the 
+  project which will in turn give you more power to replace the library you're using in the future if needed (not the 
   Android SDK one but any other third party lib) and/or to be able of quickly adapt your project to any of said library's
   breaking changes, if any, in future releases.
   

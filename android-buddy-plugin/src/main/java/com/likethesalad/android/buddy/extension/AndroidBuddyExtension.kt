@@ -1,6 +1,5 @@
 package com.likethesalad.android.buddy.extension
 
-import com.android.build.api.transform.QualifiedContent
 import com.likethesalad.android.buddy.extension.libraries.LibrariesPolicyExtension
 import com.likethesalad.android.buddy.extension.libraries.TransformationScopeExtension
 import org.gradle.api.Action

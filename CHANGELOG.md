@@ -1,4 +1,7 @@
 # Change Log
+## [1.1.1] - 2021-06-30
+### Fixed
+- Saving classes that were skipped from transformation into the final runtime classpath.
 ## [1.1.0] - 2021-06-28
 ### Added
 - Changelog file

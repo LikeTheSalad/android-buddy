@@ -1,10 +1,13 @@
 package com.likethesalad.android.buddy.utils
 
+import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkipPolicy
+import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkippedStrategy
 import net.bytebuddy.build.Plugin
 
 class SourceElementsIterator(
     iterators: MutableList<out Iterator<Plugin.Engine.Source.Element>>,
-    private val excludePrefixes: Set<String>
+    private val skipPolicy: SourceElementTransformationSkipPolicy,
+    private val skippedStrategy: SourceElementTransformationSkippedStrategy
 ) : ConcatIterator<Plugin.Engine.Source.Element>(iterators) {
     private var nextElement: Plugin.Engine.Source.Element? = null
 
@@ -12,9 +15,11 @@ class SourceElementsIterator(
         if (nextElement == null) {
             while (super.hasNext()) {
                 val element = super.next()
-                if (excludePrefixes.isEmpty() || excludePrefixes.none { element.name.startsWith(it) }) {
+                if (!skipPolicy.shouldSkipItem(element)) {
                     nextElement = element
                     return true
+                } else {
+                    skippedStrategy.onTransformationSkipped(element)
                 }
             }
 

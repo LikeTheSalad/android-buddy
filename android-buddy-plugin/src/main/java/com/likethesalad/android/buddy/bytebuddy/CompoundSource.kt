@@ -2,9 +2,10 @@ package com.likethesalad.android.buddy.bytebuddy
 
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
-import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
-import com.likethesalad.android.buddy.utils.ConcatIterator
+import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkipPolicy
+import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkippedStrategy
 import com.likethesalad.android.buddy.utils.SourceElementsIterator
+import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import net.bytebuddy.build.Plugin
 import net.bytebuddy.dynamic.ClassFileLocator
 import java.util.jar.Manifest
@@ -13,7 +14,8 @@ import java.util.jar.Manifest
 class CompoundSource(
     @Provided byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator,
     private val sourceOrigins: Set<Plugin.Engine.Source.Origin>,
-    private val excludePrefixes: Set<String>
+    private val skipPolicy: SourceElementTransformationSkipPolicy,
+    private val skippedStrategy: SourceElementTransformationSkippedStrategy
 ) : Plugin.Engine.Source,
     Plugin.Engine.Source.Origin {
 
@@ -28,7 +30,7 @@ class CompoundSource(
     override fun iterator(): MutableIterator<Plugin.Engine.Source.Element> {
         return SourceElementsIterator(sourceOrigins.map {
             it.iterator()
-        }.toMutableList(), excludePrefixes)
+        }.toMutableList(), skipPolicy, skippedStrategy)
     }
 
     override fun close() {
