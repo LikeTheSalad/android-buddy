@@ -1,6 +1,5 @@
 apply plugin: 'java-library'
 apply plugin: 'org.jetbrains.kotlin.jvm'
-apply from: "../common.gradle"
 
 dependencies {
     api "net.bytebuddy:byte-buddy:$byteBuddy_version"

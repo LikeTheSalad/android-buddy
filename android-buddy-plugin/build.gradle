@@ -2,7 +2,6 @@ apply plugin: 'java-gradle-plugin'
 apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'kotlin-kapt'
 apply plugin: "com.github.gmazzo.buildconfig"
-apply from: "../common.gradle"
 
 ext {
     tools_dependency_name = 'android-buddy-tools'
