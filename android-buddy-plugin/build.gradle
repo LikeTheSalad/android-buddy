@@ -1,4 +1,4 @@
-apply plugin: 'java-library'
+apply plugin: 'java-gradle-plugin'
 apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'kotlin-kapt'
 apply plugin: "com.github.gmazzo.buildconfig"
@@ -42,6 +42,19 @@ buildConfig {
             "ANDROID_BUDDY_TOOLS_URI",
             "\"${rootProject.group}:$tools_dependency_name:${rootProject.version}\""
     )
+}
+
+gradlePlugin {
+    plugins {
+        androidBuddy {
+            id = 'com.likethesalad.android-buddy'
+            implementationClass = 'com.likethesalad.android.buddy.AndroidBuddyPlugin'
+        }
+        androidBuddyLibrary {
+            id = 'com.likethesalad.android-buddy-library'
+            implementationClass = 'com.likethesalad.android.buddylib.AndroidBuddyLibraryPlugin'
+        }
+    }
 }
 
 kapt {
