@@ -1,8 +1,8 @@
 package com.likethesalad.android.buddylib.utils
 
-import com.likethesalad.android.buddy.plugin.generated.BuildConfig
 import com.likethesalad.android.common.utils.DependencyHandlerUtil
 import com.likethesalad.android.common.utils.DependencyHandlerUtilTest
+import com.likethesalad.android_android.buddy.plugin.generated.BuildConfig
 import org.junit.Test
 
 class LibDependencyHandlerUtilTest : DependencyHandlerUtilTest() {

@@ -1,8 +1,8 @@
 package com.likethesalad.android.buddy.bytebuddy
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.utils.ConcatIterator
+import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -15,7 +15,7 @@ import java.io.File
 class SourceOriginForMultipleFoldersTest : BaseMockable() {
 
     @MockK
-    lateinit var folderIteratorFactory: FolderIteratorFactory
+    lateinit var folderIteratorFactory: FolderIterator.Factory
 
     @MockK
     lateinit var byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator

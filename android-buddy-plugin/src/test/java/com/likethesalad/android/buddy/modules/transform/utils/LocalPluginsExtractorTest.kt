@@ -3,9 +3,7 @@ package com.likethesalad.android.buddy.modules.transform.utils
 import com.google.common.truth.Truth
 import com.likethesalad.android.common.providers.impl.DefaultClassGraphFilesProvider
 import com.likethesalad.android.common.utils.ClassGraphProvider
-import com.likethesalad.android.common.utils.ClassGraphProviderFactory
 import com.likethesalad.android.common.utils.PluginsFinder
-import com.likethesalad.android.common.utils.PluginsFinderFactory
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -16,10 +14,10 @@ import java.io.File
 class LocalPluginsExtractorTest : BaseMockable() {
 
     @MockK
-    lateinit var pluginsFinderFactory: PluginsFinderFactory
+    lateinit var pluginsFinderFactory: PluginsFinder.Factory
 
     @MockK
-    lateinit var classGraphProviderFactory: ClassGraphProviderFactory
+    lateinit var classGraphProviderFactory: ClassGraphProvider.Factory
 
     private lateinit var localPluginsExtractor: LocalPluginsExtractor
 

@@ -25,7 +25,7 @@ class AndroidVariantDataProviderTest : BaseMockable() {
     lateinit var androidExtensionDataProvider: AndroidExtensionDataProvider
 
     @MockK
-    lateinit var androidVariantPathResolverFactory: AndroidVariantPathResolverFactory
+    lateinit var androidVariantPathResolverFactory: AndroidVariantPathResolver.Factory
 
     @MockK
     lateinit var logger: Logger

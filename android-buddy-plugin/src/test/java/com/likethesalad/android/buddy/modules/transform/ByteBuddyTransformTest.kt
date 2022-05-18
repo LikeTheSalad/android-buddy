@@ -6,26 +6,20 @@ import com.android.build.api.transform.TransformInvocation
 import com.google.common.truth.Truth
 import com.likethesalad.android.buddy.bytebuddy.ClassFileLocatorMaker
 import com.likethesalad.android.buddy.bytebuddy.CompoundSource
-import com.likethesalad.android.buddy.bytebuddy.CompoundSourceFactory
 import com.likethesalad.android.buddy.bytebuddy.PluginEngineProvider
 import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFolders
-import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
 import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.configuration.libraries.scope.LibrariesScope
 import com.likethesalad.android.buddy.modules.transform.utils.PluginFactoriesProvider
 import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkipPolicy
-import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkipPolicyFactory
 import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkippedStrategy
-import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkippedStrategyFactory
 import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProvider
-import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.FilesHolder
 import com.likethesalad.android.buddy.utils.SourceElementsIterator
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import com.likethesalad.android.common.utils.android.AndroidExtensionDataProvider
 import com.likethesalad.android.common.utils.android.AndroidVariantDataProvider
-import com.likethesalad.android.common.utils.android.AndroidVariantDataProviderFactory
 import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
@@ -53,16 +47,16 @@ class ByteBuddyTransformTest : BaseMockable() {
     lateinit var byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator
 
     @MockK
-    lateinit var sourceOriginForMultipleFoldersFactory: SourceOriginForMultipleFoldersFactory
+    lateinit var sourceOriginForMultipleFoldersFactory: SourceOriginForMultipleFolders.Factory
 
     @MockK
-    lateinit var transformInvocationDataExtractorFactory: TransformInvocationDataExtractorFactory
+    lateinit var transformInvocationDataExtractorFactory: TransformInvocationDataExtractor.Factory
 
     @MockK
-    lateinit var androidVariantDataProviderFactory: AndroidVariantDataProviderFactory
+    lateinit var androidVariantDataProviderFactory: AndroidVariantDataProvider.Factory
 
     @MockK
-    lateinit var compoundSourceFactory: CompoundSourceFactory
+    lateinit var compoundSourceFactory: CompoundSource.Factory
 
     @MockK
     lateinit var directoryCleaner: DirectoryCleaner
@@ -74,7 +68,7 @@ class ByteBuddyTransformTest : BaseMockable() {
     lateinit var androidExtensionDataProvider: AndroidExtensionDataProvider
 
     @MockK
-    lateinit var defaultLibrariesJarsProviderFactory: DefaultLibrariesJarsProviderFactory
+    lateinit var defaultLibrariesJarsProviderFactory: DefaultLibrariesJarsProvider.Factory
 
     @MockK
     lateinit var transformInvocation: TransformInvocation
@@ -95,13 +89,13 @@ class ByteBuddyTransformTest : BaseMockable() {
     lateinit var androidBuddyPluginConfiguration: AndroidBuddyPluginConfiguration
 
     @MockK
-    lateinit var sourceElementTransformationSkipPolicyFactory: SourceElementTransformationSkipPolicyFactory
+    lateinit var sourceElementTransformationSkipPolicyFactory: SourceElementTransformationSkipPolicy.Factory
 
     @MockK
     lateinit var sourceElementTransformationSkipPolicy: SourceElementTransformationSkipPolicy
 
     @MockK
-    lateinit var sourceElementTransformationSkippedStrategyFactory: SourceElementTransformationSkippedStrategyFactory
+    lateinit var sourceElementTransformationSkippedStrategyFactory: SourceElementTransformationSkippedStrategy.Factory
 
     @MockK
     lateinit var sourceElementTransformationSkippedStrategy: SourceElementTransformationSkippedStrategy
