@@ -1,14 +1,26 @@
 package com.likethesalad.android.common.utils.android
 
-import com.google.auto.factory.AutoFactory
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-@AutoFactory
-class AndroidVariantPathResolver constructor(
-    private val variantName: String,
-    private val flavorName: String,
-    private val buildTypeName: String,
-    private val flavors: List<String>
+class AndroidVariantPathResolver @AssistedInject constructor(
+    @Assisted("variantName") private val variantName: String,
+    @Assisted("flavorName") private val flavorName: String,
+    @Assisted("buildTypeName") private val buildTypeName: String,
+    @Assisted private val flavors: List<String>
 ) {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            @Assisted("variantName") variantName: String,
+            @Assisted("flavorName") flavorName: String,
+            @Assisted("buildTypeName") buildTypeName: String,
+            flavors: List<String>
+        ): AndroidVariantPathResolver
+    }
+
     fun getTopBottomPath(): List<String> {
         val result = mutableListOf<String>()
 

@@ -1,13 +1,19 @@
 package com.likethesalad.android.buddy.modules.transform.utils.bytebuddy
 
-import com.google.auto.factory.AutoFactory
 import com.likethesalad.android.buddy.modules.transform.base.TransformationSkipPolicy
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import net.bytebuddy.build.Plugin
-import javax.inject.Inject
 
-@AutoFactory
 class SourceElementTransformationSkipPolicy
-@Inject constructor(private val excludePrefixes: Set<String>) : TransformationSkipPolicy<Plugin.Engine.Source.Element> {
+@AssistedInject constructor(@Assisted private val excludePrefixes: Set<String>) :
+    TransformationSkipPolicy<Plugin.Engine.Source.Element> {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(excludePrefixes: Set<String>): SourceElementTransformationSkipPolicy
+    }
 
     override fun shouldSkipItem(item: Plugin.Engine.Source.Element): Boolean {
         return excludePrefixes.any { prefix ->

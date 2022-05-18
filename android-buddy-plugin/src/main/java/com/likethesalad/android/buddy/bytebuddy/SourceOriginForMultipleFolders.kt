@@ -1,20 +1,25 @@
 package com.likethesalad.android.buddy.bytebuddy
 
-import com.google.auto.factory.AutoFactory
-import com.google.auto.factory.Provided
-import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import com.likethesalad.android.buddy.utils.ConcatIterator
+import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import net.bytebuddy.build.Plugin
 import net.bytebuddy.dynamic.ClassFileLocator
 import java.io.File
 import java.util.jar.Manifest
 
-@AutoFactory
-class SourceOriginForMultipleFolders(
-    @Provided private val folderIteratorFactory: FolderIteratorFactory,
-    @Provided private val byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator,
-    private val folders: Set<File>
+class SourceOriginForMultipleFolders @AssistedInject constructor(
+    private val folderIteratorFactory: FolderIterator.Factory,
+    private val byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator,
+    @Assisted private val folders: Set<File>
 ) : Plugin.Engine.Source.Origin {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(folders: Set<File>): SourceOriginForMultipleFolders
+    }
 
     private val elementIterator: MutableIterator<Plugin.Engine.Source.Element> by lazy {
         val folderIterators = folders.map {

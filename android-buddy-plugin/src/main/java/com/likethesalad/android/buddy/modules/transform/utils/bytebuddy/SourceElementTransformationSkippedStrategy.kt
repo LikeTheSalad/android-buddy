@@ -1,19 +1,24 @@
 package com.likethesalad.android.buddy.modules.transform.utils.bytebuddy
 
-import com.google.auto.factory.AutoFactory
-import com.google.auto.factory.Provided
 import com.likethesalad.android.buddy.modules.transform.base.TransformationSkippedStrategy
 import com.likethesalad.android.buddy.modules.transform.utils.FilePathScanner
 import com.likethesalad.android.common.utils.Logger
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import net.bytebuddy.build.Plugin
 import java.io.File
 
-@AutoFactory
-class SourceElementTransformationSkippedStrategy(
-    private val outputDir: File,
-    @Provided private val filePathScanner: FilePathScanner,
-    @Provided private val logger: Logger
+class SourceElementTransformationSkippedStrategy @AssistedInject constructor(
+    @Assisted private val outputDir: File,
+    private val filePathScanner: FilePathScanner,
+    private val logger: Logger
 ) : TransformationSkippedStrategy<Plugin.Engine.Source.Element> {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(outputDir: File): SourceElementTransformationSkippedStrategy
+    }
 
     override fun onTransformationSkipped(item: Plugin.Engine.Source.Element) {
         if (item.inputStream.available() == 0) {

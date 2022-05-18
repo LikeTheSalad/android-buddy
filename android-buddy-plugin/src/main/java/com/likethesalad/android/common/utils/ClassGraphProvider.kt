@@ -1,15 +1,20 @@
 package com.likethesalad.android.common.utils
 
-import com.google.auto.factory.AutoFactory
-import com.google.auto.factory.Provided
 import com.likethesalad.android.common.providers.ClassGraphFilesProvider
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import io.github.classgraph.ClassGraph
 
-@AutoFactory
-class ClassGraphProvider(
-    @Provided private val instantiatorWrapper: InstantiatorWrapper,
-    private val classDirs: ClassGraphFilesProvider
+class ClassGraphProvider @AssistedInject constructor(
+    private val instantiatorWrapper: InstantiatorWrapper,
+    @Assisted private val classDirs: ClassGraphFilesProvider
 ) {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(classDirs: ClassGraphFilesProvider): ClassGraphProvider
+    }
 
     val classGraph: ClassGraph by lazy {
         instantiatorWrapper.getClassGraph().overrideClasspath(classDirs.provideFiles())

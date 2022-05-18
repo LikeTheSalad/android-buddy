@@ -1,19 +1,24 @@
 package com.likethesalad.android.common.utils.android
 
 import com.android.build.gradle.api.BaseVariant
-import com.google.auto.factory.AutoFactory
-import com.google.auto.factory.Provided
 import com.likethesalad.android.common.utils.Logger
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import org.gradle.api.JavaVersion
 
 @Suppress("UnstableApiUsage")
-@AutoFactory
-class AndroidVariantDataProvider(
-    @Provided private val androidExtension: AndroidExtensionDataProvider,
-    @Provided private val androidVariantPathResolverFactory: AndroidVariantPathResolverFactory,
-    @Provided private val logger: Logger,
-    val variantName: String
+class AndroidVariantDataProvider @AssistedInject constructor(
+    private val androidExtension: AndroidExtensionDataProvider,
+    private val androidVariantPathResolverFactory: AndroidVariantPathResolver.Factory,
+    private val logger: Logger,
+    @Assisted val variantName: String
 ) {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(variantName: String): AndroidVariantDataProvider
+    }
 
     private val variant: BaseVariant by lazy {
         androidExtension.getVariantByName(variantName)

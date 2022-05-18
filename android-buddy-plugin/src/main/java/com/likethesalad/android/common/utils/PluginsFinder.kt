@@ -1,10 +1,17 @@
 package com.likethesalad.android.common.utils
 
-import com.google.auto.factory.AutoFactory
 import com.likethesalad.android.buddy.tools.Transformation
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-@AutoFactory
-class PluginsFinder(private val classGraphProvider: ClassGraphProvider) {
+class PluginsFinder @AssistedInject
+constructor(@Assisted private val classGraphProvider: ClassGraphProvider) {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(classGraphProvider: ClassGraphProvider): PluginsFinder
+    }
 
     companion object {
         private const val PLUGIN_INTERFACE_NAME = "net.bytebuddy.build.Plugin"

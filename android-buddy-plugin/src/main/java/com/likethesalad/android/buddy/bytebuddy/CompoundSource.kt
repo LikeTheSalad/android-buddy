@@ -1,23 +1,32 @@
 package com.likethesalad.android.buddy.bytebuddy
 
-import com.google.auto.factory.AutoFactory
-import com.google.auto.factory.Provided
 import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkipPolicy
 import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkippedStrategy
 import com.likethesalad.android.buddy.utils.SourceElementsIterator
 import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import net.bytebuddy.build.Plugin
 import net.bytebuddy.dynamic.ClassFileLocator
 import java.util.jar.Manifest
 
-@AutoFactory
-class CompoundSource(
-    @Provided byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator,
-    private val sourceOrigins: Set<Plugin.Engine.Source.Origin>,
-    private val skipPolicy: SourceElementTransformationSkipPolicy,
-    private val skippedStrategy: SourceElementTransformationSkippedStrategy
+class CompoundSource @AssistedInject constructor(
+    byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator,
+    @Assisted private val sourceOrigins: Set<Plugin.Engine.Source.Origin>,
+    @Assisted private val skipPolicy: SourceElementTransformationSkipPolicy,
+    @Assisted private val skippedStrategy: SourceElementTransformationSkippedStrategy
 ) : Plugin.Engine.Source,
     Plugin.Engine.Source.Origin {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            sourceOrigins: Set<Plugin.Engine.Source.Origin>,
+            skipPolicy: SourceElementTransformationSkipPolicy,
+            skippedStrategy: SourceElementTransformationSkippedStrategy
+        ): CompoundSource
+    }
 
     private val locator: ClassFileLocator by lazy {
         byteBuddyClassesInstantiator.makeCompoundClassFileLocator(sourceOrigins.map { it.classFileLocator })

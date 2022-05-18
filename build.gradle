@@ -15,9 +15,8 @@ buildscript {
 apply plugin: "io.github.gradle-nexus.publish-plugin"
 
 ext {
-    dagger_version = '2.28.1'
+    dagger_version = '2.39.1'
     autoValue_version = '1.7.3'
-    autoFactory_version = '1.0-beta8'
     androidBuild_version = '3.5.4'
     byteBuddy_version = '1.10.19'
 }

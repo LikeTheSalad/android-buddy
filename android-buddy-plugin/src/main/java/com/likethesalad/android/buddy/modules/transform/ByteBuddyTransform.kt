@@ -5,20 +5,19 @@ import com.android.build.api.transform.Transform
 import com.android.build.api.transform.TransformInvocation
 import com.likethesalad.android.buddy.bytebuddy.ClassFileLocatorMaker
 import com.likethesalad.android.buddy.bytebuddy.CompoundSource
-import com.likethesalad.android.buddy.bytebuddy.CompoundSourceFactory
 import com.likethesalad.android.buddy.bytebuddy.PluginEngineProvider
-import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFoldersFactory
+import com.likethesalad.android.buddy.bytebuddy.SourceOriginForMultipleFolders
 import com.likethesalad.android.buddy.configuration.AndroidBuddyPluginConfiguration
 import com.likethesalad.android.buddy.di.AppScope
 import com.likethesalad.android.buddy.modules.transform.utils.PluginFactoriesProvider
-import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkipPolicyFactory
-import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkippedStrategyFactory
-import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProviderFactory
+import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkipPolicy
+import com.likethesalad.android.buddy.modules.transform.utils.bytebuddy.SourceElementTransformationSkippedStrategy
+import com.likethesalad.android.buddy.providers.impl.DefaultLibrariesJarsProvider
 import com.likethesalad.android.buddy.utils.ClassLoaderCreator
 import com.likethesalad.android.buddy.utils.FilesHolder
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import com.likethesalad.android.common.utils.android.AndroidExtensionDataProvider
-import com.likethesalad.android.common.utils.android.AndroidVariantDataProviderFactory
+import com.likethesalad.android.common.utils.android.AndroidVariantDataProvider
 import com.likethesalad.android.common.utils.bytebuddy.ByteBuddyClassesInstantiator
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.build.Plugin
@@ -31,17 +30,17 @@ class ByteBuddyTransform @Inject constructor(
     private val pluginFactoriesProvider: PluginFactoriesProvider,
     private val pluginEngineProvider: PluginEngineProvider,
     private val byteBuddyClassesInstantiator: ByteBuddyClassesInstantiator,
-    private val sourceOriginForMultipleFoldersFactory: SourceOriginForMultipleFoldersFactory,
-    private val transformInvocationDataExtractorFactory: TransformInvocationDataExtractorFactory,
-    private val compoundSourceFactory: CompoundSourceFactory,
+    private val sourceOriginForMultipleFoldersFactory: SourceOriginForMultipleFolders.Factory,
+    private val transformInvocationDataExtractorFactory: TransformInvocationDataExtractor.Factory,
+    private val compoundSourceFactory: CompoundSource.Factory,
     private val classLoaderCreator: ClassLoaderCreator,
     private val directoryCleaner: DirectoryCleaner,
-    private val androidVariantDataProviderFactory: AndroidVariantDataProviderFactory,
+    private val androidVariantDataProviderFactory: AndroidVariantDataProvider.Factory,
     private val androidExtensionDataProvider: AndroidExtensionDataProvider,
-    private val defaultLibrariesJarsProviderFactory: DefaultLibrariesJarsProviderFactory,
+    private val defaultLibrariesJarsProviderFactory: DefaultLibrariesJarsProvider.Factory,
     private val androidBuddyPluginConfiguration: AndroidBuddyPluginConfiguration,
-    private val sourceElementTransformationSkipPolicyFactory: SourceElementTransformationSkipPolicyFactory,
-    private val sourceElementTransformationSkippedStrategyFactory: SourceElementTransformationSkippedStrategyFactory
+    private val sourceElementTransformationSkipPolicyFactory: SourceElementTransformationSkipPolicy.Factory,
+    private val sourceElementTransformationSkippedStrategyFactory: SourceElementTransformationSkippedStrategy.Factory
 ) : Transform() {
 
     override fun getName(): String = "androidBuddy"

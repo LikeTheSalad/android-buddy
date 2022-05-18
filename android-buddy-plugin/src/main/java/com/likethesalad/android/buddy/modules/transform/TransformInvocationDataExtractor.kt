@@ -3,14 +3,20 @@ package com.likethesalad.android.buddy.modules.transform
 import com.android.build.api.transform.Format
 import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.TransformInvocation
-import com.google.auto.factory.AutoFactory
 import com.likethesalad.android.buddy.utils.FilesHolder
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import java.io.File
 
-@AutoFactory
-class TransformInvocationDataExtractor(
-    private val transformInvocation: TransformInvocation
+class TransformInvocationDataExtractor @AssistedInject constructor(
+    @Assisted private val transformInvocation: TransformInvocation
 ) {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(transformInvocation: TransformInvocation): TransformInvocationDataExtractor
+    }
 
     companion object {
         private const val OUTPUT_DIR_NAME = "androidBuddyTransform"

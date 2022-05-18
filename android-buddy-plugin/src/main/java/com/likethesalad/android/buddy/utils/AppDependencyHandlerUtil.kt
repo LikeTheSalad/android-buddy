@@ -1,9 +1,9 @@
 package com.likethesalad.android.buddy.utils
 
 import com.likethesalad.android.buddy.di.AppScope
-import com.likethesalad.android.buddy.plugin.generated.BuildConfig
 import com.likethesalad.android.common.providers.ProjectDependencyToolsProvider
 import com.likethesalad.android.common.utils.DependencyHandlerUtil
+import com.likethesalad.android_android.buddy.plugin.generated.BuildConfig
 import javax.inject.Inject
 
 @AppScope

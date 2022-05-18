@@ -1,7 +1,5 @@
 package com.likethesalad.android.buddylib.modules.createmetadata.action
 
-import com.google.auto.factory.AutoFactory
-import com.google.auto.factory.Provided
 import com.likethesalad.android.common.actions.BaseAction
 import com.likethesalad.android.common.models.libinfo.AndroidBuddyLibraryInfo
 import com.likethesalad.android.common.models.libinfo.LibraryInfoMapper
@@ -9,16 +7,23 @@ import com.likethesalad.android.common.utils.Constants
 import com.likethesalad.android.common.utils.Constants.LIBRARY_METADATA_DIR
 import com.likethesalad.android.common.utils.DirectoryCleaner
 import com.likethesalad.android.common.utils.Logger
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import java.io.File
 
-@AutoFactory
-class CreateAndroidBuddyLibraryMetadataAction(
-    @Provided private val directoryCleaner: DirectoryCleaner,
-    @Provided private val logger: Logger,
-    @Provided private val libraryInfoMapper: LibraryInfoMapper,
-    private val info: AndroidBuddyLibraryInfo,
-    private val outputDir: File
+class CreateAndroidBuddyLibraryMetadataAction @AssistedInject constructor(
+    private val directoryCleaner: DirectoryCleaner,
+    private val logger: Logger,
+    private val libraryInfoMapper: LibraryInfoMapper,
+    @Assisted private val info: AndroidBuddyLibraryInfo,
+    @Assisted private val outputDir: File
 ) : BaseAction {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(info: AndroidBuddyLibraryInfo, outputDir: File): CreateAndroidBuddyLibraryMetadataAction
+    }
 
     override fun execute() {
         cleanUpDir()

@@ -13,13 +13,10 @@ dependencies {
     implementation project(":$tools_dependency_name")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "com.google.dagger:dagger:$dagger_version"
-    implementation "com.google.auto.factory:auto-factory:$autoFactory_version"
     implementation "io.github.classgraph:classgraph:4.8.87"
     compileOnly "com.android.tools.build:gradle:$androidBuild_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
-    kapt "com.google.auto.factory:auto-factory:$autoFactory_version"
     kapt "com.google.auto.value:auto-value:$autoValue_version"
-    annotationProcessor "com.google.auto.factory:auto-factory:$autoFactory_version"
     annotationProcessor "com.google.auto.value:auto-value:$autoValue_version"
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     testImplementation "com.google.truth:truth:1.0.1"
