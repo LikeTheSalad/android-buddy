@@ -18,7 +18,7 @@ ext {
     dagger_version = '2.39.1'
     autoValue_version = '1.7.3'
     androidBuild_version = '3.5.4'
-    byteBuddy_version = '1.10.19'
+    byteBuddy_version = '1.12.10'
 }
 
 group 'com.likethesalad.android'
