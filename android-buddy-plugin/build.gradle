@@ -9,7 +9,6 @@ ext {
 }
 
 dependencies {
-    api gradleApi()
     implementation project(":$tools_dependency_name")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "com.google.dagger:dagger:$dagger_version"
