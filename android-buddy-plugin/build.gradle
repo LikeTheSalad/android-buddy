@@ -34,14 +34,16 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
+def metadataPropertiesId = "${rootProject.group}_${name}"
+
 buildConfig {
-    packageName("com.likethesalad.${project.name.replaceAll("-", ".")}.generated")
+    packageName("${metadataPropertiesId.replaceAll("-", ".")}.generated")
 
     buildConfigField("String", "BYTE_BUDDY_VERSION", "\"$byteBuddy_version\"")
     buildConfigField(
             "String",
             "ANDROID_BUDDY_TOOLS_URI",
-            "\"${project.group}:$tools_dependency_name:${project.version}\""
+            "\"${rootProject.group}:$tools_dependency_name:${rootProject.version}\""
     )
 }
 
