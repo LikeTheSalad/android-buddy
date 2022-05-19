@@ -19,6 +19,7 @@ ext {
     autoValue_version = '1.7.3'
     androidBuild_version = '3.5.4'
     byteBuddy_version = '1.12.10'
+    testingUtilities_version = '1.0.8'
 }
 
 artifactPublisher {

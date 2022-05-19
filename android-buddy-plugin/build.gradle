@@ -16,10 +16,9 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     kapt "com.google.auto.value:auto-value:$autoValue_version"
     annotationProcessor "com.google.auto.value:auto-value:$autoValue_version"
-    testImplementation group: 'junit', name: 'junit', version: '4.12'
-    testImplementation "com.google.truth:truth:1.0.1"
-    testImplementation "io.mockk:mockk:1.10.0"
     testImplementation "com.android.tools.build:gradle:$androidBuild_version"
+    testImplementation "com.likethesalad.tools.testing:android-gradle:$testingUtilities_version"
+    testImplementation "com.likethesalad.tools.testing:unit-testing:$testingUtilities_version"
 }
 
 compileKotlin {
