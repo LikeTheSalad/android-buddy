@@ -19,7 +19,7 @@ public class BasicTransformation implements Plugin {
                                         TypeDescription typeDescription,
                                         ClassFileLocator classFileLocator) {
         return builder.method(ElementMatchers.named("getMessage"))
-                .intercept(MethodDelegation.to(FixedValue.value("Instrumented message")));
+                .intercept(FixedValue.value("Instrumented message"));
     }
 
     @Override
