@@ -19,6 +19,7 @@ dependencies {
     testImplementation "com.android.tools.build:gradle:$androidBuild_version"
     testImplementation "com.likethesalad.tools.testing:android-gradle:$testingUtilities_version"
     testImplementation "com.likethesalad.tools.testing:unit-testing:$testingUtilities_version"
+    testImplementation "net.lingala.zip4j:zip4j:2.9.1"
 }
 
 compileKotlin {
@@ -29,6 +30,10 @@ compileTestKotlin {
 }
 
 def metadataPropertiesId = "${rootProject.group}_${name}"
+
+pluginUnderTestMetadata {
+    pluginClasspath.from(configurations.compileOnly)
+}
 
 buildConfig {
     packageName("${metadataPropertiesId.replaceAll("-", ".")}.generated")
