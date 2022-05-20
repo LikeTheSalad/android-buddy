@@ -1,5 +1,6 @@
 package com.likethesalad.android.functional
 
+import com.google.common.truth.Truth
 import com.likethesalad.tools.functional.testing.AndroidProjectTest
 import com.likethesalad.tools.functional.testing.app.layout.AndroidAppProjectDescriptor
 import com.likethesalad.tools.functional.testing.layout.items.impl.plugins.GradlePluginDeclaration
@@ -51,12 +52,12 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
         verifyResultContainsLine(result, "> Task :$projectName:transformClassesWithAndroidBuddyForDebug")
 
         val classLoader = getAppClassloader(projectName)
-        val helloClass = classLoader.loadClass("Hello")
+        val helloClass = classLoader.loadClass("com.thepackage.Hello")
         val getMessage = helloClass.getDeclaredMethod("getMessage")
         val helloInstance = helloClass.newInstance()
         val message = getMessage.invoke(helloInstance) as String
 
-        println("Message: $message")
+        Truth.assertThat(message).isEqualTo("Instrumented message")
     }
 
     private fun getAppClassloader(projectName: String): ClassLoader {
