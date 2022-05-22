@@ -13,6 +13,7 @@ dependencies {
     implementation "com.google.dagger:dagger:$dagger_version"
     implementation "io.github.classgraph:classgraph:4.8.87"
     compileOnly "com.android.tools.build:gradle:$androidBuild_version"
+    compileOnly "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     kapt "com.google.auto.value:auto-value:$autoValue_version"
     annotationProcessor "com.google.auto.value:auto-value:$autoValue_version"

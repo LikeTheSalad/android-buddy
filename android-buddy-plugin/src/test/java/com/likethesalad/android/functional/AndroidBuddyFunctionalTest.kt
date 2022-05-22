@@ -60,6 +60,26 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
         Truth.assertThat(message).isEqualTo("Instrumented message")
     }
 
+    @Test
+    fun `Check app kotlin class instrumentation`() {
+        val projectName = "basic_kotlin"
+
+        val appDescriptor = createAppProjectDescriptor(projectName)
+        appDescriptor.pluginsBlock.addPlugin(GradlePluginDeclaration("org.jetbrains.kotlin.android"))
+
+        val result = createProjectAndBuild(appDescriptor, listOf("assembleDebug"))
+
+        verifyResultContainsLine(result, "> Task :$projectName:transformClassesWithAndroidBuddyForDebug")
+
+        val classLoader = getAppClassloader(projectName)
+        val helloClass = classLoader.loadClass("com.thepackage.HelloK")
+        val getMessage = helloClass.getDeclaredMethod("getMessage")
+        val helloInstance = helloClass.newInstance()
+        val message = getMessage.invoke(helloInstance) as String
+
+        Truth.assertThat(message).isEqualTo("Instrumented message")
+    }
+
     private fun getAppClassloader(projectName: String): ClassLoader {
         val jarFile = extractJarFromProject(projectName)
         return URLClassLoader(arrayOf(jarFile.toURI().toURL()), javaClass.classLoader)
