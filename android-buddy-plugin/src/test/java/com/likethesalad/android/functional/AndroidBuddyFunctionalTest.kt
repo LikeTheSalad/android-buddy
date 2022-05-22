@@ -42,7 +42,7 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
     }
 
     @Test
-    fun `Check app class instrumentation`() {
+    fun `Check app java class instrumentation`() {
         val projectName = "basic"
 
         val appDescriptor = createAppProjectDescriptor(projectName)
@@ -90,10 +90,10 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
 
         val dexFile = File(destinationDir, dexFileName)
 
-        return convertDextToJar(dexFile)
+        return convertDexToJar(dexFile)
     }
 
-    private fun convertDextToJar(dexFile: File): File {
+    private fun convertDexToJar(dexFile: File): File {
         val jarFile = File(dexFile.parentFile, "classes.jar")
         val dex2jarScript = File(dexToolsDir, "d2j-dex2jar.sh")
         val processBuilder = ProcessBuilder(
