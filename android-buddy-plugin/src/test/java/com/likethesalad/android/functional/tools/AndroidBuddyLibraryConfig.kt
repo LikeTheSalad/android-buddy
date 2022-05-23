@@ -11,7 +11,7 @@ class AndroidBuddyLibraryConfig(
         return """
             androidBuddyLibrary { 
                 id = "$id"
-                exposedTransformationNames = $transformationClassNames
+                exposedTransformationNames = ${transformationClassNames.map { "\"$it\"" }}
             }
         """.trimIndent()
     }

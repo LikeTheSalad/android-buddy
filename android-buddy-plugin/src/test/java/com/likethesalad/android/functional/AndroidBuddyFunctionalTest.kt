@@ -82,6 +82,35 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
         Truth.assertThat(message).isEqualTo("Instrumented message")
     }
 
+    @Test
+    fun `Check app with lib with instrumentation`() {
+        val projectName = "basic_with_lib"
+        val libProjectName = "basic_lib"
+
+        val appDescriptor = createAppProjectDescriptor(projectName)
+        appDescriptor.pluginsBlock.addPlugin(GradlePluginDeclaration("org.jetbrains.kotlin.android"))
+        val libDescriptor = createLibraryProjectDescriptor(
+            libProjectName, AndroidBuddyLibraryConfig(
+                "some-id",
+                listOf("com.transformations.BasicLibTransformation")
+            )
+        )
+        appDescriptor.dependenciesBlock.addDependency("implementation project(':$libProjectName')")
+        createProject(libDescriptor)
+
+        val result = createProjectAndBuild(appDescriptor, listOf("assembleDebug"))
+
+        verifyResultContainsLine(result, "> Task :$projectName:transformClassesWithAndroidBuddyForDebug")
+
+        val classLoader = getAppClassloader(projectName)
+        val helloClass = classLoader.loadClass("com.thepackage.HelloLib")
+        val getMessage = helloClass.getDeclaredMethod("getMessage")
+        val helloInstance = helloClass.newInstance()
+        val message = getMessage.invoke(helloInstance) as String
+
+        Truth.assertThat(message).isEqualTo("Instrumented message in lib")
+    }
+
     private fun getAppClassloader(projectName: String): ClassLoader {
         val jarFile = extractJarFromProject(projectName)
         return URLClassLoader(arrayOf(jarFile.toURI().toURL()), javaClass.classLoader)
