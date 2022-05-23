@@ -1,8 +1,10 @@
 package com.likethesalad.android.functional
 
 import com.google.common.truth.Truth
+import com.likethesalad.android.functional.tools.AndroidBuddyLibraryConfig
 import com.likethesalad.tools.functional.testing.AndroidProjectTest
 import com.likethesalad.tools.functional.testing.app.layout.AndroidAppProjectDescriptor
+import com.likethesalad.tools.functional.testing.layout.AndroidLibProjectDescriptor
 import com.likethesalad.tools.functional.testing.layout.items.impl.plugins.GradlePluginDeclaration
 import com.likethesalad.tools.functional.testing.utils.TestAssetsProvider
 import net.lingala.zip4j.ZipFile
@@ -100,6 +102,20 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
             ANDROID_PLUGIN_VERSION
         )
         descriptor.pluginsBlock.addPlugin(GradlePluginDeclaration("com.likethesalad.android-buddy"))
+        return descriptor
+    }
+
+    private fun createLibraryProjectDescriptor(
+        projectName: String,
+        config: AndroidBuddyLibraryConfig
+    ): AndroidLibProjectDescriptor {
+        val descriptor = AndroidLibProjectDescriptor(
+            projectName,
+            getInputTestAsset(projectName),
+            ANDROID_PLUGIN_VERSION,
+            listOf(config)
+        )
+        descriptor.pluginsBlock.addPlugin(GradlePluginDeclaration("com.likethesalad.android-buddy-library"))
         return descriptor
     }
 
