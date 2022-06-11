@@ -175,6 +175,48 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
         Truth.assertThat(message2).isEqualTo("Instrumented message in lib2")
     }
 
+    @Test
+    fun `Check applying transformations from selected libraries only`() {
+        val projectName = "app_with_selected_libs"
+        val libProjectName1 = "selected_lib_1"
+        val libProjectName2 = "selected_lib_2"
+
+        val appDescriptor = createAppProjectDescriptor(
+            projectName,
+            AndroidBuddyAppConfig(AndroidBuddyAppConfig.LibrariesPolicyConfig.UseOnly(listOf("some-id2")))
+        )
+        appDescriptor.pluginsBlock.addPlugin(GradlePluginDeclaration("org.jetbrains.kotlin.android"))
+        val libDescriptor1 = createLibraryProjectDescriptor(
+            libProjectName1, AndroidBuddyLibraryConfig(
+                "some-id1",
+                listOf("com.transformations.BasicLibTransformation1")
+            )
+        )
+        val libDescriptor2 = createLibraryProjectDescriptor(
+            libProjectName2, AndroidBuddyLibraryConfig(
+                "some-id2",
+                listOf("com.transformations.BasicLibTransformation2")
+            )
+        )
+        appDescriptor.dependenciesBlock.addDependency("implementation project(':$libProjectName1')")
+        appDescriptor.dependenciesBlock.addDependency("implementation project(':$libProjectName2')")
+        createProject(libDescriptor1)
+        createProject(libDescriptor2)
+
+        createProjectAndBuild(appDescriptor, listOf("assembleDebug"))
+
+        val classLoader = getAppClassloader(projectName)
+        val helloClass = classLoader.loadClass("com.thepackage.HelloLibs")
+        val getMessage1 = helloClass.getDeclaredMethod("getMessage")
+        val getMessage2 = helloClass.getDeclaredMethod("getMessage2")
+        val helloInstance = helloClass.newInstance()
+        val message1 = getMessage1.invoke(helloInstance) as String
+        val message2 = getMessage2.invoke(helloInstance) as String
+
+        Truth.assertThat(message1).isEqualTo("Not modified message")
+        Truth.assertThat(message2).isEqualTo("Instrumented message in lib2")
+    }
+
     private fun getAppClassloader(projectName: String): ClassLoader {
         val jarFile = extractJarFromProject(projectName)
         return URLClassLoader(arrayOf(jarFile.toURI().toURL()), javaClass.classLoader)
