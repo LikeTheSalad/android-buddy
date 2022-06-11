@@ -1,6 +1,7 @@
 package com.likethesalad.android.functional
 
 import com.google.common.truth.Truth
+import com.likethesalad.android.functional.tools.AndroidBuddyAppConfig
 import com.likethesalad.android.functional.tools.AndroidBuddyLibraryConfig
 import com.likethesalad.tools.functional.testing.AndroidProjectTest
 import com.likethesalad.tools.functional.testing.app.layout.AndroidAppProjectDescriptor
@@ -49,9 +50,7 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
 
         val appDescriptor = createAppProjectDescriptor(projectName)
 
-        val result = createProjectAndBuild(appDescriptor, listOf("assembleDebug"))
-
-        verifyResultContainsLine(result, "> Task :$projectName:transformClassesWithAndroidBuddyForDebug")
+        createProjectAndBuild(appDescriptor, listOf("assembleDebug"))
 
         val classLoader = getAppClassloader(projectName)
         val helloClass = classLoader.loadClass("com.thepackage.Hello")
@@ -69,9 +68,7 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
         val appDescriptor = createAppProjectDescriptor(projectName)
         appDescriptor.pluginsBlock.addPlugin(GradlePluginDeclaration("org.jetbrains.kotlin.android"))
 
-        val result = createProjectAndBuild(appDescriptor, listOf("assembleDebug"))
-
-        verifyResultContainsLine(result, "> Task :$projectName:transformClassesWithAndroidBuddyForDebug")
+        createProjectAndBuild(appDescriptor, listOf("assembleDebug"))
 
         val classLoader = getAppClassloader(projectName)
         val helloClass = classLoader.loadClass("com.thepackage.HelloK")
@@ -98,9 +95,7 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
         appDescriptor.dependenciesBlock.addDependency("implementation project(':$libProjectName')")
         createProject(libDescriptor)
 
-        val result = createProjectAndBuild(appDescriptor, listOf("assembleDebug"))
-
-        verifyResultContainsLine(result, "> Task :$projectName:transformClassesWithAndroidBuddyForDebug")
+        createProjectAndBuild(appDescriptor, listOf("assembleDebug"))
 
         val classLoader = getAppClassloader(projectName)
         val helloClass = classLoader.loadClass("com.thepackage.HelloLib")
@@ -109,6 +104,36 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
         val message = getMessage.invoke(helloInstance) as String
 
         Truth.assertThat(message).isEqualTo("Instrumented message in lib")
+    }
+
+    @Test
+    fun `Check app with lib with instrumentation is ignored when configured to use no transformations from libs`() {
+        val projectName = "app_with_lib_ignored"
+        val libProjectName = "ignored_lib"
+
+        val appDescriptor = createAppProjectDescriptor(
+            projectName,
+            AndroidBuddyAppConfig(AndroidBuddyAppConfig.LibrariesPolicyConfig.IgnoreAll)
+        )
+        appDescriptor.pluginsBlock.addPlugin(GradlePluginDeclaration("org.jetbrains.kotlin.android"))
+        val libDescriptor = createLibraryProjectDescriptor(
+            libProjectName, AndroidBuddyLibraryConfig(
+                "some-id",
+                listOf("com.transformations.BasicLibTransformation")
+            )
+        )
+        appDescriptor.dependenciesBlock.addDependency("implementation project(':$libProjectName')")
+        createProject(libDescriptor)
+
+        createProjectAndBuild(appDescriptor, listOf("assembleDebug"))
+
+        val classLoader = getAppClassloader(projectName)
+        val helloClass = classLoader.loadClass("com.thepackage.HelloLib")
+        val getMessage = helloClass.getDeclaredMethod("getMessage")
+        val helloInstance = helloClass.newInstance()
+        val message = getMessage.invoke(helloInstance) as String
+
+        Truth.assertThat(message).isEqualTo("Not modified message")
     }
 
     private fun getAppClassloader(projectName: String): ClassLoader {
@@ -124,11 +149,15 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
         return extractJar(apkPath)
     }
 
-    private fun createAppProjectDescriptor(projectName: String): AndroidAppProjectDescriptor {
+    private fun createAppProjectDescriptor(
+        projectName: String,
+        config: AndroidBuddyAppConfig? = null
+    ): AndroidAppProjectDescriptor {
         val descriptor = AndroidAppProjectDescriptor(
             projectName,
             getInputTestAsset(projectName),
-            ANDROID_PLUGIN_VERSION
+            ANDROID_PLUGIN_VERSION,
+            config?.let { listOf(it) } ?: emptyList()
         )
         descriptor.pluginsBlock.addPlugin(GradlePluginDeclaration("com.likethesalad.android-buddy"))
         return descriptor
