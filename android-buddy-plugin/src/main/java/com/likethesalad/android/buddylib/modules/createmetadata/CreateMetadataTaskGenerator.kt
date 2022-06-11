@@ -46,10 +46,8 @@ class CreateMetadataTaskGenerator @Inject constructor(
     private fun createTaskForVariant(taskName: String, destinationDir: File)
             : CreateAndroidBuddyLibraryMetadata {
         val task = taskContainer.create(
-            taskName, CreateAndroidBuddyLibraryMetadata::class.java, createMetadataTaskArgs
+            taskName, CreateAndroidBuddyLibraryMetadata::class.java, createMetadataTaskArgs, extension
         )
-        task.id = extension.id
-        task.inputClassNames = extension.exposedTransformationNames
         task.outputDir.set(destinationDir)
 
         return task

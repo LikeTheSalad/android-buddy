@@ -62,6 +62,11 @@ class CreateMetadataTaskGeneratorTest : BaseMockable() {
     @MockK
     lateinit var variant: BaseVariant
 
+    @MockK
+    lateinit var inputClassNamesProperties: SetProperty<String>
+
+    @MockK
+    lateinit var idProperty: Property<String>
 
     private val variantName = "someVariant"
     private val taskName = "someTaskName"
@@ -78,9 +83,16 @@ class CreateMetadataTaskGeneratorTest : BaseMockable() {
             taskContainer.create(
                 taskName,
                 CreateAndroidBuddyLibraryMetadata::class.java,
-                createMetadataTaskArgs
+                createMetadataTaskArgs,
+                any()
             )
         }.returns(createAndroidBuddyLibraryMetadata)
+        every {
+            createAndroidBuddyLibraryMetadata.id
+        }.returns(idProperty)
+        every {
+            createAndroidBuddyLibraryMetadata.inputClassNames
+        }.returns(inputClassNamesProperties)
         every { androidExtensionDataProvider.allVariants(capture(allVariantsCaptor)) } just Runs
         createMetadataTaskGenerator = CreateMetadataTaskGenerator(
             androidExtensionDataProvider,
@@ -116,10 +128,9 @@ class CreateMetadataTaskGeneratorTest : BaseMockable() {
             taskContainer.create(
                 taskName,
                 CreateAndroidBuddyLibraryMetadata::class.java,
-                createMetadataTaskArgs
+                createMetadataTaskArgs,
+                androidBuddyLibExtension
             )
-            createAndroidBuddyLibraryMetadata.inputClassNames = pluginNames
-            createAndroidBuddyLibraryMetadata.id = pluginId
             outputDir.set(expectedOutputDir)
             collection.builtBy(createAndroidBuddyLibraryMetadata)
             variant.registerPreJavacGeneratedBytecode(collection)
