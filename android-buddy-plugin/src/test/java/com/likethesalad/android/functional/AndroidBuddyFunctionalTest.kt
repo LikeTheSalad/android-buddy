@@ -24,6 +24,7 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
     companion object {
         private const val ANDROID_PLUGIN_VERSION = "4.2.0"
         private const val GRADLE_VERSION = "6.7.1"
+        private const val CONSUMER_PLUGIN_ID = "com.likethesalad.android-buddy"
 
         @get:ClassRule
         @JvmStatic
@@ -217,9 +218,41 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
         Truth.assertThat(message2).isEqualTo("Instrumented message in lib2")
     }
 
+    @Test
+    fun `Test android lib transformation`() {
+        val libName = "some_consumer_lib"
+        val libDescriptor = createLibraryConsumerProjectDescriptor(libName)
+
+        createProjectAndBuild(libDescriptor, listOf("assembleDebug"))
+
+        val classLoader = getLibClassloader(libName)
+        val helloClass = classLoader.loadClass("com.thepackage.Hello")
+        val getMessage = helloClass.getDeclaredMethod("getMessage")
+        val helloInstance = helloClass.newInstance()
+        val message = getMessage.invoke(helloInstance) as String
+
+        Truth.assertThat(message).isEqualTo("Instrumented message")
+    }
+
     private fun getAppClassloader(projectName: String): ClassLoader {
         val jarFile = extractJarFromProject(projectName)
         return URLClassLoader(arrayOf(jarFile.toURI().toURL()), javaClass.classLoader)
+    }
+
+    private fun getLibClassloader(libProjectName: String): ClassLoader {
+        val jarFile = extractJarFromLibProject(libProjectName)
+        return URLClassLoader(arrayOf(jarFile.toURI().toURL()), javaClass.classLoader)
+    }
+
+    private fun extractJarFromLibProject(libProjectName: String): File {
+        val projectDir = getProjectDir(libProjectName)
+        val aarDir = File(projectDir, "build/outputs/aar")
+        val aarFile = File(aarDir, "$libProjectName-debug.aar")
+        val jarFileName = "classes.jar"
+        val jarFile = File(aarDir, jarFileName)
+        ZipFile(aarFile).extractFile(jarFileName, aarDir.absolutePath)
+
+        return jarFile
     }
 
     private fun extractJarFromProject(projectName: String): File {
@@ -227,7 +260,7 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
         val apkDir = File(projectDir, "build/outputs/apk/debug")
         val apkPath = File(apkDir, "$projectName-debug.apk")
 
-        return extractJar(apkPath)
+        return extractJarFromApk(apkPath)
     }
 
     private fun createAppProjectDescriptor(
@@ -240,7 +273,7 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
             ANDROID_PLUGIN_VERSION,
             config?.let { listOf(it) } ?: emptyList()
         )
-        descriptor.pluginsBlock.addPlugin(GradlePluginDeclaration("com.likethesalad.android-buddy"))
+        descriptor.pluginsBlock.addPlugin(GradlePluginDeclaration(CONSUMER_PLUGIN_ID))
         return descriptor
     }
 
@@ -258,7 +291,19 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
         return descriptor
     }
 
-    private fun extractJar(apkFile: File): File {
+    private fun createLibraryConsumerProjectDescriptor(
+        projectName: String
+    ): AndroidLibProjectDescriptor {
+        val descriptor = AndroidLibProjectDescriptor(
+            projectName,
+            getInputTestAsset(projectName),
+            ANDROID_PLUGIN_VERSION
+        )
+        descriptor.pluginsBlock.addPlugin(GradlePluginDeclaration(CONSUMER_PLUGIN_ID))
+        return descriptor
+    }
+
+    private fun extractJarFromApk(apkFile: File): File {
         val destinationDir = apkFile.parentFile
         val dexFileName = "classes.dex"
         ZipFile(apkFile).extractFile(dexFileName, destinationDir.absolutePath)
