@@ -10,7 +10,6 @@ import org.gradle.api.JavaVersion
 @Suppress("UnstableApiUsage")
 class AndroidVariantDataProvider @AssistedInject constructor(
     private val androidExtension: AndroidExtensionDataProvider,
-    private val androidVariantPathResolverFactory: AndroidVariantPathResolver.Factory,
     private val logger: Logger,
     @Assisted val variantName: String
 ) {
@@ -30,14 +29,6 @@ class AndroidVariantDataProvider @AssistedInject constructor(
 
         logger.info("Using java target version {}", javaVersion)
         return javaVersion
-    }
-
-    fun getVariantPath(): List<String> {
-        val resolver = androidVariantPathResolverFactory.create(
-            variantName, variant.flavorName, variant.buildType.name, variant.productFlavors.map { it.name }
-        )
-
-        return resolver.getTopBottomPath()
     }
 
     private fun javaVersionToInt(javaVersion: JavaVersion): Int {

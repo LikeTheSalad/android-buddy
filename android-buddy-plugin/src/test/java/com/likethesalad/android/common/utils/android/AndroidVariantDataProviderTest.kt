@@ -2,8 +2,6 @@ package com.likethesalad.android.common.utils.android
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.api.ApplicationVariant
-import com.android.builder.model.BuildType
-import com.android.builder.model.ProductFlavor
 import com.google.common.truth.Truth
 import com.likethesalad.android.common.utils.Logger
 import com.likethesalad.android.testutils.BaseMockable
@@ -25,9 +23,6 @@ class AndroidVariantDataProviderTest : BaseMockable() {
     lateinit var androidExtensionDataProvider: AndroidExtensionDataProvider
 
     @MockK
-    lateinit var androidVariantPathResolverFactory: AndroidVariantPathResolver.Factory
-
-    @MockK
     lateinit var logger: Logger
 
     private val variantName = "someVariantName"
@@ -35,13 +30,11 @@ class AndroidVariantDataProviderTest : BaseMockable() {
 
     @Before
     fun setUp() {
-        androidVariantDataProvider =
-            AndroidVariantDataProvider(
-                androidExtensionDataProvider,
-                androidVariantPathResolverFactory,
-                logger,
-                variantName
-            )
+        androidVariantDataProvider = AndroidVariantDataProvider(
+            androidExtensionDataProvider,
+            logger,
+            variantName
+        )
     }
 
     @Test
@@ -61,38 +54,6 @@ class AndroidVariantDataProviderTest : BaseMockable() {
         verify {
             logger.info("Using java target version {}", 7)
         }
-    }
-
-    @Test
-    fun `Get variant path`() {
-        val variant = createAndSetMainVariantMock()
-        val flavorName = "someFlavorName"
-        val androidVariantPathResolver = mockk<AndroidVariantPathResolver>()
-        val buildType = mockk<BuildType>()
-        val buildTypeName = "someBuildTypeName"
-        val flavor1 = mockk<ProductFlavor>()
-        val flavor2 = mockk<ProductFlavor>()
-        val flavorName1 = "someFlavor"
-        val flavorName2 = "anotherFlavor"
-        val flavors = listOf(flavor1, flavor2)
-        val expectedPath = listOf("some", "path")
-        every { flavor1.name }.returns(flavorName1)
-        every { flavor2.name }.returns(flavorName2)
-        every { variant.flavorName }.returns(flavorName)
-        every { variant.buildType }.returns(buildType)
-        every { buildType.name }.returns(buildTypeName)
-        every { variant.productFlavors }.returns(flavors)
-        every {
-            androidVariantPathResolverFactory.create(
-                variantName, flavorName, buildTypeName,
-                listOf(flavorName1, flavorName2)
-            )
-        }.returns(androidVariantPathResolver)
-        every { androidVariantPathResolver.getTopBottomPath() }.returns(expectedPath)
-
-        val result = androidVariantDataProvider.getVariantPath()
-
-        Truth.assertThat(result).isEqualTo(expectedPath)
     }
 
     private fun getVariantsIterator(
