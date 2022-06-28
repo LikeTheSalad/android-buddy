@@ -4,7 +4,6 @@ import com.likethesalad.android.common.providers.ProjectDependencyToolsProvider
 import com.likethesalad.android.testutils.BaseMockable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.slot
 import io.mockk.verify
 import org.gradle.api.Action
 import org.gradle.api.artifacts.Dependency
@@ -48,32 +47,10 @@ open class DependencyHandlerUtilTest : BaseMockable() {
     }
 
     @Test
-    fun `Add gradle logging dependency`() {
-        executeAddDependencies()
-
-        verifyDependencyAdded("org.gradle:gradle-logging:4.10.1")
-    }
-
-    @Test
     fun `Add slf4j api dependency`() {
         executeAddDependencies()
 
         verifyDependencyAdded("org.slf4j:slf4j-api:1.7.30")
-    }
-
-    @Test
-    fun `Add gradle releases maven repo`() {
-        val mavenAction = slot<Action<MavenArtifactRepository>>()
-
-        executeAddDependencies()
-
-        verify {
-            repositoryHandler.maven(capture(mavenAction))
-        }
-        mavenAction.captured.execute(mavenArtifactRepository)
-        verify {
-            mavenArtifactRepository.setUrl("https://repo.gradle.org/gradle/libs-releases-local/")
-        }
     }
 
     protected fun verifyDependencyAdded(dependency: Any) {

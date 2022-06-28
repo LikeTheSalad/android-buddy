@@ -28,8 +28,4 @@ class Logger @Inject constructor(projectLoggerProvider: ProjectLoggerProvider) {
     fun error(text: String, vararg extra: Any) {
         projectLogger.error("$PREFIX $text", *extra)
     }
-
-    fun lifecycle(text: String, vararg extra: Any) {
-        projectLogger.lifecycle(text, *extra)
-    }
 }

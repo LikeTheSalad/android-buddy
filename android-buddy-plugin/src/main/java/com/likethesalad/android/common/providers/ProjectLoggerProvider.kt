@@ -1,6 +1,6 @@
 package com.likethesalad.android.common.providers
 
-import org.gradle.api.logging.Logger
+import org.slf4j.Logger
 
 interface ProjectLoggerProvider {
 

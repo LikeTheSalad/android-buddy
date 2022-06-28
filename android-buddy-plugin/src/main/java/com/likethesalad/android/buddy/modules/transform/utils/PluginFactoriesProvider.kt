@@ -26,7 +26,7 @@ class PluginFactoriesProvider
 
     private val loggerArgumentResolver by lazy {
         byteBuddyClassesInstantiator.makeFactoryArgumentResolverFor(
-            org.gradle.api.logging.Logger::class.java,
+            org.slf4j.Logger::class.java,
             projectLoggerProvider.getLogger()
         )
     }
