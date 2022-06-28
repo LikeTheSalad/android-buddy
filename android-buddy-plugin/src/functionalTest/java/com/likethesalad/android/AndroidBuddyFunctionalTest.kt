@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
 
 class AndroidBuddyFunctionalTest : AndroidProjectTest() {
 
-    private val inputAssetsProvider = TestAssetsProvider("test", "consumer")
+    private val inputAssetsProvider = TestAssetsProvider("functionalTest", "consumer")
 
     companion object {
         private const val ANDROID_PLUGIN_VERSION = "4.2.0"
@@ -35,7 +35,7 @@ class AndroidBuddyFunctionalTest : AndroidProjectTest() {
         @JvmStatic
         @BeforeClass
         fun setUpClass() {
-            val toolsDir = TestAssetsProvider("test", "tools")
+            val toolsDir = TestAssetsProvider("functionalTest", "tools")
             val dexToolsZip = toolsDir.getAssetFile("dex-tools.zip")
             val dexToolsExtractDir = classTempDir.newFolder("dex-tools-extracted")
 
