@@ -1,8 +1,8 @@
-package com.likethesalad.android.functional
+package com.likethesalad.android
 
 import com.google.common.truth.Truth
-import com.likethesalad.android.functional.tools.AndroidBuddyAppConfig
-import com.likethesalad.android.functional.tools.AndroidBuddyLibraryConfig
+import com.likethesalad.android.tools.AndroidBuddyAppConfig
+import com.likethesalad.android.tools.AndroidBuddyLibraryConfig
 import com.likethesalad.tools.functional.testing.AndroidProjectTest
 import com.likethesalad.tools.functional.testing.app.layout.AndroidAppProjectDescriptor
 import com.likethesalad.tools.functional.testing.layout.AndroidLibProjectDescriptor

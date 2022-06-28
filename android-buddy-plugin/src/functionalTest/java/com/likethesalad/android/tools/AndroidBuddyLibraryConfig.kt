@@ -1,4 +1,4 @@
-package com.likethesalad.android.functional.tools
+package com.likethesalad.android.tools
 
 import com.likethesalad.tools.functional.testing.layout.items.GradleBlockItem
 
