@@ -1,7 +1,8 @@
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
-![version](https://img.shields.io/maven-central/v/com.likethesalad.android/android-buddy-plugin)
+> ⚠️ This project is **DEPRECATED** since the [official plugin](https://github.com/raphw/byte-buddy/tree/master/byte-buddy-gradle-plugin) has now support for Android projects.
 
-# Android Buddy
+# Android Buddy (⚠️ DEPRECATED, please use the [official plugin](https://github.com/raphw/byte-buddy/tree/master/byte-buddy-gradle-plugin) instead)
 
 Table of Contents
 =================
@@ -20,6 +21,10 @@ Table of Contents
   * [Setting up a producer project](#setting-up-a-producer-project)
   * [Advanced configuration](#advanced-configuration)
 * [License](#license)
+
+⚠️ Deprecation Notice ⚠️
+---
+The [official Byte Buddy Gradle plugin](https://github.com/raphw/byte-buddy/tree/master/byte-buddy-gradle-plugin) has now support for Android projects, so this project is no longer needed. Please go have a look at the official one instead. Thanks!
 
 What it is
 ---
